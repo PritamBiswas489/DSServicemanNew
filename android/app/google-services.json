@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "695999466630",
+    "project_id": "dscaptain-fcm",
+    "storage_bucket": "dscaptain-fcm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695999466630:android:e3236330a24f6dd4171507",
+        "android_client_info": {
+          "package_name": "com.dorkarlyf.captain.testing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_J4KhdJ29QH6DGtN5N1Keup_k7Z3n4Os"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
