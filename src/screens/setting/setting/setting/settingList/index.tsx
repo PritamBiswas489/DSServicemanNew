@@ -6,12 +6,12 @@ import RenderItem from './renderItem';
 import {useValues} from '../../../../../../App';
 
 export function SettingList({setModalVisible,setCommissionModal,showPromotionalModal}: {setModalVisible: any,setCommissionModal:any,showPromotionalModal:any}) {
-  const {isServiceManLogin} = useValues();
+  const {isDeliveryManLogin} = useValues();
   return (
     <View style={[styles.container]}>
       <FlatList
        
-        data={isServiceManLogin ? serviceMenSettingData : settingData}
+        data={isDeliveryManLogin ? serviceMenSettingData : settingData}
         renderItem={({item,index}) => (
           <RenderItem key={index}  setModalVisible={setModalVisible} showPromotionalModal={showPromotionalModal} setCommissionModal={setCommissionModal} item={item} />
         )}

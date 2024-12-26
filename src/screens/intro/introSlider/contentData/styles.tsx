@@ -22,10 +22,10 @@ export const styles = StyleSheet.create({
   },
   buttonText: {
     color: appColors.primary,
-    fontSize: windowWidth(3.6),
+    fontSize: windowWidth(4.6),
   },
   button1TextStyle: {
-    fontSize: windowWidth(3.6),
+    fontSize: windowWidth(4.6),
   },
   text: {
     color: appColors.lightText,

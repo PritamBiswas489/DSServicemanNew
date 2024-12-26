@@ -128,7 +128,7 @@ export default function IntroData() {
             styles.title,
             {color: isDark ? appColors.white : appColors.darkText},
           ]}>
-          {t('introSlider.title')}
+          {t('newDeveloper.ServiceManAndDeliveryman')} 
         </Text>
       </View>
     </View>

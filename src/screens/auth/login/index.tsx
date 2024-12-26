@@ -4,7 +4,7 @@ import HeaderComponent from '@otherComponent/auth/header';
 import { styles } from './styles';
 import TextInputComponent from '@otherComponent/auth/textInput';
 import PasswordInputComponent from '@otherComponent/auth/passwordInput';
-import { Email } from '@assets/icons/auth/email';
+import { Call } from '@src/utils/icons';
 import { Password } from '@assets/icons/auth/passwords';
 import appColors from '@theme/appColors';
 import GradientBtn from '@commonComponents/gradientBtn';
@@ -26,11 +26,11 @@ import { useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
 import { getAuthUserService } from '@src/services/auth.service';
 import { getAuthUserService as storeAuthService } from '@src/services/store/auth.service';
-import { serviceProviderAccountDataActions } from '@src/store/redux/service-provider-account-data.redux';
+import { serviceManAccountDataActions } from '@src/store/redux/serviceman/service-man-account-data.redux';
 import { useDispatch } from 'react-redux';
-import { serviceProviderBookingReviewActions } from '@src/store/redux/service-provider-booking-review-redux';
-import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-provider-pomotional-cost-redux';
 import { storeProfileDataActions } from '@src/store/redux/store/store-profile-redux';
+import PhoneTextInput from '@otherComponent/auth/phoneTextInput';
+import { windowWidth } from '@src/theme/appConstant';
 interface LoginResponse {
   data: any;
   status: number;
@@ -43,9 +43,11 @@ interface LoginResponse {
 type loginProps = NativeStackNavigationProp<RootStackParamList>;
 const Login = ({ route }: any) => {
   const navigation = useNavigation<loginProps>();
-  const [errors, setErrors] = useState({ email: '', password: '' });
-  const [form, setForm] = useState({ email: '', password: '' });
-  // const [form, setForm] = useState({email: 'pritam.biswas489@gmail.com', password: 'Pritam123@#'});
+  const [errors, setErrors] = useState({ phone: '', password: '' });
+  const [form, setForm] = useState({ phone: '', password: '' });
+  const [loginPhoneCountryCode,setPhoneCountryCode] = useState('IN')
+  const [loginPhoneDialCode,setPhoneDialCode] = useState('91')  
+  // const [form, setForm] = useState({phone: 'pritam.biswas489@gmail.com', password: 'Pritam123@#'});
   const [selectOptionModal, setOptionModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch()
@@ -59,8 +61,8 @@ const Login = ({ route }: any) => {
 
   const {
     isDark,
-    isServiceManLogin,
-    setIsServiceManLogin,
+    isDeliveryManLogin,
+    setIsDeliveryManLogin,
     setIsFreeLancerLogin,
     t,
     loggedInUserType,
@@ -78,108 +80,110 @@ const Login = ({ route }: any) => {
 
   useEffect(() => {
 
-    route?.params?.serviceMenLogin
-      ? setIsServiceManLogin(true)
-      : setIsServiceManLogin(false);
+    route?.params?.deliveryMenLogin
+      ? setIsDeliveryManLogin(true)
+      : setIsDeliveryManLogin(false);
   }, []);
 
 
   useEffect(() => {
-    if (isServiceManLogin) {
-      // setForm({ ...form, ['email']: 'fashion1@gmail.com', ['password']: '@Dorkar1234' });
-    //  setForm({ ...form, ['email']: 'foodstore1@gmail.com', ['password']: '@Dorkar1234' });
-     setForm({ ...form, ['email']: 'arup1012@gmail.com', ['password']: '@Kolkata1234' });
-    //  setForm({ ...form, ['email']: 'Munmun2020@gmail.com', ['password']: '@Kolkata1234' });
-      // setForm({ ...form, ['email']: 'medicine1@gmail.com', ['password']: '@Dorkar1234' });
+    if (isDeliveryManLogin) {
+      // setForm({ ...form, ['phone']: 'fashion1@gmail.com', ['password']: '@Dorkar1234' });
+    //  setForm({ ...form, ['phone']: 'foodstore1@gmail.com', ['password']: '@Dorkar1234' });
+     setForm({ ...form, ['phone']: 'arup1012@gmail.com', ['password']: '@Kolkata1234' });
+    //  setForm({ ...form, ['phone']: 'Munmun2020@gmail.com', ['password']: '@Kolkata1234' });
+      // setForm({ ...form, ['phone']: 'medicine1@gmail.com', ['password']: '@Dorkar1234' });
     } else {
-      setForm({ ...form, ['email']: 'dorkarbeldanga@gmail.com', ['password']: '@Beldanga1234' });
+      setForm({ ...form, ['phone']: '9830990065', ['password']: 'Pritam123' });
     }
-  }, [isServiceManLogin])
+  }, [isDeliveryManLogin])
 
 
-  const handleLoginServiceProvider = () => {
-    const reg =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!form.email) {
+  //handle login here
+  const handleLogin = () => {
+    const reg =  /^\d{10}$/;
+    let error = false
+    if (!form.phone) {
+      error = true
       setErrors(prev => {
-        return { ...prev, email: t('error.email') };
+        return { ...prev, phone: t('newDeveloper.registerPhoneError') };
       });
     }
-    if (!reg.test(form.email)) {
+    if (!reg.test(form.phone)) {
+      error = true
       setErrors(prev => {
-        return { ...prev, email: t('error.validEmail') };
+        return { ...prev, phone: t('newDeveloper.registerPhoneError') };
       });
     }
     if (!form.password) {
+      error = true
       setErrors(prev => {
         return { ...prev, password: t('error.password') };
       });
     }
-    else {
-      //isServiceManLogin ? saveServiceMenCredentials() : clearServiceMenData();
-      isServiceManLogin ? handleStoreSellerLoginHandle() : handleServiceProviderLoginHandle()
-
+    if(!error) {
+      isDeliveryManLogin ? handleDeliveryManLoginHandle() : handleServiceManLoginHandle()
     }
   };
-  const handleStoreSellerLoginHandle = async () => {
-    setIsLoading(true)
-    const data: {
-      email: string,
-      password: string,
-      vendor_type: string
-    } = {
-      email: form.email,
-      password: form.password,
-      vendor_type: 'owner'
-    };
+  const handleDeliveryManLoginHandle = async () => {
+    // setIsLoading(true)
+    // const data: {
+    //   phone: string,
+    //   password: string,
+    //   vendor_type: string
+    // } = {
+    //   phone: form.phone,
+    //   password: form.password,
+    //   vendor_type: 'owner'
+    // };
 
     
-        const response: LoginResponse = await storeLoginService(data);
-        if (response?.data?.errors) {
-            Toast.show({
-              type: 'error',
-              text1: 'ERROR',
-              text2: response?.data?.errors[0]?.message,
-            });
-            setIsLoading(false)
-        } else if (response?.data?.token) {
-              await setAuthTokens(response?.data?.token, null);
-              const responseuser = await storeAuthService()
-              if(
-                responseuser?.data?.errors && 
-                responseuser?.data?.errors[0]?.code === 'auth-001'){
-                  navigation.replace('AuthNavigation');
-                  return
-              }
-              if (responseuser?.data?.id) {
-                      Toast.show({
-                        type: 'success',
-                        text1: 'SUCCESS',
-                        text2: t('newDeveloper.successfullyLoggedIn'),
-                      });
-                      dispatch(storeProfileDataActions.setData(responseuser?.data))
-                      setIsLoading(false)
-                      setValue('loggedInUserType', 'Seller')
-                      setLoggedInUserType('Seller')
-                      navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'BottomTabSeller' }],
-                      });
-              } else {
-                    Toast.show({
-                      type: 'error',
-                      text1: 'ERROR',
-                      text2: t('newDeveloper.errorLoggedIn'),
-                    });
-              }
-        } else {
-          Toast.show({
-            type: 'error',
-            text1: 'ERROR',
-            text2: t('newDeveloper.errorLoggedIn'),
-          });
-          setIsLoading(false)
-        }
+    //     const response: LoginResponse = await storeLoginService(data);
+    //     if (response?.data?.errors) {
+    //         Toast.show({
+    //           type: 'error',
+    //           text1: 'ERROR',
+    //           text2: response?.data?.errors[0]?.message,
+    //         });
+    //         setIsLoading(false)
+    //     } else if (response?.data?.token) {
+    //           await setAuthTokens(response?.data?.token, null);
+    //           const responseuser = await storeAuthService()
+    //           if(
+    //             responseuser?.data?.errors && 
+    //             responseuser?.data?.errors[0]?.code === 'auth-001'){
+    //               navigation.replace('AuthNavigation');
+    //               return
+    //           }
+    //           if (responseuser?.data?.id) {
+    //                   Toast.show({
+    //                     type: 'success',
+    //                     text1: 'SUCCESS',
+    //                     text2: t('newDeveloper.successfullyLoggedIn'),
+    //                   });
+    //                   dispatch(storeProfileDataActions.setData(responseuser?.data))
+    //                   setIsLoading(false)
+    //                   setValue('loggedInUserType', 'Seller')
+    //                   setLoggedInUserType('Seller')
+    //                   navigation.reset({
+    //                     index: 0,
+    //                     routes: [{ name: 'BottomTabSeller' }],
+    //                   });
+    //           } else {
+    //                 Toast.show({
+    //                   type: 'error',
+    //                   text1: 'ERROR',
+    //                   text2: t('newDeveloper.errorLoggedIn'),
+    //                 });
+    //           }
+    //     } else {
+    //       Toast.show({
+    //         type: 'error',
+    //         text1: 'ERROR',
+    //         text2: t('newDeveloper.errorLoggedIn'),
+    //       });
+    //       setIsLoading(false)
+    //     }
 
        
       
@@ -187,17 +191,17 @@ const Login = ({ route }: any) => {
 
 
   }
-
-  const handleServiceProviderLoginHandle = async () => {
+  //handle service man login handle 
+  const handleServiceManLoginHandle = async () => {
     setIsLoading(true)
-    const data: { email_or_phone: string, password: string } = {
-      email_or_phone: form.email,
+    const data: { phone: string, password: string } = {
+      phone: `+${loginPhoneDialCode}${form.phone}`,
       password: form.password,
     };
     const response: LoginResponse = await loginService(data);
     if (response?.data?.response_code === 'auth_login_200') {
 
-
+  
       if (response?.data?.content?.is_active !== 1) {
 
         Toast.show({
@@ -207,19 +211,17 @@ const Login = ({ route }: any) => {
         });
         setIsLoading(false)
       } else {
+       
         await setAuthTokens(response?.data?.content?.token, null);
         const responseuser = await getAuthUserService()
-
-        if (responseuser?.data?.response_code === 'default_200' && responseuser?.data?.content?.provider_info?.id) {
-          dispatch(serviceProviderAccountDataActions.setData(responseuser?.data?.content?.provider_info))
-          dispatch(serviceProviderBookingReviewActions.setData(responseuser?.data?.content?.booking_overview))
-          dispatch(serviceProviderPomotionalCostActions.setData(responseuser?.data?.content?.promotional_cost_percentage))
+        if (responseuser?.data?.response_code === 'default_200' && responseuser?.data?.content?.id) {
+          dispatch(serviceManAccountDataActions.setData(responseuser?.data?.content))
           Toast.show({
             type: 'success',
             text1: 'Success',
             text2: response?.data?.message,
           });
-          setIsServiceManLogin(false);
+          setIsDeliveryManLogin(false);
           setIsLoading(false)
           setIsFreeLancerLogin(true);
           setValue('loggedInUserType', 'Provider')
@@ -271,31 +273,37 @@ const Login = ({ route }: any) => {
                   showBack={false}
                   authTitle={'introSlider.signIn'}
                   content={
-                    !isServiceManLogin
+                    !isDeliveryManLogin
                       ? 'auth.providerLogin'
                       : 'auth.serviceManLogin'
                   }
                 />
-                <TextInputComponent
-                  placeholder={t('auth.email')}
-                  keyboardType="email-address"
-                  Icon={
-                    <Email
-                      color={
-                        form.email
-                          ? isDark
-                            ? appColors.lightText
-                            : appColors.darkText
-                          : appColors.lightText
-                      }
-                    />
-                  }
-                  value={form.email}
-                  onChangeText={value => {
-                    onChange({ name: 'email', value });
-                  }}
-                  error={errors.email}
-                />
+                
+
+
+
+<PhoneTextInput
+                                phoneContent={<>
+                                  <TextInputComponent
+                                    textContainerStyle={{ width: windowWidth(45) }}
+                                    placeholder={t('auth.phoneNumber')}
+                                    keyboardType="number-pad"
+                                    value={form.phone}
+                                    onChangeText={value => {
+                                      onChange({ name: 'phone', value });
+                                    }}
+                                    error={errors.phone} />
+                                </>}
+                                phoneCountryCode={loginPhoneCountryCode}
+                                setPhoneCountryCode={function (value: string): void {
+                                  setPhoneCountryCode(value)
+                                }}
+                                phoneDialCode={loginPhoneDialCode}
+                                setPhoneDialCode={function (value: string): void {
+                                  setPhoneDialCode(value)
+                                }} />
+
+
                 <PasswordInputComponent
                   inputType={InputType.PASSWORD}
                   placeholder={t('introSlider.passwordPlaceholder')}
@@ -319,7 +327,7 @@ const Login = ({ route }: any) => {
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() =>{
-                    !isServiceManLogin
+                    !isDeliveryManLogin
                     ? navigation.navigate('ForgotPassword')
                     : navigation.navigate('StoreForgotPassword')
 
@@ -331,12 +339,10 @@ const Login = ({ route }: any) => {
                 </TouchableOpacity>
 
                 <GradientBtn
-                  accountText={!isServiceManLogin ? 'introSlider.anAccount' : ''}
-                  authText={!isServiceManLogin ? 'introSlider.signUp' : ''}
                   label="introSlider.loginNow"
-                  onPress={handleLoginServiceProvider}
+                  onPress={handleLogin}
                   gotoScreen={
-                    !isServiceManLogin ? () => setOptionModal(true) : undefined
+                    !isDeliveryManLogin ? () => setOptionModal(true) : undefined
                   }
                 />
               </View>
@@ -344,14 +350,14 @@ const Login = ({ route }: any) => {
           />
         </View>
         <View
-          style={isServiceManLogin ? styles.buttonView : styles.buttonContainer}
+          style={isDeliveryManLogin ? styles.buttonView : styles.buttonContainer}
         />
         <GradientBtn
           color={isDark ? appColors.darkTheme : appColors.white}
           label={
-            isServiceManLogin ? 'auth.providerLogin' : 'auth.serviceManLogin'
+            isDeliveryManLogin ? 'auth.providerLogin' : 'auth.serviceManLogin'
           }
-          onPress={() => setIsServiceManLogin(!isServiceManLogin)}
+          onPress={() => setIsDeliveryManLogin(!isDeliveryManLogin)}
           additionalStyle={styles.buttonStyle}
           labelColor={appColors.primary}
           labelTextStyle={styles.labelText}

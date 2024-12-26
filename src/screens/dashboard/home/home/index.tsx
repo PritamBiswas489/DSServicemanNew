@@ -62,7 +62,7 @@ export function Home() {
   const [cancelBookingModal, setCancelBookingModal] = useState(false);
   const [acceptBookingModal, setAcceptBookingModal] = useState(false);
   const { navigate,replace } = useNavigation<navigationProp>();
-  const { isDark, isServiceManLogin, t, loggedInUserType } = useValues();
+  const { isDark, isDeliveryManLogin, t, loggedInUserType } = useValues();
   const [showSkeletonLoader, setSkeletonLoader] = useState(false)
   const [needSkeletonLoader,setNeedSkeletonLoader] =  useState(true)
  
@@ -252,12 +252,12 @@ export function Home() {
           onTrailIcon={() => navigate('Notification')}
         />
         {/* <TouchableOpacity onPress={()=>onDisplayNotification('testing title','testing body')}><Text>Click test notification</Text></TouchableOpacity> */}
-        {isServiceManLogin && <Provider />}
+        {isDeliveryManLogin && <Provider />}
         <TotalPayBackBalance onPress={() => Alert.alert('NOT DONE YET')} />
-        {isServiceManLogin ? <ServiceMenDashBoard /> : <DashBoard />}
+        {isDeliveryManLogin ? <ServiceMenDashBoard /> : <DashBoard />}
         <HeadingRow
           title={
-            isServiceManLogin
+            isDeliveryManLogin
               ? 'serviceMenLogin.assignedServices'
               : 'home.recentBooking'
           }
@@ -267,7 +267,7 @@ export function Home() {
         {bookingList.length === 0 && <HomeNoFataFound message={t('newDeveloper.homeNoBookingFoundMessage')} />}
         <HomeBookingList data={bookingList} />
         <StaticsDetail />
-        {isServiceManLogin ? <ServiceMen /> : <ProviderLogin />}
+        {isDeliveryManLogin ? <ServiceMen /> : <ProviderLogin />}
         {/* <BlogView /> */}
         <CommonModal
           modal={<WalletModal setShowWalletModal={setShowWalletModal} />}

@@ -43,7 +43,7 @@ export function Booking() {
   const [endDate, setEndDate] = useState('');
   const [isStartDate, setIsStartDate] = useState(true);
   const [showDatePicker, setDatePicker] = useState(false);
-  const { isDark, isServiceManLogin } = useValues();
+  const { isDark, isDeliveryManLogin } = useValues();
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -113,7 +113,7 @@ export function Booking() {
           setAcceptBookingModal={setAcceptBookingModal}
           setCancelBookingModal={setCancelBookingModal}
           containerStyle={{ marginVertical: 0 }}
-          data={isServiceManLogin ? allBookingsData : BookingData}
+          data={isDeliveryManLogin ? allBookingsData : BookingData}
         />
         <View style={GlobalStyle.blankView} />
       </ScrollView>

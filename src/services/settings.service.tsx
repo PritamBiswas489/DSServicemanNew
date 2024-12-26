@@ -31,7 +31,7 @@ export const getZoneList = async (): Promise<Response> => {
 
 export const getProviderConfig = async () : Promise<Response> => {
   try {
-    const response = await api.get<Response>('/provider/config');
+    const response = await api.get<Response>('/serviceman/config');
     return response;
   } catch (error:any) {
     return error.response;

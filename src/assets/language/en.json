@@ -16,12 +16,12 @@
         },
         "auth": {
             "signIn": "Sign in",
-            "providerLogin": "Login as a Provider",
+            "providerLogin": "Login as a Serviceman",
             "email": "Enter email",
             "password": "Enter password",
             "loginNow": "Login now",
             "forgotPassword": "Forget password ?",
-            "serviceManLogin": "Login as Store Seller",
+            "serviceManLogin": "Login as Deliveryman",
             "fixit": "fixit",
             "forgetPassword": "forget PASSWORD",
             "forgetPasswordContent": "Don’t worry ! Just enter your register no.",
@@ -1475,8 +1475,12 @@
            "Transferredto":"Transferred to",
            "PaidVia":"Paid via",
            "ConversationList":"Conversation List",
-        
-           
+           "ServiceDeliveryManApp":"Serviceman and Deliveryman app",
+           "ServiceManAndDeliveryman":"Serviceman and Deliveryman",
+           "servicemanlogin":"Serviceman",
+           "deliveryManLogin":"Deliveryman",
+           "enterYourPhoneNumber":"Enter your phone number",
+           "registerPhoneError":"Enter valid phone number"
             
           
 

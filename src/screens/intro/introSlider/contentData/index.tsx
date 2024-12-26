@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import React from 'react';
 import {styles} from './styles';
 import GridButton from '@commonComponents/gridButton';
@@ -17,18 +17,21 @@ export default function ContentData({
 }) {
   const {navigate} = useNavigation<routeProps>();
   const {isDark,t} = useValues();
-
+   
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{t('introSlider.loginApp')}</Text>
       <GridButton
-        label1="introSlider.provider"
+        label1="newDeveloper.servicemanlogin"
+        
         onButtonClick={() => {
-          navigate('Login', {serviceMenLogin: true});
+          Alert.alert('Will start durng deliveryman app')
+          navigate('Login',{deliveryMenLogin:true});
         }}
-        label="introSlider.servicemen"
+        label="newDeveloper.deliveryManLogin"
         onButton1Click={() => {
           navigate('Login');
+          // navigate('Login');
         }}
         buttonStyle={styles.buttonStyle}
         buttonTextStyle={styles.buttonText}
@@ -36,22 +39,6 @@ export default function ContentData({
         buttonContainerStyle={styles.buttonContainer}
         button1TextStyle={styles.button1TextStyle}
       />
-      <View style={styles.row}>
-        <TouchableOpacity>
-          <Text style={styles.text}>{t('introSlider.anAccount')} </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => setOptionModal(true)}>
-          <Text
-            style={[
-              styles.signUp,
-              {color: isDark ? appColors.white : appColors.darkText},
-            ]}>
-            {t('introSlider.signUp')}
-          </Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }

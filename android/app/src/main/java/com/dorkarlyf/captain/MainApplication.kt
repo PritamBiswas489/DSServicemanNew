@@ -1,4 +1,4 @@
-package com.dorkarlyf.captain.testing
+package com.dorkarlyf.serviceman.testing
 
 import android.app.Application
 import com.facebook.react.PackageList

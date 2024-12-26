@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "DSCaptain.app"
-               BlueprintName = "DSCaptain"
-               ReferencedContainer = "container:DSCaptain.xcodeproj">
+               BuildableName = "DSServiceman.app"
+               BlueprintName = "DSServiceman"
+               ReferencedContainer = "container:DSServiceman.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "DSCaptainTests.xctest"
-               BlueprintName = "DSCaptainTests"
-               ReferencedContainer = "container:DSCaptain.xcodeproj">
+               BuildableName = "DSServicemanTests.xctest"
+               BlueprintName = "DSServicemanTests"
+               ReferencedContainer = "container:DSServiceman.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "DSCaptain.app"
-            BlueprintName = "DSCaptain"
-            ReferencedContainer = "container:DSCaptain.xcodeproj">
+            BuildableName = "DSServiceman.app"
+            BlueprintName = "DSServiceman"
+            ReferencedContainer = "container:DSServiceman.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "DSCaptain.app"
-            BlueprintName = "DSCaptain"
-            ReferencedContainer = "container:DSCaptain.xcodeproj">
+            BuildableName = "DSServiceman.app"
+            BlueprintName = "DSServiceman"
+            ReferencedContainer = "container:DSServiceman.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

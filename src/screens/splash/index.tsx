@@ -14,15 +14,10 @@ import { useValues } from '../../../App';
 import { getServiceMenCredentials } from '@utils/functions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { getAuthUserService } from '@src/services/auth.service';
-import { serviceProviderAccountDataActions } from '@src/store/redux/service-provider-account-data.redux';
-import { serviceProviderBookingReviewActions } from '@src/store/redux/service-provider-booking-review-redux';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
 import { getProviderConfig, getPagesContent } from '@src/services/settings.service';
-import { configAppActions } from '@src/store/redux/config-redux';
 import { contentPagesActions } from '@src/store/redux/content-pages-redux';
-import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-provider-pomotional-cost-redux';
-import useHomeDataLoader from '@src/hooks/useHomeDataLoader';
 import { homeStatisticsGraphActions } from '@src/store/redux/home-statistics-graph-redux';
 import { checkLoggedInUserType } from '@utils/functions';
 import { storeConfigAppActions } from '@src/store/redux/store/store-config-redux';
@@ -30,7 +25,8 @@ import { storeProfileDataActions } from '@src/store/redux/store/store-profile-re
 import { getStoreSettings } from '@src/services/store/settings.service';
 import { getAuthUserService as storeAuthService } from '@src/services/store/auth.service';
 import { storeHomeOrderActions } from '@src/store/redux/store/store-home-order';
-
+import { serviceManAccountDataActions } from '@src/store/redux/serviceman/service-man-account-data.redux';
+import { serviceManConfigAppActions } from '@src/store/redux/serviceman/service-man-config-redux';
 
 type navigation = NativeStackNavigationProp<RootStackParamList>;
 const SplashScreen = () => {
@@ -45,7 +41,7 @@ const SplashScreen = () => {
   const { 
     setCurrSymbol, 
     setCurrValue, 
-    setIsServiceManLogin, 
+    setIsDeliveryManLogin, 
     setIsDark, 
     isDark, 
     t,
@@ -60,7 +56,7 @@ const SplashScreen = () => {
   const [checkingLoader, setCheckingLoader] = useState(false);
   const dispatch = useDispatch()
 
-  const { callAllFunctionHome } = useHomeDataLoader();
+   
    
    
   useEffect(() => {
@@ -130,7 +126,7 @@ const SplashScreen = () => {
   const checkServiceMenCredential = async () => {
     const hasServiceMenCredentials = await getServiceMenCredentials();
     if (hasServiceMenCredentials) {
-      setIsServiceManLogin(true);
+      setIsDeliveryManLogin(true);
     }
   };
 
@@ -266,16 +262,17 @@ const SplashScreen = () => {
         replace('IntroSlider');
     }
   }
-  //check user 
+  //check user and get service man config
   const checkuser = async () => {
     setCheckingLoader(true)
     const responseProviderConfig = await getProviderConfig();
-    if (responseProviderConfig?.data?.content?.base_url) {
-      dispatch(configAppActions.setData(responseProviderConfig?.data?.content))
+     
+    if (responseProviderConfig?.data?.content?.business_name) {
+           dispatch(serviceManConfigAppActions.setData(responseProviderConfig?.data?.content))
     } else {
-      Alert.alert('Unable to load app.restart the app')
-      setCheckingLoader(false)
-      return
+          Alert.alert('Unable to load app.restart the app')
+          setCheckingLoader(false)
+          return
     }
 
     const contentConfig = await getPagesContent()
@@ -308,16 +305,9 @@ const SplashScreen = () => {
     }
 
    
-    
-    
-
-    const response = await getAuthUserService()
-    if (response?.data?.response_code === 'default_200' && response?.data?.content?.provider_info?.id) {
-      dispatch(serviceProviderAccountDataActions.setData(response?.data?.content?.provider_info))
-      dispatch(serviceProviderBookingReviewActions.setData(response?.data?.content?.booking_overview))
-      dispatch(serviceProviderPomotionalCostActions.setData(response?.data?.content?.promotional_cost_percentage))
-
-      await callAllFunctionHome()
+    const responseuser = await getAuthUserService()
+    if (responseuser?.data?.response_code === 'default_200' && responseuser?.data?.content?.id) {
+      dispatch(serviceManAccountDataActions.setData(responseuser?.data?.content))
       replace('BottomTab');
     } else {
       replace('IntroSlider');
@@ -336,12 +326,12 @@ const SplashScreen = () => {
           zoomOut().start(async () => {
             //check logged in user type for retrieve 
             const getUserType = await checkLoggedInUserType()
-            
+           
             if(getUserType === 'Provider'){
                  assignDefaultHomeStatisticsData()
                  checkuser()
             }else if(getUserType === 'Seller'){
-                  checkVendor()
+                  // checkVendor()
             }else{
                 replace('IntroSlider');
             }
@@ -384,9 +374,9 @@ const SplashScreen = () => {
       />
       <Text style={{
         color: appColors.primary, 
-        fontSize:24, 
+        fontSize:18, 
         fontWeight:'bold'
-        }}>{t('newDeveloper.ServiceProviderApp')}</Text>
+        }}>{t('newDeveloper.ServiceDeliveryManApp')}</Text>
       <Spinner
         visible={checkingLoader}
         textContent={''}

@@ -18,7 +18,7 @@ import { RootState, AppDispatch } from '@src/store';
 import { forgetPasswordAction } from '@src/store/redux/forgetpassword-redux';
 import { Email } from '@assets/icons/auth/email';
 import Toast from 'react-native-toast-message';
-import { getForgetpasswordOtp } from '@src/services/forgetpassword.service';
+import { getForgetpasswordOtp, serviceMenSendingOtp } from '@src/services/forgetpassword.service';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 type forgotPswProps = NativeStackNavigationProp<RootStackParamList>;
@@ -40,9 +40,9 @@ const ForgotPassword = () => {
   const [selectOptionModal, setOptionModal] = useState<boolean>(false);
   const [processingSpinner,setprocessingSpinner] = useState<boolean>(false);
 
-    const { forget_password_verification_method } = useSelector((state: RootState) => state['providerAppConfig'])
+    // const { forget_password_verification_method } = useSelector((state: RootState) => state['providerAppConfig'])
    
-  //  const forget_password_verification_method:string = 'phone' 
+   const forget_password_verification_method:string = 'phone' 
  
   const {
     email: forgetPasswordEmail,
@@ -105,12 +105,7 @@ const ForgotPassword = () => {
     if(error === false){
       setprocessingSpinner(true)
       //send otp to the user phone or email address
-       
-      const formData:{identity:string,identity_type:string} = {
-        identity: forgetPasswordIdentityType === 'phone' ? `${forgetPasswordPhoneDialCode}${forgerPasswordPhone}` : forgetPasswordEmail,
-        identity_type:forgetPasswordIdentityType
-      }
-      const response:Response = await getForgetpasswordOtp(formData)
+      const response:Response = await serviceMenSendingOtp(`+${forgetPasswordPhoneDialCode}${forgerPasswordPhone}`)
       console.log(response?.data)
       if(response?.data?.response_code === 'default_200'){
         setprocessingSpinner(false)
@@ -119,9 +114,6 @@ const ForgotPassword = () => {
           text1: 'success',
           text2: response?.data?.message,
         });
-        // console.log("========= otp number ============")
-        // console.log(response?.data?.content?.otp)
-        dispatch(forgetPasswordAction.setData({ field: 'otp', data: response?.data?.content?.otp }))
         navigate('VerifyOtp');
       }else{
         setprocessingSpinner(false)
@@ -196,8 +188,6 @@ const ForgotPassword = () => {
 
             <View style={styles.blankView}></View>
             <GradientBtn
-              accountText="introSlider.anAccount"
-              authText="introSlider.signUp"
               label="auth.sendOtp"
               onPress={onOtpClick}
               gotoScreen={() => setOptionModal(true)}

@@ -1,41 +1,58 @@
 import React, { useState } from 'react';
-import {View} from 'react-native';
+import { View } from 'react-native';
 import AuthBg from '@otherComponent/auth/authBg';
 import HeaderComponent from '@otherComponent/auth/header';
 import OTPTextInput from 'react-native-otp-textinput';
 import GradientBtn from '@commonComponents/gradientBtn';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from 'src/navigation/types';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {styles} from './styles';
-import {useValues} from '../../../../App';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from 'src/navigation/types';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { styles } from './styles';
+import { useValues } from '../../../../App';
 import appColors from '@theme/appColors';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
 import Toast from 'react-native-toast-message';
 import { forgetPasswordAction } from '@src/store/redux/forgetpassword-redux';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { serviceForgetPasswordOtpVerification } from '@src/services/forgetpassword.service';
 
 type otpProps = NativeStackNavigationProp<RootStackParamList>;
 type otpRouteProps = RouteProp<RootStackParamList, 'VerifyOtp'>;
 
-const VerifyOtp=()=> {
+interface Response {
+  data: any;
+  status: number;
+  statusText: string;
+  headers: any;
+  config: any;
+  request?: any;
+}
+
+
+const VerifyOtp = () => {
   const inputCount = 4;
   const dispatch = useDispatch()
-  const {navigate} = useNavigation<otpProps>();
-  const {params} = useRoute<otpRouteProps>();
-  const {isDark,t} = useValues();
-  const [enteredOtp,setEnteredOtp] = useState('')
-  
+  const { navigate } = useNavigation<otpProps>();
+  const { params } = useRoute<otpRouteProps>();
+  const { isDark, t } = useValues();
+  const [enteredOtp, setEnteredOtp] = useState('')
+  const [processingSpinner, setprocessingSpinner] = useState<boolean>(false);
 
   const {
-    otp:responseOtp,
+    email: forgetPasswordEmail,
+    phoneCountryCode: forgetPasswordPhoneCountryCode,
+    phoneDialCode: forgetPasswordPhoneDialCode,
+    phone: forgerPasswordPhone,
+    identity_type: forgetPasswordIdentityType,
   } = useSelector((state: RootState) => state['forgetPassword'])
 
 
   // console.log({responseOtp})
 
-  const onOtpClick = () => {
-    if(enteredOtp.length  < 4){
+  const onOtpClick = async () => {
+    setprocessingSpinner(true)
+    if (enteredOtp.length < 4) {
       Toast.show({
         type: 'error',
         text1: 'error',
@@ -43,25 +60,32 @@ const VerifyOtp=()=> {
       });
       return
     }
-     
-    if(responseOtp.toString()!==enteredOtp.toString()){
-      Toast.show({
-        type: 'error',
-        text1: 'error',
-        text2: t('newDeveloper.OtpDoesnotMatch'),
-      });
-      return
+    const phoneNumber = `+${forgetPasswordPhoneDialCode}${forgerPasswordPhone}`
+    const response: Response = await serviceForgetPasswordOtpVerification(phoneNumber, enteredOtp)
+    if (response?.data?.response_code === 'default_verified_200') {
+            setprocessingSpinner(false)
+            Toast.show({
+              type: 'success',
+              text1: 'success',
+              text2: response?.data?.message,
+            });
+            dispatch(forgetPasswordAction.setData({ field: 'enteredOtp', data: enteredOtp }))
+            navigate('ResetPassword');
+    } else {
+            setprocessingSpinner(false)
+            Toast.show({
+              type: 'error',
+              text1: 'error',
+              text2: response?.data?.message,
+            });
     }
-    dispatch(forgetPasswordAction.setData({ field: 'enteredOtp', data: enteredOtp }))
-
-    navigate('ResetPassword');
   };
 
   return (
     <View
       style={[
         styles.container,
-        {backgroundColor: isDark ? appColors.darkText : appColors.background},
+        { backgroundColor: isDark ? appColors.darkText : appColors.background },
       ]}>
       <AuthBg
         authContent={
@@ -94,6 +118,11 @@ const VerifyOtp=()=> {
             />
           </View>
         }
+      />
+      <Spinner
+        visible={processingSpinner}
+        textContent={'Processing.....'}
+        textStyle={{ color: '#FFF' }}
       />
     </View>
   );

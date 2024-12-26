@@ -32,7 +32,7 @@ interface Response {
 //Profile Account Information nice page
 export function ProfileAccountInformation() {
   const { navigate } = useNavigation<navigationProp>();
-  const { isDark, isServiceManLogin, t } = useValues();
+  const { isDark, isDeliveryManLogin, t } = useValues();
   const [showSkeletonLoader, setSkeletonLoader] = useState(false)
   const [refreshing, setRefreshing] = React.useState(false);
   const onRefresh = React.useCallback(async() => {

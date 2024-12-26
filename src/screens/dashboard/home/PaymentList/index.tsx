@@ -19,7 +19,7 @@ type routeProps = NativeStackNavigationProp<RootStackParamList>;
 
 export default function PaymentList() {
     const dispatch = useDispatch()
-    const { isDark, isServiceManLogin } = useValues();
+    const { isDark, isDeliveryManLogin } = useValues();
     const [refreshing, setRefreshing] = React.useState(false);
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);

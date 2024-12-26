@@ -7,8 +7,8 @@ export interface ThemeContextType {
   setNotificationSound: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrValue: React.Dispatch<React.SetStateAction<number>>;
   setCurrSymbol: React.Dispatch<React.SetStateAction<string>>;
-  isServiceManLogin: boolean;
-  setIsServiceManLogin: React.Dispatch<React.SetStateAction<boolean>>;
+  isDeliveryManLogin: boolean;
+  setIsDeliveryManLogin: React.Dispatch<React.SetStateAction<boolean>>;
   isFreelancerLogin: boolean;
   setIsFreeLancerLogin: React.Dispatch<React.SetStateAction<boolean>>;
   loggedInUserType: string;

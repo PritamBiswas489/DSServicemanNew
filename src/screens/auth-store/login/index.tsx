@@ -57,8 +57,8 @@ import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-p
 
   const {
     isDark,
-    isServiceManLogin,
-    setIsServiceManLogin,
+    isDeliveryManLogin,
+    setIsDeliveryManLogin,
     setIsFreeLancerLogin,
     t,
     loggedInUserType,
@@ -77,18 +77,18 @@ import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-p
   useEffect(() => {
     
     route?.params?.serviceMenLogin
-      ? setIsServiceManLogin(true)
-      : setIsServiceManLogin(false);
+      ? setIsDeliveryManLogin(true)
+      : setIsDeliveryManLogin(false);
   }, []);
 
 
   useEffect(()=>{
-    if(isServiceManLogin){
+    if(isDeliveryManLogin){
       setForm({...form, ['email']: 'fashion1@gmail.com',['password']: '@Dorkar1234'});
     }else{
       setForm({...form, ['email']: 'dorkarbeldanga@gmail.com',['password']: '@Beldanga1234'});
     }
-  },[isServiceManLogin])
+  },[isDeliveryManLogin])
 
 
   const handleLoginServiceProvider = () => {
@@ -110,8 +110,8 @@ import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-p
       });
     }
     else {
-       //isServiceManLogin ? saveServiceMenCredentials() : clearServiceMenData();
-       isServiceManLogin ?  handleStoreSellerLoginHandle() : handleServiceProviderLoginHandle()
+       //isDeliveryManLogin ? saveServiceMenCredentials() : clearServiceMenData();
+       isDeliveryManLogin ?  handleStoreSellerLoginHandle() : handleServiceProviderLoginHandle()
 
     }
   };
@@ -158,7 +158,7 @@ import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-p
                   text1: 'Success',
                   text2: response?.data?.message,
               });
-              setIsServiceManLogin(false);
+              setIsDeliveryManLogin(false);
               setIsLoading(false)
               setIsFreeLancerLogin(true);
               setValue('loggedInUserType','Provider')
@@ -210,7 +210,7 @@ import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-p
                 showBack={false}
                 authTitle={'introSlider.signIn'}
                 content={
-                  !isServiceManLogin
+                  !isDeliveryManLogin
                     ? 'auth.providerLogin'
                     : 'auth.serviceManLogin'
                 }
@@ -265,12 +265,12 @@ import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-p
               </TouchableOpacity>
 
               <GradientBtn
-                accountText={!isServiceManLogin ? 'introSlider.anAccount' : ''}
-                authText={!isServiceManLogin ? 'introSlider.signUp' : ''}
+                accountText={!isDeliveryManLogin ? 'introSlider.anAccount' : ''}
+                authText={!isDeliveryManLogin ? 'introSlider.signUp' : ''}
                 label="introSlider.loginNow"
                 onPress={handleLoginServiceProvider}
                 gotoScreen={
-                  !isServiceManLogin ? () => setOptionModal(true) : undefined
+                  !isDeliveryManLogin ? () => setOptionModal(true) : undefined
                 }
               />
             </View>
@@ -278,14 +278,14 @@ import { serviceProviderPomotionalCostActions } from '@src/store/redux/service-p
         />
       </View>
       <View
-        style={isServiceManLogin ? styles.buttonView : styles.buttonContainer}
+        style={isDeliveryManLogin ? styles.buttonView : styles.buttonContainer}
       />
       <GradientBtn
         color={isDark ? appColors.darkTheme : appColors.white}
         label={
-          isServiceManLogin ? 'auth.providerLogin' : 'auth.serviceManLogin'
+          isDeliveryManLogin ? 'auth.providerLogin' : 'auth.serviceManLogin'
         }
-        onPress={() => setIsServiceManLogin(!isServiceManLogin)}
+        onPress={() => setIsDeliveryManLogin(!isDeliveryManLogin)}
         additionalStyle={styles.buttonStyle}
         labelColor={appColors.primary}
         labelTextStyle={styles.labelText}

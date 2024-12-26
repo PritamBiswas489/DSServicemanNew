@@ -10,7 +10,7 @@ interface Response {
   }
 export const getAuthUserService =  async (): Promise<Response> => {
 	try {
-		const response = await api.get('/provider/account/overview');
+		const response = await api.get('/serviceman/info');
 		return response;
 	} catch (error:any) {
 		return error.response;

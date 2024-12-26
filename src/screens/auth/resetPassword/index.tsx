@@ -100,14 +100,12 @@ const ResetPassword = () => {
       }
 
       const formData = new FormData()
-      formData.append('identity', forgetPasswordIdentityType === 'phone' ? `${forgetPasswordPhoneDialCode}${forgerPasswordPhone}` : forgetPasswordEmail)
-      formData.append('identity_type', forgetPasswordIdentityType)
+      formData.append('phone_or_email',forgetPasswordIdentityType === 'phone' ? `+${forgetPasswordPhoneDialCode}${forgerPasswordPhone}` : forgetPasswordEmail)
       formData.append('otp', enteredOtp)
       formData.append('password', form.password)
       formData.append('confirm_password', form.confirmPassword)
       formData.append('_method','PUT')
       
-      // console.log(formData)
       const response: Response = await resetPasswordNew(formData)
       // console.log(response?.data)
       if (response?.data?.response_code === 'default_password_reset_200') {

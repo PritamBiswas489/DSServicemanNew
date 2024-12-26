@@ -30,7 +30,7 @@ export function Description({
   setmodalImage,
   setImageProofModal
 }: descriptionType) {
-  const { isDark, isServiceManLogin, t } = useValues();
+  const { isDark, isDeliveryManLogin, t } = useValues();
 
   const [image, setImage] = useState<string>(''); // Manage image state here
   const [modalVisible, setModalVisible] = useState(false); // Manage modal visibility

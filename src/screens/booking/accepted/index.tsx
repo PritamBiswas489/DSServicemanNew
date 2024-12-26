@@ -40,7 +40,7 @@ export function AcceptedBooking({ route }: any) {
   const [serviceMenModal, setServiceMenModal] = useState(false);
   const [serviceMenOptions, setSelectedOptions] = useState(0);
   const { navigate } = useNavigation<routeProps>();
-  const { isDark, isServiceManLogin } = useValues();
+  const { isDark, isDeliveryManLogin } = useValues();
   const [startService, setStartService] = useState(false);
   const [cancelService, setCancelService] = useState(false);
   const [cancelBookingModal, setCancelBookingModal] = useState(false);
@@ -216,7 +216,7 @@ export function AcceptedBooking({ route }: any) {
             visibleModal={() => setCancelBookingModal(!cancelBookingModal)}
           />
         </ScrollView>
-        {isServiceManLogin && (
+        {isDeliveryManLogin && (
           <ServiceOptions
             label1={'booking.refuse'}
             label={'booking.startService'}

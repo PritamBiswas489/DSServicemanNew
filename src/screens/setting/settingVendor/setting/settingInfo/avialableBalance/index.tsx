@@ -12,7 +12,7 @@ import { timeAgo } from '@src/config/utility';
 
 //available balance function 
 export function AvailableBalance() {
-  const { isServiceManLogin, t } = useValues();
+  const { isDeliveryManLogin, t } = useValues();
   const { stores } = useSelector((state: RootState) => state['storeProfileData'])
 
   let totalOrder:number = 0, totalDaysJoined:string | null = ''

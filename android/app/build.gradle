@@ -75,13 +75,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.dorkarlyf.captain.testing"
+    namespace "com.dorkarlyf.serviceman.testing"
     defaultConfig {
-        applicationId "com.dorkarlyf.captain.testing"
+        applicationId "com.dorkarlyf.serviceman.testing"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2.0"
+        versionCode 1
+        versionName "1.0"
     }
     signingConfigs {
         debug {
@@ -92,9 +92,9 @@ android {
         }
          release {
             
-                storeFile file('dorkarlyf-captain-testing.keystore')
+                storeFile file('dorkarlyf-serviceman-testing.keystore')
                 storePassword  '123456'
-                keyAlias 'dorkarlyf-captain-testing'
+                keyAlias 'dorkarlyf-serviceman-testing'
                 keyPassword '123456'
              
         }

@@ -14,8 +14,8 @@ const initialContextVal = {
   setNotificationSound:()=>{},
   setCurrValue: () => {},
   setCurrSymbol: () => {},
-  isServiceManLogin: false,
-  setIsServiceManLogin: () => {},
+  isDeliveryManLogin: false,
+  setIsDeliveryManLogin: () => {},
   isFreelancerLogin: false,
   setIsFreeLancerLogin: () => {},
   loggedInUserType:'', //logged in user type
@@ -26,11 +26,12 @@ const initialContextVal = {
 export const ThemeContext = createContext<ThemeContextType>(initialContextVal);
 
 const App: React.FC = () => {
+   
   const [currSymbol, setCurrSymbol] = useState('₹');
   const [currValue, setCurrValue] = useState(1);
   const [isDark, setIsDark] = useState(initialContextVal.isDark);
   const [notificationSound, setNotificationSound] = useState(initialContextVal.notificationSound);
-  const [isServiceManLogin, setIsServiceManLogin] = useState(initialContextVal.isServiceManLogin);
+  const [isDeliveryManLogin, setIsDeliveryManLogin] = useState(initialContextVal.isDeliveryManLogin);
   const [isFreelancerLogin, setIsFreeLancerLogin] = useState(initialContextVal.isFreelancerLogin);
   const [loggedInUserType, setLoggedInUserType] = useState(initialContextVal.loggedInUserType);
   const {t} = useTranslation();
@@ -43,8 +44,8 @@ const App: React.FC = () => {
     setIsDark,
     notificationSound,
     setNotificationSound,
-    isServiceManLogin,
-    setIsServiceManLogin,
+    isDeliveryManLogin,
+    setIsDeliveryManLogin,
     isFreelancerLogin,
     setIsFreeLancerLogin,
     t,

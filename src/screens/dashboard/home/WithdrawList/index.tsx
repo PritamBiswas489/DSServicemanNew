@@ -21,7 +21,7 @@ type routeProps = NativeStackNavigationProp<RootStackParamList>;
 export default function WithdrawList() {
     const dispatch = useDispatch()
 
-    const { isDark, isServiceManLogin } = useValues();
+    const { isDark, isDeliveryManLogin } = useValues();
 
     const [refreshing, setRefreshing] = React.useState(false);
 

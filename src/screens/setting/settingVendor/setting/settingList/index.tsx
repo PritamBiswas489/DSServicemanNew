@@ -6,7 +6,7 @@ import RenderItem from './renderItem';
 import {useValues} from '../../../../../../App';
 
 export function SettingList({setModalVisible,setCommissionModal,showPromotionalModal}: {setModalVisible: any,setCommissionModal:any,showPromotionalModal:any}) {
-  const {isServiceManLogin} = useValues();
+  const {isDeliveryManLogin} = useValues();
   return (
     <View style={[styles.container]}>
       <FlatList

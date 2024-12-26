@@ -77,7 +77,7 @@ export type commissionDetailProps = {
 };
 
 export type loginProps = {
-  serviceMenLogin: boolean;
+  deliveryMenLogin: boolean;
 };
 
 export type StoreChatMessagesProps = {

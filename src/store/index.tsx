@@ -30,7 +30,7 @@ import servicesFormSlice from "./redux/service-form-redux";
 import configAppSlice from "./redux/config-redux";
 import homeDataSlice from "./redux/home-data-redux";
 import notificationListSlice from "./redux/notifications-data-redux";
-import forgetPasswordSlice from "./redux/forgetpassword-redux";
+
 import contentPagesSlice from "./redux/content-pages-redux";
 import serviceProviderBookingReviewSlice from "./redux/service-provider-booking-review-redux";
 import serviceProviderPomotionalCostSlice from "./redux/service-provider-pomotional-cost-redux";
@@ -72,6 +72,13 @@ import storeItemSlice from "./redux/store/store-item-redux";
 import itemStatusUpdateSlice from "./redux/store/itemstatus-update-redux";
 import storeHomeOrderSlice from "./redux/store/store-home-order";
 import conversationChannelSlice from "./redux/store/customer-conversations-redux";
+
+
+
+
+import serviceManAccountDataSlice from "./redux/serviceman/service-man-account-data.redux";
+import serviceManConfigAppSlice from "./redux/serviceman/service-man-config-redux";
+import forgetPasswordSlice from "./redux/forgetpassword-redux";
 
 //configure store
 const store = configureStore({
@@ -149,7 +156,12 @@ const store = configureStore({
         storeItem:storeItemSlice.reducer,
         itemUpdateStatus:itemStatusUpdateSlice.reducer,
         storeHomeOrder:storeHomeOrderSlice.reducer,
-        conversationChannel:conversationChannelSlice.reducer
+        conversationChannel:conversationChannelSlice.reducer,
+
+       //==================== SERVICE MAN STORE ===================================================//
+       serviceManAccountData:serviceManAccountDataSlice.reducer,
+       serviceManConfigApp:serviceManConfigAppSlice.reducer
+
         //DONOT FORGET CLEAR REDUX STATE AFTER LOGOUT DEVELOPER
     },
     middleware: (getDefaultMiddleware) =>

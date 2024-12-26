@@ -29,7 +29,7 @@ interface Response {
 // Adjust balance function
 export default function AdjustBalance() {
     const dispatch = useDispatch();
-    const { isDark, isServiceManLogin } = useValues();
+    const { isDark, isDeliveryManLogin } = useValues();
     const { navigate, goBack } = useNavigation<routeProps>();
 
     const { currSymbol, currValue, t } = useValues();

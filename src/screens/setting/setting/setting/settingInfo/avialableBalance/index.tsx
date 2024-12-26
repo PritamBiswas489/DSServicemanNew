@@ -10,7 +10,7 @@ import { RootState, AppDispatch } from '@src/store';
 import { calculateDaysDifference } from '@src/config/utility';
 
 export function AvailableBalance() {
-  const { isServiceManLogin, t } = useValues();
+  const { isDeliveryManLogin, t } = useValues();
   const serviceProviderBookingReview = useSelector((state: RootState) => state['serviceProviderBookingReview'])
 
   const findCompleteData = serviceProviderBookingReview.find(ele => ele.booking_status === 'completed')
