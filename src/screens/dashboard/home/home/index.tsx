@@ -1,4 +1,4 @@
-import { ScrollView } from 'react-native-virtualized-view';
+import { ScrollView, View } from 'react-native-virtualized-view';
 import React, { useEffect, useState } from 'react';
 import { Chat, Notification } from '@utils/icons';
 import Header from '@commonComponents/header';
@@ -44,7 +44,10 @@ import { getAuthUserService } from '@src/services/auth.service';
 import { serviceProviderAccountDataActions } from '@src/store/redux/service-provider-account-data.redux';
 import { Text } from 'react-native';
 import notifee, { AndroidImportance } from '@notifee/react-native';
- 
+import { serviceManAccountDataActions } from '@src/store/redux/serviceman/service-man-account-data.redux';
+import RecentBookingActivities from './homeBookingList';
+import { getHomeData } from '@src/services/home.service';
+
 
 type navigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -65,56 +68,25 @@ export function Home() {
   const { isDark, isDeliveryManLogin, t, loggedInUserType } = useValues();
   const [showSkeletonLoader, setSkeletonLoader] = useState(false)
   const [needSkeletonLoader,setNeedSkeletonLoader] =  useState(true)
- 
   const [refreshing, setRefreshing] = React.useState(false);
  
   const dispatch = useDispatch()
-  const { callAllFunctionHome } = useHomeDataLoader();
-
 
   const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
-    dispatch(homeDataActions.setData({field:'loadServiceMen',data:true}))
-    dispatch(homeDataActions.setData({field:'loadBookingList',data:true}))
-    dispatch(homeDataActions.setData({field:'loadSubsScriptionList',data:true}))
-    
-    setNeedSkeletonLoader(false)
-    await callAllFunctionHome();
-    const response = await getAuthUserService()
-    if (response?.data?.response_code === 'default_200' && response?.data?.content?.provider_info?.id) {
-      dispatch(serviceProviderAccountDataActions.setData(response?.data?.content?.provider_info))
-    }else{
-      replace('IntroSlider');
-    }
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+        setRefreshing(true);
+        setNeedSkeletonLoader(false)
+        const responseuser = await getAuthUserService()
+        if (responseuser?.data?.response_code === 'default_200' && responseuser?.data?.content?.id) {
+          dispatch(serviceManAccountDataActions.setData(responseuser?.data?.content))
+        }else{
+          replace('IntroSlider');
+        }
+        setTimeout(() => {
+          setRefreshing(false);
+        }, 1000);
   }, []);
 
-  const {
-    serviceMenLimit,
-    bookingList,
-    loadBookingList,
-    loadServiceMen,
-    loadSubsScriptionList
-  } = useSelector((state: RootState) => state['homeData'])
-
-   
-
-  const serviceProviderAccountData = useSelector((state: RootState) => state['serviceProviderAccountData'])
-  // console.log({fcm_token:serviceProviderAccountData.owner.fcm_token})
   
-  //handle load all data
-  //  console.log(JSON.stringify(serviceProviderAccountData,null,2))
-
-  const filterModalVisible = () => {
-    setShowWalletModal(true);
-  };
-
-  useEffect(()=>{
-    callAllFunctionHome()
-  },[])
-
   //on display notification
   async function onDisplayNotification(title:string,body:string) {
     //==== Create a channel =====//
@@ -138,18 +110,7 @@ export function Home() {
 
 
    
-  useEffect(() => {
-    // console.log({ servicemenNeedFresh, subscriptionFresh })
-    if (!loadBookingList && !loadSubsScriptionList && !loadServiceMen) {
-      setSkeletonLoader(false)
-      setNeedSkeletonLoader(true)
-    }else{
-      if(needSkeletonLoader){
-        setSkeletonLoader(true)
-      }
-      
-    }
-  }, [loadBookingList, loadSubsScriptionList, loadServiceMen])
+   
 
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
@@ -162,7 +123,7 @@ export function Home() {
     }
   }
  
-  //==== save fcm token ======//
+  //==== Save fcm token ======//
   const saveFcmTokenData = async (fcmToken:string) =>{
      console.log({fcmToken})
      const formData = new FormData()
@@ -224,9 +185,15 @@ export function Home() {
     };
   }, []);
 
-  console.log("=============== loggedInUserType =====================")
-  console.log(loggedInUserType)
 
+  const loadHomeData = async ()=>{
+      const response:Response = await getHomeData()
+      console.log(JSON.stringify(response?.data))
+  }
+
+  useEffect(()=>{
+     loadHomeData()
+  },[])
   
 
   return (
@@ -234,6 +201,7 @@ export function Home() {
       style={[
         GlobalStyle.mainView,
         { backgroundColor: isDark ? appColors.darkTheme : appColors.white },
+         
       ]}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       showsVerticalScrollIndicator={false}>
@@ -252,58 +220,16 @@ export function Home() {
           onTrailIcon={() => navigate('Notification')}
         />
         {/* <TouchableOpacity onPress={()=>onDisplayNotification('testing title','testing body')}><Text>Click test notification</Text></TouchableOpacity> */}
-        {isDeliveryManLogin && <Provider />}
-        <TotalPayBackBalance onPress={() => Alert.alert('NOT DONE YET')} />
-        {isDeliveryManLogin ? <ServiceMenDashBoard /> : <DashBoard />}
-        <HeadingRow
-          title={
-            isDeliveryManLogin
-              ? 'serviceMenLogin.assignedServices'
-              : 'home.recentBooking'
-          }
-          content={'home.viewAll'}
-          gotoScreen={() => navigate('Booking')}
-        />
-        {bookingList.length === 0 && <HomeNoFataFound message={t('newDeveloper.homeNoBookingFoundMessage')} />}
-        <HomeBookingList data={bookingList} />
+         
+
+        <ServiceMenDashBoard />
+        
         <StaticsDetail />
-        {isDeliveryManLogin ? <ServiceMen /> : <ProviderLogin />}
-        {/* <BlogView /> */}
-        <CommonModal
-          modal={<WalletModal setShowWalletModal={setShowWalletModal} />}
-          showModal={showWalletModal}
-          visibleModal={filterModalVisible}
-        />
-        <CommonModal
-          modal={
-            <CancelBooking
-              placeHolder={'booking.refuseBooking'}
-              title={'booking.refuseBookingPlaceholder'}
-              setShowModal={setCancelBookingModal}
-              textInputContainer={{ height: windowHeight(18) }}
-              onSubmitClick={() => setCancelBookingModal(false)}
-            />
-          }
-          showModal={cancelBookingModal}
-          visibleModal={() => setCancelBookingModal(true)}
-        />
-        <ModalComponent
-          showImage={true}
-          image={acceptBooking}
-          visible={acceptBookingModal}
-          onClose={() => setAcceptBookingModal(false)}
-          success={false}
-          title="booking.acceptBooking"
-          content="booking.acceptBookingContent"
-          showGridButton={true}
-          buttonLabel={'booking.doLater'}
-          button1Label={'booking.yes'}
-          onButtonClick={() => {
-            setAcceptBookingModal(false)
-            // navigate('AcceptedBooking')
-          }}
-          onButton1Click={() => setAcceptBookingModal(false)}
-        />
+
+        <RecentBookingActivities/>
+
+         
+        
       </>}
 
     </ScrollView>

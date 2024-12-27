@@ -5,7 +5,7 @@ import {settingData, serviceMenSettingData} from './data/data';
 import RenderItem from './renderItem';
 import {useValues} from '../../../../../../App';
 
-export function SettingList({setModalVisible,setCommissionModal,showPromotionalModal}: {setModalVisible: any,setCommissionModal:any,showPromotionalModal:any}) {
+export function SettingList() {
   const {isDeliveryManLogin} = useValues();
   return (
     <View style={[styles.container]}>
@@ -13,7 +13,7 @@ export function SettingList({setModalVisible,setCommissionModal,showPromotionalM
        
         data={isDeliveryManLogin ? serviceMenSettingData : settingData}
         renderItem={({item,index}) => (
-          <RenderItem key={index}  setModalVisible={setModalVisible} showPromotionalModal={showPromotionalModal} setCommissionModal={setCommissionModal} item={item} />
+          <RenderItem key={index}  item={item} />
         )}
       />
     </View>

@@ -10,4 +10,5 @@ export type propsType = {
   error:string | null;
   isBanner?:boolean;
   disableEdit?:any
+  disableDelete?:any
 };

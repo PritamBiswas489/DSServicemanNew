@@ -14,22 +14,17 @@ import { useValues } from '../../../../../App';
 import appColors from '@theme/appColors';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
-import { addServiceManErrorFieldActions } from '@src/store/redux/add-service-man-error-redux';
-import { addServiceMen } from '@src/services/servicemen.service';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Toast from 'react-native-toast-message';
-import { addServiceManFieldActions } from '@src/store/redux/add-service-man-redux';
 import SkeletonLoader from '@src/commonComponents/SkeletonLoader';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { ServiceMenDetailsInterface } from '@src/interfaces/serviceMenDetailsInterface';
-import { getServiceMenDetails } from '@src/services/profile.service';
-import { serviceMenDetailsAction } from '@src/store/redux/servicemen-details-redux';
 import NoDataFound from '@src/commonComponents/noDataFound';
 import { noValue, wifi, notification } from '@utils/images';
 import { getMediaUrl } from '@src/config/utility';
-import { updateServiceMenProfileDetails } from '@src/services/profile.service';
-import { serviceMenDataAction } from '@src/store/redux/servicemen-list';
-
+import { updateProfileData } from '@src/services/profile.service';
+import { getAuthUserService } from '@src/services/auth.service';
+import { serviceManAccountDataActions } from '@src/store/redux/serviceman/service-man-account-data.redux';
 
 interface Response {
   data: any;
@@ -41,16 +36,14 @@ interface Response {
 }
 type EditServiceMenRouteProp = RouteProp<RootStackParamList, 'EditServiceMen'>;
 export function EditServiceMen() {
-
-  const [loadingServiceMenAdd, setLoadingServiceMenAdd] = useState(false)
   const dispatch = useDispatch()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isDark, t } = useValues()
   const route = useRoute<EditServiceMenRouteProp>();
-  const { id } = route.params;
-  const { data: ServiceMenDetailState } = useSelector((state: RootState) => state['serviceMenDetailsField'])
+  const serviceManAccountData = useSelector((state: RootState) => state.serviceManAccountData)
+  
   const [detailServiceMenDetails, setDetailsServiceMenDetails] = useState<ServiceMenDetailsInterface>()
-  const [loaderSkeleton, setLoaderSkeleton] = useState(true)
+  
   const [password, setPassword] = useState('')
   const [identityImageOne, setIdentityImageOne] = useState('')
   const [identityImageTwo, setIndentityImageTwo] = useState('')
@@ -62,67 +55,28 @@ export function EditServiceMen() {
 
 
   //Service Men Details Handle
-  const getServiceMenDetailHandle = async (updateType:string) => {
-    
-    const response: Response = await getServiceMenDetails(id);
-    if (response?.data?.content?.id) {
-      setLoaderSkeleton(false)
-      const d = {
-        id: response?.data?.content?.id,
-        user_id: response?.data?.content?.user_id,
-        provider_id: response?.data?.content?.provider_id,
-        first_name: response?.data?.content?.user?.first_name,
-        last_name: response?.data?.content?.user?.last_name,
-        email: response?.data?.content?.user?.email,
-        phone: response?.data?.content?.user?.phone,
-        identification_number: response?.data?.content?.user?.identification_number,
-        identification_type: response?.data?.content?.user?.identification_type,
-        identification_image: response?.data?.content?.user?.identification_image,
-        gender: response?.data?.content?.user?.gender,
-        profile_image: response?.data?.content?.user?.profile_image,
-        created_at: response?.data?.content?.user?.created_at,
-        ongoing: response?.data?.content?.bookings_count?.ongoing,
-        completed: response?.data?.content?.bookings_count?.completed,
-        canceled: response?.data?.content?.bookings_count?.canceled,
-      }
-
-      
-     if(updateType === 'update'){
-       dispatch(serviceMenDetailsAction.updateServiceMenDetails({id,details:d}))
-
-       const details = { ...d };
-       delete details['ongoing'];
-       delete details['completed'];
-       delete details['canceled'];
-       
-       dispatch(serviceMenDataAction.updateServiceMenDetails(
-        {
-          id:d.id,
-          details
-        }
-       ))
-     }else{
-       dispatch(serviceMenDetailsAction.addServiceMenArr(d))
-     }
-     setDetailsServiceMenDetails(d)  
-    }
-  }
+  
 
   useEffect(() => {
-    const checkExisting = ServiceMenDetailState.find(elementDet => elementDet.id === id);
-    if (checkExisting?.id) {
-      setDetailsServiceMenDetails(checkExisting.details)
-      setLoaderSkeleton(false)
-    } else {
-      setLoaderSkeleton(true)
-      getServiceMenDetailHandle('new')
+    const d = {
+      id: serviceManAccountData.id,
+      user_id: serviceManAccountData.user_id,
+      provider_id: serviceManAccountData.provider_id,
+      first_name: serviceManAccountData.user.first_name,
+      last_name: serviceManAccountData.user.last_name,
+      email: serviceManAccountData.user.email,
+      phone: serviceManAccountData.user.phone,
+      identification_number: serviceManAccountData.user.identification_number,
+      identification_type: serviceManAccountData.user.identification_type,
+      identification_image: serviceManAccountData?.user?.identification_image || [],
+      gender: serviceManAccountData.user.gender,
+      profile_image: serviceManAccountData.user.profile_image,
+      created_at: serviceManAccountData.created_at,
     }
-  }, [id])
+    setDetailsServiceMenDetails(d)  
+  }, [])
 
-  const refreshServiceMenDetailsDataHandle = () => {
-    setLoaderSkeleton(true)
-    getServiceMenDetailHandle('new')
-  }
+  
 
   useEffect(() => {
     let imageOne = '';
@@ -153,7 +107,6 @@ export function EditServiceMen() {
     const formData = new FormData()
     formData.append('first_name', detailServiceMenDetails?.first_name)
     formData.append('last_name', detailServiceMenDetails?.last_name)
-    formData.append('phone', detailServiceMenDetails?.phone)
     formData.append('email', detailServiceMenDetails?.email)
     if (password !== '') {
       formData.append('password', password)
@@ -165,63 +118,27 @@ export function EditServiceMen() {
           type: 'image/jpeg',
         });
     }
-    formData.append('identity_type', detailServiceMenDetails?.identification_type)
-    formData.append('identity_number', detailServiceMenDetails?.identification_number)
-    if (updatedIdentityImageOne !== '') {
-          formData.append('identity_images[]', {
-            uri:  updatedIdentityImageOne,
-            name: 'updatedIdentityImageOne.jpg', 
-            type: 'image/jpeg',
-          });
-    }
-    if (updatedIdentityImageTwo !== '') {
-          formData.append('identity_images[]', {
-            uri:  updatedIdentityImageTwo,
-            name: 'updatedIdentityImageTwo.jpg', 
-            type: 'image/jpeg',
-          });
-    }
-     
+    
     setUpdateLoader(true)
-
-    if (detailServiceMenDetails?.id) {
-      const response: Response = await updateServiceMenProfileDetails(
-        formData,
-        detailServiceMenDetails?.id
-      )
-      if (response?.data?.response_code === 'default_400') {
-        response?.data?.errors.forEach((data: { "error_code": string, "message": string }, index: number) => {
-          Toast.show({
-            type: 'error',
-            text1: 'ERROR',
-            text2: data?.message,
-          });
-        })
-        setUpdateLoader(false)
-      } else if (response?.data?.response_code === 'default_update_200') {
+    const response:Response = await updateProfileData(formData) 
+    if (response?.data?.response_code === 'default_update_200') {
+          const responseuser = await getAuthUserService()
+          if (responseuser?.data?.response_code === 'default_200' && responseuser?.data?.content?.id) {
+            dispatch(serviceManAccountDataActions.setData(responseuser?.data?.content))
+          }
           Toast.show({
             type: 'success',
             text1: 'SUCCESS',
             text2: response?.data?.message,
           });
-          await getServiceMenDetailHandle('update');
-          setUpdateLoader(false)
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'ERROR',
-          text2: t('newDeveloper.processFailed'),
-        });
-        setUpdateLoader(false)
-      }
-     
-    } else {
-      Toast.show({
-        type: 'error',
-        text1: 'ERROR',
-        text2: t('newDeveloper.processFailed'),
-      });
+    }else{
+          Toast.show({
+              type: 'error',
+              text1: 'ERROR',
+              text2: response?.data?.message || t('newDeveloper.processFailed'),
+          });
     }
+    setUpdateLoader(false)
   }
 
   return (
@@ -229,17 +146,16 @@ export function EditServiceMen() {
       showsVerticalScrollIndicator={false}
       style={[GlobalStyle.mainView, { backgroundColor: isDark ? appColors.darkCard : appColors.white }]}
       contentContainerStyle={{ paddingBottom: windowHeight(3) }}>
-      <Header showBackArrow={true} title="newDeveloper.editServiceMen" />
+      <Header showBackArrow={true} title="newDeveloper.EditProfile" />
 
-      {loaderSkeleton && <SkeletonLoader />}
-      {!loaderSkeleton && detailServiceMenDetails?.id &&
         <>
           <ProfileSection
             profileImage={profileImage}
             setProfileImage={setProfileImage}
             setUpdatedProfileImage={setUpdatedProfileImage}
           />
-          <InputView
+
+          {detailServiceMenDetails &&  <InputView
             detailServiceMenDetails={detailServiceMenDetails}
             password={password}
             identityImageOne={identityImageOne}
@@ -251,37 +167,18 @@ export function EditServiceMen() {
             setUpdatedIdentityImageOne={setUpdatedIdentityImageOne}
             setUpdatedIdentityImageTwo={setUpdatedIdentityImageTwo}
 
-          />
+          />}
+         
           <GradientBtn
-            label={'newDeveloper.updateServiceMen'}
+            label={'newDeveloper.update'}
             onPress={updateDetailsServiceMen}
           />
 
-        </>}
+        </> 
 
 
-      {!loaderSkeleton && !detailServiceMenDetails?.id && <>
-        <NoDataFound
-          headerTitle="newDeveloper.noServiceMenDetailsFound"
-          image={noValue}
-          infoImage={undefined}
-          title="newDeveloper.noServiceMenDetailsFound"
-          content="newDeveloper.noServiceMenDetailsFoundContent"
-          gradiantBtn={
-            <GradientBtn
-              additionalStyle={{ bottom: windowHeight(2) }}
-              label={'common.refresh'}
-              onPress={refreshServiceMenDetailsDataHandle}
-            />
-          }
-        />
-
-      </>}
-      <Spinner
-        visible={loadingServiceMenAdd}
-        textContent={'Processing.....'}
-        textStyle={{ color: '#FFF' }}
-      />
+      
+     
       <Spinner
         visible={isUpdateLoader}
         textContent={'Updating.....'}

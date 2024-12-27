@@ -8,11 +8,9 @@ export interface ServiceMenDetailsInterface {
     phone: string;
     identification_number: string;
     identification_type: string;
-    identification_image: [],
+    identification_image: string[],
     gender: string,
     profile_image: string;
     created_at: string,
-    ongoing:number,
-    completed:number,
-    canceled:number
+    
 }

@@ -121,7 +121,7 @@ export type RootStackParamList = {
   Categories: undefined;
   ServiceMenList: undefined;
   AddNewServiceMen: undefined;
-  EditServiceMen: { id: string };
+  EditServiceMen: undefined;
   LatestBlog: undefined;
   BlogDetail: BlogDetailScreenProp;
   PopularServiceView: undefined;

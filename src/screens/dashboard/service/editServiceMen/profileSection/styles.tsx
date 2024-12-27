@@ -28,8 +28,8 @@ export const styles = StyleSheet.create({
     marginBottom:10
   },
   imageStyle: {
-    height: windowWidth(18),
-    width: windowWidth(18),
+    height: windowWidth(25),
+    width: windowWidth(25),
     borderRadius: windowWidth(10),
   },
   error: {

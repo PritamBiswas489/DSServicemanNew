@@ -57,10 +57,9 @@ export function Setting() {
         replace('AuthNavigation');
     }else{
       setProcessingSpinner(false)
-        setModalVisible(false)
+      setModalVisible(false)
       Alert.alert('Failed to remove')
     }
-    
   } 
   return (
     <ScrollView
@@ -80,40 +79,7 @@ export function Setting() {
         }}
       />
       <SettingInfo />
-      <SettingList setModalVisible={setModalVisible}  setCommissionModal={setCommissionModal} showPromotionalModal={showPromotionalModal} />
-      <ModalComponent
-        icon={<Delete color={appColors.error} height={'60'} width={'60'} />}
-        visible={showDeleteModal}
-        onClose={() => setModalVisible(false)}
-        success={false}
-        title="profileSetting.deleteAccount"
-        content="profileSetting.deleteConfirmation"
-        btnTitle="profileSetting.delete"
-        gotoScreen={handleDeleteProviderOwnAccount}
-        showText={t('wallet.cancel')}
-        onShowText={() => setModalVisible(false)}
-      />
-
-    <ModalComponent
-        visible={showCommissionModal}
-        onClose={() => setCommissionModal(false)}
-        success={false}
-        icon={<CommissionBig/>}
-        title={`${t('newDeveloper.PercentageText')}: ${default_commission}%`}
-        content={`${t('newDeveloper.PercentageContent')}`}
-        btnTitle="common.okay"
-        gotoScreen={()=>setCommissionModal(false)}
-      /> 
-
-<PromotionalCostModal
-        visible={promotionalModal}
-        onClose={() => showPromotionalModal(false)}
-        success={false}
-         
-         
-        btnTitle="common.okay"
-        gotoScreen={()=>showPromotionalModal(false)}
-      /> 
+      <SettingList/>
       <Spinner
           visible={processingSpinner}
           textContent={'Processing.....'}

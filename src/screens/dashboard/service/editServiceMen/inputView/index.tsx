@@ -55,14 +55,14 @@ export default function InputView(
     {
       detailServiceMenDetails: ServiceMenDetailsInterface,
       password: string,
-      identityImageOne:string,
-      identityImageTwo:string
-      setIdentityImageOne:(value:string)=>void,
-      setIndentityImageTwo:(value:string)=>void,
-      setDetailsServiceMenDetails:(value:ServiceMenDetailsInterface)=>void,
-      setPassword:(value:string)=>void,
-      setUpdatedIdentityImageOne:(value:string)=>void,
-      setUpdatedIdentityImageTwo:(value:string)=>void,
+      identityImageOne: string,
+      identityImageTwo: string
+      setIdentityImageOne: (value: string) => void,
+      setIndentityImageTwo: (value: string) => void,
+      setDetailsServiceMenDetails: (value: ServiceMenDetailsInterface) => void,
+      setPassword: (value: string) => void,
+      setUpdatedIdentityImageOne: (value: string) => void,
+      setUpdatedIdentityImageTwo: (value: string) => void,
     }) {
 
   const { t } = useValues();
@@ -98,8 +98,8 @@ export default function InputView(
     };
 
     handleImagePicker(options, (imageUri: string) => {
-        setIndentityImageTwo(imageUri);
-        setUpdatedIdentityImageTwo(imageUri)
+      setIndentityImageTwo(imageUri);
+      setUpdatedIdentityImageTwo(imageUri)
     });
   };
 
@@ -110,10 +110,12 @@ export default function InputView(
       <TextInputComponent
         placeholder={t('newDeveloper.addServiceMenFirstName')}
         Icon={<Person />}
+        editable={false}
         value={detailServiceMenDetails?.first_name}
         onChangeText={value => {
-          setDetailsServiceMenDetails({...detailServiceMenDetails,first_name:value});
+          setDetailsServiceMenDetails({ ...detailServiceMenDetails, first_name: value });
         }}
+
         error={''}
         containerStyle={{ marginTop: 0 }}
       />
@@ -121,9 +123,10 @@ export default function InputView(
       <TextInputComponent
         placeholder={t('newDeveloper.addServiceMenLastName')}
         Icon={<Person />}
+        editable={false}
         value={detailServiceMenDetails?.last_name}
         onChangeText={value => {
-          setDetailsServiceMenDetails({...detailServiceMenDetails,last_name:value});
+          setDetailsServiceMenDetails({ ...detailServiceMenDetails, last_name: value });
         }}
         error={''}
         containerStyle={{ marginTop: 10 }}
@@ -133,62 +136,71 @@ export default function InputView(
         containerStyle={{ marginTop: windowWidth(3) }}
         textContainerStyle={{ width: windowWidth(45) }}
         Icon={<Call />}
+        editable={false}
         placeholder={t('auth.phoneNumber')}
         keyboardType="number-pad"
         value={detailServiceMenDetails?.phone}
         error={''}
         onChangeText={value => {
-          setDetailsServiceMenDetails({...detailServiceMenDetails,phone:value});
+          setDetailsServiceMenDetails({ ...detailServiceMenDetails, phone: value });
         }}
       />
-      <DropdownWithIcon
-        icon={<Identity />}
-        label="newDeveloper.addServiceMenIdentityType"
-        data={identityDataItems}
-        onSelect={(value: DropdownItem) => { 
-          setDetailsServiceMenDetails({...detailServiceMenDetails,identification_type:value?.value});
+     
+      <TextInputComponent
+        placeholder={t('newDeveloper.addServiceMenIdentityType')}
+        Icon={<Identity />}
+        value={selectedIdentityType?.value ? selectedIdentityType.label : ''}
+        editable={false}
+        onChangeText={value => {
         }}
         error={''}
-        selectedValue={selectedIdentityType?.value ? { label: selectedIdentityType.label, value: selectedIdentityType.value } : { label: '', value: '' }}
+
       />
 
       <TextInputComponent
         placeholder={t('newDeveloper.addServiceMenIdentityNumber')}
         Icon={<Identity />}
         value={detailServiceMenDetails?.identification_number}
+        editable={false}
         onChangeText={value => {
-          setDetailsServiceMenDetails({...detailServiceMenDetails,identification_number:value});
+          setDetailsServiceMenDetails({ ...detailServiceMenDetails, identification_number: value });
         }}
         error={''}
         keyboardType={'number-pad'}
       />
-      <UploadContainerView
+      {/* identity image frontend */}
+      {identityImageOne && <UploadContainerView
         title={'newDeveloper.uploadidentityFrontImage'}
         onPress={() => openImageFront()}
         image={identityImageOne}
-        setImage={(value)=>{
-           setIdentityImageOne(value)
-           setUpdatedIdentityImageOne(value)
+        disableEdit={true}
+        disableDelete={true}
+        isBanner={true}
+        setImage={(value) => {
+          setIdentityImageOne(value)
+          setUpdatedIdentityImageOne(value)
         }}
         error={''}
-      />
-
-      <UploadContainerView
+      />}
+      {/* identity image back */}
+      {identityImageTwo && <UploadContainerView
         title={'newDeveloper.uploadidentityBackImage'}
         onPress={() => openImageBack()}
         image={identityImageTwo}
-        setImage={(value)=>{
+        disableEdit={true}
+        disableDelete={true}
+        setImage={(value) => {
           setIndentityImageTwo(value)
           setUpdatedIdentityImageTwo(value)
         }}
         error={''}
-      />
+      />}
       <TextInputComponent
         placeholder={t('auth.email')}
         Icon={<Email />}
         value={detailServiceMenDetails?.email}
         onChangeText={value => {
-          setDetailsServiceMenDetails({...detailServiceMenDetails,email:value});
+          setDetailsServiceMenDetails({ ...detailServiceMenDetails, email: value });
         }}
         containerStyle={{ marginTop: 10 }}
         keyboardType={'email-address'}

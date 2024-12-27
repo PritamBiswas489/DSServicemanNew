@@ -26,109 +26,32 @@ export const settingData: Array<settingType> = [
       {
         icon: <Person />,
         name: 'newDeveloper.editProfileMenu',
-        gotoScreen: 'UserProfileSetting',
+        gotoScreen: 'EditServiceMen',
         darkIcon: <Person color={appColors.white} />,
       },
-      { //account information
-        icon: <AccountInformationIcon />,
-        name: 'newDeveloper.AccountInformation',
-        gotoScreen: 'ProfileAccountInformation',
-        darkIcon: <AccountInformationIcon color={appColors.white} />,
-      },
-      {
-        icon: <BusinessSettingsIcon />,
-        name: 'newDeveloper.Businesssettings',
-        gotoScreen: 'BusinessSettings',
-        darkIcon: <BusinessSettingsIcon color={appColors.white} />,
-      },
-      {
-        icon: <BusinessInformationIcon />,
-        name: 'newDeveloper.BusinessInformation',
-        gotoScreen: 'BusinessInformation',
-        darkIcon: <AccountInformationIcon color={appColors.white} />,
-      },
-      // {
-      //   icon: <Company color={appColors.darkText} />,
-      //   name: 'auth.companyDetails',
-      //   gotoScreen: 'CompanyDetail',
-      //   darkIcon: <Company color={appColors.white} />,
-      // },
-      {
-        icon: <Review />,
-        name: 'newDeveloper.reviewsMenu',
-        gotoScreen: 'Reviews',
-        darkIcon: <Review color={appColors.white} />,
-      },
-      {
-        icon: <Bank />,
-        name: 'newDeveloper.bankMenu',
-        gotoScreen: 'BankDetails',
-        darkIcon: <Bank color={appColors.white} />,
-      },
-      {
-        icon: <CommissionIcon />,
-        name: 'newDeveloper.Commission',
-        gotoScreen: 'CommissionModal',
-        darkIcon: <CommissionIcon color={appColors.white} />,
-      },
-      {
-        icon: <PromotionalCostIcon />,
-        name: 'newDeveloper.PromotionalCost',
-        gotoScreen: 'PromotionalCostModal',
-        darkIcon: <PromotionalCostIcon color={appColors.white} />,
-      },
-      // {
-      //       icon: <Commission strokeWidth={'1'} color={appColors.darkText} />,
-      //   name: 'profileSetting.commissionDetails',
-      //   gotoScreen: 'CommissionHistory',
-      //   darkIcon: <Commission color={appColors.white} />,
-      // },
+      
+    
+       
+      
+     
+     
        
       
     ],
   },
+   
   // {
-  //   title: 'profileSetting.aboutApp',
+  //   showDivider: true,
+  //   title: 'profileSetting.redZone',
   //   data: [
   //     {
-  //       icon: <Calendar />,
-  //       name: 'profileSetting.timeSlots',
-  //       gotoScreen: 'TimeSlots',
-  //       darkIcon: <Calendar color={appColors.white} />,
-  //     },
-  //     {
-  //       icon: <Commission strokeWidth={'1'} color={appColors.darkText} />,
-  //       name: 'profileSetting.commissionDetails',
-  //       gotoScreen: 'CommissionHistory',
-  //       darkIcon: <Commission color={appColors.white} />,
-  //     },
-  //     {
-  //       icon: <Package />,
-  //       name: 'profileSetting.myPackages',
-  //       gotoScreen: 'Packages',
-  //       darkIcon: <Package color={appColors.white} />,
-  //     },
-  
-  //     {
-  //       icon: <Subscription />,
-  //       name: 'subscription.subscriptionPlan',
-  //       gotoScreen: 'SubscriptionPlan',
-  //       darkIcon: <Subscription color={appColors.white} />,
+  //       icon: <Delete color={appColors.error} />,
+  //       name: 'profileSetting.deleteAccount',
+  //       gotoScreen: 'showModal',
+  //       darkIcon: <Delete color={appColors.error} />,
   //     },
   //   ],
   // },
-  {
-    showDivider: true,
-    title: 'profileSetting.redZone',
-    data: [
-      {
-        icon: <Delete color={appColors.error} />,
-        name: 'profileSetting.deleteAccount',
-        gotoScreen: 'showModal',
-        darkIcon: <Delete color={appColors.error} />,
-      },
-    ],
-  },
 ];
 
 export const serviceMenSettingData: Array<settingType> = [

@@ -19,44 +19,17 @@ import { logoutClearReduxState } from '@src/services/logout.service';
 
 export default function RenderItem({
   item,
-  setModalVisible,
-  setCommissionModal,
-  showPromotionalModal
 }: {
   item: settingType;
-  setModalVisible: React.Dispatch<React.SetStateAction<Boolean>>;
-  setCommissionModal:React.Dispatch<React.SetStateAction<Boolean>>;
-  showPromotionalModal:React.Dispatch<React.SetStateAction<Boolean>>;
 }) {
   const {replace, navigate} = useNavigation<routeProps>();
   const {isDark, t} = useValues();
   const dispatch = useDispatch()
 
   const handleOnPress = async (data: any) => {
-    if(data.gotoScreen === 'showModal'){
-      clearServiceMenData()
-    }else if(data.gotoScreen === 'logoutProcess'){
-        const response = await deleteAuthTokens(); 
-        logoutClearReduxState(dispatch)
-        replace('AuthNavigation');
-    }else if(data.gotoScreen === 'CommissionModal'){
-       setCommissionModal(true)
-    }else if(data.gotoScreen === 'PromotionalCostModal'){
-      showPromotionalModal(true)
-    }else{
-        navigate(data.gotoScreen)
-    }
+    navigate(data.gotoScreen)
     //PromotionalCost
   };
-
-  const clearServiceMenData = async () => {
-    const clearServiceMen = await clearServiceMenCredential();
-
-    if (clearServiceMen) {
-      setModalVisible(true);
-    }
-  };
-
   return (
     <View
       style={{

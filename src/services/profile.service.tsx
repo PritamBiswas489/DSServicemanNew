@@ -10,8 +10,9 @@ interface Response {
 }
 
 export const updateProfileData = async (data:FormData): Promise<Response> => {
+	data.append('_method','PUT')
     try {
-		const response = await api.post('/provider/update/profile',data);
+		const response = await api.post('/serviceman/update/profile',data);
 		return response;
 	} catch (error:any) {
 		return error.response;
@@ -119,11 +120,11 @@ export const updatelanguage = async ():Promise<Response> => {
 	}
 }
 
-//save fcm token process
+//Save fcm token process
 export const saveFcmTokenProcess = async (formData:FormData):Promise<Response> => { 
 	formData.append('_method','PUT')
 	try {
-		const response = await api.post(`/provider/update/fcm-token`,formData);
+		const response = await api.post(`/serviceman/update/fcm-token`,formData);
 		console.log(response?.data)
 		return response;
 	} catch (error:any) {

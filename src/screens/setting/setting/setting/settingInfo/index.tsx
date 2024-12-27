@@ -13,20 +13,16 @@ import { getMediaUrl } from '@src/config/utility';
 
 export function SettingInfo() {
   const { isDark, t } = useValues();
-  const { company_name, company_email, logo } = useSelector((state: RootState) => state['serviceProviderAccountData'])
-  //console.log("================= Hello One ======================")
-  //console.log(getMediaUrl())
-  //console.log("================= Hello Two ======================")
-  //console.log(logo)
+  const { user } = useSelector((state: RootState) => state.serviceManAccountData)
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        {logo && <View
+        {user.profile_image && <View
           style={[
             styles.imageView,
             { backgroundColor: isDark ? appColors.darkCardBg : appColors.white },
           ]}>
-          <Image source={{ uri: `${getMediaUrl()}/provider/logo/${logo}` }} style={styles.imageStyle} />
+          <Image source={{ uri: `${getMediaUrl()}/serviceman/profile/${user.profile_image}` }} style={styles.imageStyle} />
         </View>}
         <View style={styles.textView}>
           <Text
@@ -34,12 +30,8 @@ export function SettingInfo() {
               styles.name,
               { color: isDark ? appColors.white : appColors.darkText },
             ]}>
-            {company_name}
+            {`${user.first_name} ${user.last_name}`}
           </Text>
-          <View style={[styles.row, { marginTop: 6 }]}>
-            <Email width={'20'} height={'20'} color={appColors.lightText} />
-            <Text style={styles.email}>{company_email}</Text>
-          </View>
         </View>
       </View>
       <View

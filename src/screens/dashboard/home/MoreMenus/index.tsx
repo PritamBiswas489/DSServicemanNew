@@ -10,6 +10,7 @@ import {styles} from './styles';
 
 //More menus page showing
 export function MoreMenus() {
+   
   
   const [isGrid, setIsGrid] = useState(false);
   const {isDark} = useValues();

@@ -33,7 +33,7 @@ export default function ProfileSection({ profileImage, setProfileImage,setUpdate
 
   return (
     <>
-      <View style={styles.container}></View>
+      <View style={[styles.container, { backgroundColor: isDark ? appColors.darkText : appColors.white }]}></View>
       <View style={styles.mainView}>
         <View style={[styles.mainContainer, { backgroundColor: isDark ? appColors.darkText : appColors.white }]}>
           {profileImage ? (

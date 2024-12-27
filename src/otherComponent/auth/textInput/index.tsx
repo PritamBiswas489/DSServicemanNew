@@ -34,13 +34,19 @@ export default function textInput({
       onBlur();
     }
   };
+  let containerColor = isDark ? appColors.darkTheme : appColors.textInput
+  let textinputColor = isDark ? appColors.white : appColors.darkText
+  if(typeof editable!=='undefined'){
+    containerColor = appColors.disable 
+    textinputColor = appColors.black
+  }
 
   return (
     <View style={[textInputStyle.container, containerStyle]}>
       <View
         style={[
           textInputStyle.inputView,
-          {backgroundColor: isDark ? appColors.darkTheme : appColors.textInput},
+          {backgroundColor:containerColor},
           inputStyle,
         ]}>
         {Icon && <View>{Icon}</View>}
@@ -51,7 +57,7 @@ export default function textInput({
           style={[
             textInputStyle.inputStyle,
             textContainerStyle,
-            {color: isDark ? appColors.white : appColors.darkText},
+            {color: textinputColor},
           ]}
           placeholderTextColor={appColors.lightText}
           onFocus={handleFocus}

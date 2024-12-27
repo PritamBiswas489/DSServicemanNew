@@ -135,7 +135,7 @@ export default function StaticsDetail() {
             styles.title,
             {color: isDark ? appColors.white : appColors.darkText},
           ]}>
-          {t('newDeveloper.EarningStatistics')} 
+          {t('newDeveloper.BookingStatistics')} 
         </Text>
         <View
           style={[
