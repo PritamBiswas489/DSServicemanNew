@@ -31,6 +31,8 @@ import { useDispatch } from 'react-redux';
 import { storeProfileDataActions } from '@src/store/redux/store/store-profile-redux';
 import PhoneTextInput from '@otherComponent/auth/phoneTextInput';
 import { windowWidth } from '@src/theme/appConstant';
+import { getProviderConfig } from '@src/services/settings.service';
+import { serviceManConfigAppActions } from '@src/store/redux/serviceman/service-man-config-redux';
 interface LoginResponse {
   data: any;
   status: number;
@@ -213,9 +215,15 @@ const Login = ({ route }: any) => {
       } else {
        
         await setAuthTokens(response?.data?.content?.token, null);
+        //Set User Profile Info
         const responseuser = await getAuthUserService()
         if (responseuser?.data?.response_code === 'default_200' && responseuser?.data?.content?.id) {
           dispatch(serviceManAccountDataActions.setData(responseuser?.data?.content))
+          //retrieve service config data
+          const responseProviderConfig = await getProviderConfig();
+          if (responseProviderConfig?.data?.content?.business_name) {
+              dispatch(serviceManConfigAppActions.setData(responseProviderConfig?.data?.content))
+          }
           Toast.show({
             type: 'success',
             text1: 'Success',

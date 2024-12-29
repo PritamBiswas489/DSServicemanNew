@@ -1,4 +1,4 @@
-interface TopCards {
+export interface TopCardInterface {
     total_bookings: number;
     ongoing_bookings: number;
     completed_bookings: number;
@@ -35,7 +35,7 @@ interface TopCards {
     };
   }
   
-  interface Booking {
+export interface BookingInterface {
     id: string;
     readable_id: number;
     customer_id: string;
@@ -73,7 +73,7 @@ interface TopCards {
     detail: BookingDetail[];
   }
   
-  interface BookingStats {
+ export interface BookingStatInterface {
     id: string;
     readable_id: number;
     customer_id: string;
@@ -111,8 +111,8 @@ interface TopCards {
   }
   
   export interface HomeDataInterface {
-    top_cards: TopCards;
-    booking_stats: BookingStats[];
-    bookings: Booking[];
+    top_cards: TopCardInterface;
+    booking_stats: BookingStatInterface[];
+    bookings: BookingInterface[];
   }
   

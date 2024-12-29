@@ -27,6 +27,7 @@ import { getAuthUserService as storeAuthService } from '@src/services/store/auth
 import { storeHomeOrderActions } from '@src/store/redux/store/store-home-order';
 import { serviceManAccountDataActions } from '@src/store/redux/serviceman/service-man-account-data.redux';
 import { serviceManConfigAppActions } from '@src/store/redux/serviceman/service-man-config-redux';
+import { serviceManHomeDataActions } from '@src/store/redux/serviceman/service-man-home-data.redux';
 
 type navigation = NativeStackNavigationProp<RootStackParamList>;
 const SplashScreen = () => {
@@ -301,6 +302,7 @@ const SplashScreen = () => {
           dispatch(contentPagesActions.setData({ 'field': 'privacy_policy', data: contentConfig?.data?.content[key]?.value }))
         }
       })
+      dispatch(contentPagesActions.setData({ 'field': 'fetched', data: true }))
 
     }
 
@@ -308,6 +310,7 @@ const SplashScreen = () => {
     const responseuser = await getAuthUserService()
     if (responseuser?.data?.response_code === 'default_200' && responseuser?.data?.content?.id) {
       dispatch(serviceManAccountDataActions.setData(responseuser?.data?.content))
+      dispatch(serviceManHomeDataActions.setData({field:'refreshHomeData',data:true}))
       replace('BottomTab');
     } else {
       replace('IntroSlider');

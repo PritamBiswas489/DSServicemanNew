@@ -56,7 +56,7 @@ export default function LineChartView() {
         yAxisLabelWidth={60}
         yAxisColor="white"
         yAxisThickness={0}
-        yAxisLabelSuffix={'k'}
+        
         rulesType="dotted"
         rulesColor={'#d4d5d6'}
         yAxisTextStyle={{color: 'gray'}}

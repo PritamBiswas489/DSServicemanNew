@@ -1,9 +1,9 @@
-import {View, Text} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {styles} from './styles';
+import { View, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { styles } from './styles';
 import LineChartView from './lineChart';
 import WeeklySection from './weeklySection';
-import {useValues} from '../../../../../App';
+import { useValues } from '../../../../../App';
 import appColors from '@theme/appColors';
 import { RootState, AppDispatch } from '@src/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,11 +17,15 @@ interface Response {
   config: any;
   request?: any;
 }
+const monthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
 export default function StaticsDetail() {
   const dispatch = useDispatch()
-  const {isDark,t} = useValues();
+  const { isDark, t } = useValues();
 
-  const {  
+  const {
     selectedYear,
     selectedMonth,
     selectedFilter,
@@ -31,94 +35,94 @@ export default function StaticsDetail() {
     monthStatData
   } = useSelector((state: RootState) => state['homeStatisticGraph'])
 
-  const loadhomeStatisticsData = async()=>{
+  //load home statistics data
+  const loadhomeStatisticsData = async () => {
     let url = ''
-    if(selectedFilter === 0){
-       url = `/provider/dashboard?sections=earning_stats&stats_type=full_year&year=${selectedYear}`
+    if (selectedFilter === 0) {
+      url = `/serviceman/dashboard?sections=booking_stats&stats_type=full_year&year=${selectedYear}`
     }
-    if(selectedFilter === 1){
-       url = `/provider/dashboard?sections=earning_stats&stats_type=full_month&year=${selectedYear}&month=${monthList.indexOf(selectedMonth)+1}`
+    if (selectedFilter === 1) {
+      url = `/serviceman/dashboard?sections=booking_stats&stats_type=full_month&year=${selectedYear}&month=${monthList.indexOf(selectedMonth) + 1}`
     }
-    const response:Response = await homeStaticGraphData(url)
-    //earning stats
-    if (response?.data?.content?.[0]?.earning_stats.length > 0 && selectedFilter === 0) {
-     
-    
-      const yrstat = [...yearStatData]; // Clone the yearStatData array
-      const findyear = yrstat.find(ele => ele.year.toString() === selectedYear.toString());
-    
-      if (findyear?.month) {
-        let selectedMonths = [...findyear?.month]; 
-          const updatedMonths = selectedMonths.map((monthEntry) => {
-            //@ts-ignore
-            const match = response?.data?.content?.[0]?.earning_stats.find(entry => entry.month === monthEntry.monthName);
-            if (match) {
-              return {
-                ...monthEntry, 
-                amount: Math.ceil(match.sums/1000)  
-              };
-            }
-            return monthEntry;  
-          });
-           
-          
-          const updatedYrStat = yrstat.map((yearEntry) => {
-            if (yearEntry.year.toString() === selectedYear.toString()) {
-              return {
-                ...yearEntry,   
-                month: updatedMonths  
-              };
-            }
-            return yearEntry;  
-          });
-          dispatch(homeStatisticsGraphActions.setData({field:'yearStatData',data:updatedYrStat}))
-      }
-    }
-    //earning stats
-    if (response?.data?.content?.[0]?.earning_stats.length > 0 && selectedFilter === 1) {
-      const monthStat = [...monthStatData];
-      const findyear = monthStat.find(ele => ele.year.toString() === selectedYear.toString());
-      if (findyear?.month) {
-            let selectedMonths = [...findyear?.month]; 
+    const response: Response = await homeStaticGraphData(url)
+
+    if (response?.data?.content?.[0]?.booking_stats.length > 0 && selectedFilter === 0) {
+          const yrstat = [...yearStatData]; // Clone the yearStatData array
+          const findyear = yrstat.find(ele => ele.year.toString() === selectedYear.toString());
+          if (findyear?.month) {
+            let selectedMonths = [...findyear?.month];
             const updatedMonths = selectedMonths.map((monthEntry) => {
+              const monthEntryNumber = monthNames.indexOf(monthEntry.monthName) + 1
               //@ts-ignore
-              const match = response?.data?.content?.[0]?.earning_stats.find(entry => entry.month === monthEntry.monthName);
+              const match = response?.data?.content?.[0]?.booking_stats.find(entry => String(entry.month) === String(monthEntryNumber));
               if (match) {
-                
-                const matchDays = monthEntry.days.map(ele=>{
-                   if(ele.dayNumber === match.day){
-                       return {
-                        ...ele,
-                        amount:Math.ceil(match.sums/1000)  
-                       }                  
-                   }else{
-                    return ele
-                   }
-                })
+                console.log(match)
                 return {
                   ...monthEntry,
-                  days:matchDays
-                }
-              }
-              return monthEntry
-            })
-            const updatedMonthStat = monthStat.map((yearEntry) => {
-              if (yearEntry.year.toString() === selectedYear.toString()) {
-                return {
-                  ...yearEntry,   
-                  month: updatedMonths  
+                  amount: match?.total || 0
                 };
               }
-              return yearEntry;  
+              return monthEntry;
             });
-            dispatch(homeStatisticsGraphActions.setData({field:'monthStatData',data:updatedMonthStat}))
-      }
+
+            const updatedYrStat = yrstat.map((yearEntry) => {
+              if (yearEntry.year.toString() === selectedYear.toString()) {
+                return {
+                  ...yearEntry,
+                  month: updatedMonths
+                };
+              }
+              return yearEntry;
+            });
+            dispatch(homeStatisticsGraphActions.setData({ field: 'yearStatData', data: updatedYrStat }))
+          }
     }
+    if (response?.data?.content?.[0]?.booking_stats.length > 0 && selectedFilter === 1) {
+            const monthStat = [...monthStatData];
+            const findyear = monthStat.find(ele => ele.year.toString() === selectedYear.toString());
+            if (findyear?.month) {
+              let selectedMonths = [...findyear?.month];
+              const updatedMonths = selectedMonths.map((monthEntry) => {
+                const monthEntryNumber = monthNames.indexOf(monthEntry.monthName) + 1
+                //@ts-ignore
+                const match = response?.data?.content?.[0]?.booking_stats.find(entry => String(entry.month) === String(monthEntryNumber));
+                if (match) {
+                  const matchDays = monthEntry.days.map(ele => {
+                    if (ele.dayNumber === match.day) {
+                      return {
+                        ...ele,
+                        amount: match?.total || 0
+                      }
+                    } else {
+                      return ele
+                    }
+                  })
+                  return {
+                    ...monthEntry,
+                    days: matchDays
+                  }
+                }
+                return monthEntry
+              })
+              const updatedMonthStat = monthStat.map((yearEntry) => {
+                if (yearEntry.year.toString() === selectedYear.toString()) {
+                  return {
+                    ...yearEntry,
+                    month: updatedMonths
+                  };
+                }
+                return yearEntry;
+              });
+              dispatch(homeStatisticsGraphActions.setData({ field: 'monthStatData', data: updatedMonthStat }))
+            }
+    }
+
+
   }
 
-    useEffect( ()=>{
-      loadhomeStatisticsData()
- }, [ selectedYear,selectedMonth,selectedFilter])   
+  useEffect(() => {
+    loadhomeStatisticsData()
+  }, [selectedYear, selectedMonth, selectedFilter])
 
   return (
     <View
@@ -133,9 +137,9 @@ export default function StaticsDetail() {
         <Text
           style={[
             styles.title,
-            {color: isDark ? appColors.white : appColors.darkText},
+            { color: isDark ? appColors.white : appColors.darkText },
           ]}>
-          {t('newDeveloper.BookingStatistics')} 
+          {t('newDeveloper.BookingStatistics')}
         </Text>
         <View
           style={[
@@ -146,9 +150,9 @@ export default function StaticsDetail() {
             },
           ]}>
           <WeeklySection
-            
+
           />
-          <LineChartView/>
+          <LineChartView />
         </View>
       </View>
     </View>

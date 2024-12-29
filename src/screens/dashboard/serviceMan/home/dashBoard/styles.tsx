@@ -32,6 +32,7 @@ export const styles = StyleSheet.create({
     color: appColors.lightText,
     fontFamily: appFonts.NunitoRegular,
     fontSize: windowWidth(3.6),
+    width:windowWidth(28)
   },
   totalService: {
     color: appColors.primary,

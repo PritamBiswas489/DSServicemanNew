@@ -1,63 +1,36 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, FlatList, ListRenderItem } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, ListRenderItem, TouchableOpacity, Alert } from 'react-native';
 import { useValues } from '../../../../../../App';
 import appColors from '@src/theme/appColors';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@src/store';
+import { BookingInterface } from '@src/interfaces/servicemen/home.data.interface';
+import { convertToTitleCase, datetimeArr, getMediaUrl } from '@src/config/utility';
+import { windowHeight } from '@src/theme/appConstant';
 
-interface Booking {
-  id: string;
-  image: string;
-  date: string;
-  status: string;
-}
-
-const recentBookings: Booking[] = [
-  {
-    id: '100849',
-    image: 'https://via.placeholder.com/50',
-    date: '24 Dec, 2024, 08:38 PM',
-    status: 'Accepted',
-  },
-  {
-    id: '100848',
-    image: 'https://via.placeholder.com/50',
-    date: '24 Dec, 2024, 08:38 PM',
-    status: 'Accepted',
-  },
-  {
-    id: '100846',
-    image: 'https://via.placeholder.com/50',
-    date: '24 Dec, 2024, 08:34 PM',
-    status: 'Accepted',
-  },
-];
-
-interface BookingItemProps {
-  item: Booking;
-}
-
-const BookingItem: React.FC<{item:Booking,isDark:boolean}> = ({ item , isDark}) => (
-     
-  <View style={[styles.bookingItem,{backgroundColor: isDark ? appColors.darkTheme : appColors.boxBg}]}>
-    <Image source={{ uri: item.image }} style={styles.image} />
+const BookingItem: React.FC<{ item: BookingInterface, isDark: boolean }> = ({ item, isDark }) => {
+  const date_array = datetimeArr(item.created_at)
+  return <TouchableOpacity onPress={()=>Alert.alert(String(item.id))}><View style={[styles.bookingItem, { backgroundColor: isDark ? appColors.darkTheme : appColors.boxBg }]}>
+    {item?.detail?.[0]?.service?.thumbnail && <Image source={{ uri: `${getMediaUrl()}/service/${item?.detail?.[0]?.service?.thumbnail}` }} style={styles.image} />}
     <View style={styles.details}>
-      <Text style={[styles.bookingText,{color: isDark ? appColors.white : appColors.darkText,}]}>Booking# {item.id}</Text>
-      <Text style={[styles.dateText,{color: isDark ? appColors.darkSubText : appColors.darkText,}]}>{item.date}</Text>
+      <Text style={[styles.bookingText, { color: isDark ? appColors.white : appColors.darkText, }]}>Booking# {item.readable_id}</Text>
+      <Text style={[styles.dateText, { color: isDark ? appColors.darkSubText : appColors.darkText, }]}>{date_array.day} {date_array.month}, {date_array.year} {date_array.hours}:{date_array.minutes} {date_array.ampm}</Text>
     </View>
     <View style={styles.statusContainer}>
-      <Text style={styles.statusText}>{item.status}</Text>
+      <Text style={styles.statusText}>{convertToTitleCase(item.booking_status)}</Text>
     </View>
-  </View>
-);
-
+  </View></TouchableOpacity>
+};
+// Recent booking activities
 const RecentBookingActivities: React.FC = () => {
   const { isDark, isDeliveryManLogin, t, loggedInUserType } = useValues();
-  const renderItem: ListRenderItem<Booking> = ({ item }) => <BookingItem item={item} isDark={isDark} />;
-
+  const renderItem: ListRenderItem<BookingInterface> = ({ item }) => <BookingItem item={item} isDark={isDark} />;
+  const { RecentBookings } = useSelector((state: RootState) => state.serviceManHomeData)
   return (
-    <View style={[styles.container,{backgroundColor:isDark ? appColors.darkCardBg : appColors.white  }]}>
-      <Text style={[styles.headerText,{color: isDark ? appColors.white : appColors.darkText,}]}>Recent Booking Activities</Text>
+    <View style={[styles.container, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white , marginBottom:windowHeight(5)}]}>
+      <Text style={[styles.headerText, { color: isDark ? appColors.white : appColors.darkText, }]}>{t('newDeveloper.RecentBookingActivities')}</Text>
       <FlatList
-        data={recentBookings}
+        data={RecentBookings}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
@@ -73,12 +46,12 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
     marginBottom: 10,
-    fontWeight:'bold',
+    fontWeight: 'bold',
   },
   bookingItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    
+
     padding: 10,
     marginVertical: 5,
     borderRadius: 10,

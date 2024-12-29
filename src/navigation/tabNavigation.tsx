@@ -21,6 +21,9 @@ import {View,Text} from 'react-native';
 import CartModal from '@otherComponent/cartModal';
 import {windowHeight} from '@theme/appConstant';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@src/store';
+import { serviceManHomeDataActions } from '@src/store/redux/serviceman/service-man-home-data.redux';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,6 +31,7 @@ export function BottomTab() {
   const [selected, setSelected] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [processingSpinner, setProcessingLoader] = useState(false)
+   const dispatch = useDispatch()
   const tabData = [
     {
       name: 'bottomTab.home',
@@ -53,6 +57,9 @@ export function BottomTab() {
   ];
 
   const onPress = (key: number) => {
+    if(selected === 0 ){
+          dispatch(serviceManHomeDataActions.setData({field:'refreshHomeData',data:true}))
+      }
     if (key != 2) {
       setSelected(key);
     }

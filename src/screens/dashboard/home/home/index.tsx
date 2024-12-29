@@ -1,52 +1,32 @@
-import { ScrollView, View } from 'react-native-virtualized-view';
+import { ScrollView } from 'react-native-virtualized-view';
 import React, { useEffect, useState } from 'react';
 import { Chat, Notification } from '@utils/icons';
 import Header from '@commonComponents/header';
 import { GlobalStyle } from '@style/styles';
-import { TotalPayBackBalance } from '../AccountInformation/totalBalance';
-import { DashBoard } from '../dashBoard';
-import HeadingRow from '@commonComponents/headingRow';
-import { BookingData } from '../data';
-import BookingList from '@screens/booking/allBooking/bookingList';
-import BlogView from '../blogList';
 import StaticsDetail from '../staticsDetail';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from 'src/navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import CommonModal from '@commonComponents/commonModal';
-import WalletModal from '@otherComponent/wallet/walletModal';
-import CancelBooking from '@otherComponent/booking/cancelBooking';
-import { windowHeight } from '@theme/appConstant';
-import ModalComponent from '@commonComponents/modal';
-import { acceptBooking } from '@utils/images';
 import appColors from '@theme/appColors';
 import { useValues } from '../../../../../App';
-import { Provider } from '@screens/dashboard/serviceMan/home';
 import { ServiceMenDashBoard } from '@screens/dashboard/serviceMan/home';
-import { ServiceMen } from './serviceMen';
-import { ProviderLogin } from './provider';
 import { Alert, RefreshControl, TouchableOpacity } from 'react-native';
 import SkeletonLoader from '@src/commonComponents/SkeletonLoader';
-
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
- 
-
 import HomeNoFataFound from '@src/commonComponents/homeNoDataFound';
- 
-import HomeBookingList from '@src/commonComponents/homeBookingList';
-import { homeDataActions } from '@src/store/redux/home-data-redux';
-import useHomeDataLoader from '@src/hooks/useHomeDataLoader';
 import messaging from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
 import { saveFcmTokenProcess } from '@src/services/profile.service';
 import { getAuthUserService } from '@src/services/auth.service';
-import { serviceProviderAccountDataActions } from '@src/store/redux/service-provider-account-data.redux';
 import { Text } from 'react-native';
 import notifee, { AndroidImportance } from '@notifee/react-native';
 import { serviceManAccountDataActions } from '@src/store/redux/serviceman/service-man-account-data.redux';
 import RecentBookingActivities from './homeBookingList';
-import { getHomeData } from '@src/services/home.service';
+import { homeTopCardData, homeBookingStat, homeRecentBookings,  } from '@src/services/home.service';
+import { serviceManHomeDataActions } from '@src/store/redux/serviceman/service-man-home-data.redux';
+import { getPagesContent } from '@src/services/settings.service';
+import { contentPagesActions } from '@src/store/redux/content-pages-redux';
 
 
 type navigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -61,20 +41,22 @@ interface Response {
 }
 
 export function Home() {
-  const [showWalletModal, setShowWalletModal] = useState(false);
-  const [cancelBookingModal, setCancelBookingModal] = useState(false);
-  const [acceptBookingModal, setAcceptBookingModal] = useState(false);
   const { navigate,replace } = useNavigation<navigationProp>();
   const { isDark, isDeliveryManLogin, t, loggedInUserType } = useValues();
-  const [showSkeletonLoader, setSkeletonLoader] = useState(false)
+  
   const [needSkeletonLoader,setNeedSkeletonLoader] =  useState(true)
   const [refreshing, setRefreshing] = React.useState(false);
+
+  const {refreshHomeData} = useSelector((state: RootState)=>state.serviceManHomeData)
+  const {fetched:contentFetched} = useSelector((state: RootState)=>state.contentPages)
+
  
   const dispatch = useDispatch()
 
   const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
         setNeedSkeletonLoader(false)
+        loadDashboardHomeData()
         const responseuser = await getAuthUserService()
         if (responseuser?.data?.response_code === 'default_200' && responseuser?.data?.content?.id) {
           dispatch(serviceManAccountDataActions.setData(responseuser?.data?.content))
@@ -85,6 +67,40 @@ export function Home() {
           setRefreshing(false);
         }, 1000);
   }, []);
+
+  const fetchContents = async()=>{
+    const contentConfig = await getPagesContent()
+        if (contentConfig?.data?.content) {
+          Object.keys(contentConfig?.data?.content).forEach((key: string) => {
+            // console.log(contentConfig?.data?.content[key]?.value)
+            if (key === 'about_us') {
+              dispatch(contentPagesActions.setData({ 'field': 'about_us', data: contentConfig?.data?.content[key]?.value }))
+            }
+            if (key === 'terms_and_conditions') {
+              dispatch(contentPagesActions.setData({ 'field': 'terms_and_conditions', data: contentConfig?.data?.content[key]?.value }))
+            }
+            if (key === 'refund_policy') {
+              dispatch(contentPagesActions.setData({ 'field': 'refund_policy', data: contentConfig?.data?.content[key]?.value }))
+            }
+            if (key === 'return_policy') {
+              dispatch(contentPagesActions.setData({ 'field': 'return_policy', data: contentConfig?.data?.content[key]?.value }))
+            }
+            if (key === 'cancellation_policy') {
+              dispatch(contentPagesActions.setData({ 'field': 'cancellation_policy', data: contentConfig?.data?.content[key]?.value }))
+            }
+            if (key === 'privacy_policy') {
+              dispatch(contentPagesActions.setData({ 'field': 'privacy_policy', data: contentConfig?.data?.content[key]?.value }))
+            }
+          })
+          dispatch(contentPagesActions.setData({ 'field': 'fetched', data: true }))
+        }
+  }
+
+  useEffect(()=>{
+    if(!contentFetched){
+      fetchContents()
+    }
+  },[contentFetched])
 
   
   //on display notification
@@ -107,11 +123,7 @@ export function Home() {
       },
     });
   }
-
-
-   
-   
-
+  
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
     const enabled =
@@ -185,16 +197,26 @@ export function Home() {
     };
   }, []);
 
-
-  const loadHomeData = async ()=>{
-      const response:Response = await getHomeData()
-      console.log(JSON.stringify(response?.data))
+  // load home page date
+  const loadDashboardHomeData = async ()=>{
+      const [topCardData,recentBookings] = await Promise.all([homeTopCardData(),homeRecentBookings()]) 
+      // console.log("========== top card data ====================")
+      // console.log(JSON.stringify(topCardData?.data?.content?.[0]?.top_cards))  
+      // console.log("========== recent booking data ====================")
+      // console.log(JSON.stringify(recentBookings?.data?.content?.[0]?.bookings))  
+      dispatch(serviceManHomeDataActions.setData({field:'topCard',data:topCardData?.data?.content?.[0]?.top_cards}))
+      dispatch(serviceManHomeDataActions.setData({field:'RecentBookings',data:recentBookings?.data?.content?.[0]?.bookings}))
+      dispatch(serviceManHomeDataActions.setData({field:'refreshHomeData',data:false}))
   }
 
   useEffect(()=>{
-     loadHomeData()
-  },[])
-  
+    if(refreshHomeData){
+      loadDashboardHomeData()
+      setNeedSkeletonLoader(false)
+    }else{
+      setNeedSkeletonLoader(false)
+    }
+  },[refreshHomeData])
 
   return (
     <ScrollView
@@ -205,8 +227,8 @@ export function Home() {
       ]}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       showsVerticalScrollIndicator={false}>
-      {showSkeletonLoader && <SkeletonLoader />}
-      {!showSkeletonLoader && <>
+      {needSkeletonLoader && <SkeletonLoader />}
+      {!needSkeletonLoader && <>
         <Header
           showBackArrow={false}
           title={'bottomTab.home'}

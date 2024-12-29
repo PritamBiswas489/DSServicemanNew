@@ -79,6 +79,7 @@ import conversationChannelSlice from "./redux/store/customer-conversations-redux
 import serviceManAccountDataSlice from "./redux/serviceman/service-man-account-data.redux";
 import serviceManConfigAppSlice from "./redux/serviceman/service-man-config-redux";
 import forgetPasswordSlice from "./redux/forgetpassword-redux";
+import serviceManHomeDataSlice from "./redux/serviceman/service-man-home-data.redux";
 
 //configure store
 const store = configureStore({
@@ -158,9 +159,10 @@ const store = configureStore({
         storeHomeOrder:storeHomeOrderSlice.reducer,
         conversationChannel:conversationChannelSlice.reducer,
 
-       //==================== SERVICE MAN STORE ===================================================//
+       //==================== SERVICEMAN STORE ===================================================//
        serviceManAccountData:serviceManAccountDataSlice.reducer,
-       serviceManConfigApp:serviceManConfigAppSlice.reducer
+       serviceManConfigApp:serviceManConfigAppSlice.reducer,
+       serviceManHomeData:serviceManHomeDataSlice.reducer
 
         //DONOT FORGET CLEAR REDUX STATE AFTER LOGOUT DEVELOPER
     },

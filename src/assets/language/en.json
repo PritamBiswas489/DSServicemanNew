@@ -1483,7 +1483,14 @@
            "registerPhoneError":"Enter valid phone number",
            "TotalAssignBooking":"Total Assigned Booking",
            "EditProfile":"Edit Profile",
-           "BookingStatistics":"Booking statistics"
+           "BookingStatistics":"Booking statistics",
+           "TotalAssignedBooking":"Total Assigned Booking",
+           "OngoingBooking":"Ongoing Booking",
+           "TotalCompletedBooking":"Total Completed Booking",
+           "TotalCancelledBooking":"Total Canceled Booking",
+           "Booking":"Booking",
+           "RecentBookingActivities":"Recent Booking Activities"
+
             
           
 
