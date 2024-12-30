@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     paddingVertical: windowHeight(2),
   },
   innerContainer: {
-    marginTop: windowHeight(1),
+    // marginTop: windowHeight(1),
   },
   lineView: {
     borderWidth: 0.3,

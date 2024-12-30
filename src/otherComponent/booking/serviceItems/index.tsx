@@ -5,6 +5,7 @@ import { useValues } from '../../../../App';
 import { ServiceItemsProps } from './types';
 import appColors from '@theme/appColors';
 import { getMediaUrl } from '@src/config/utility';
+import { capitalizeFirstLetter } from '@src/config/utility';
 
 const statusColor: Record<'pending' | 'accepted' | 'ongoing' | 'completed' | 'canceled', string> = {
   pending: appColors.pending,
@@ -36,29 +37,17 @@ export function ServiceItems({
   return (
     <View style={styles.rowContainer}>
       <View style={styles.row}>
-         <Image
-          source={{ uri: `${getMediaUrl()}/category/${item.subCategoryImage}` }}
-          style={[styles.serviceImage, imageStyle]}
-        />
         <View>
           <View style={styles.containerStyle}>
             {item.readableId && (
               <View style={styles.row}>
-                <Text style={styles.bookId}>#{t(item.readableId)}</Text>
+                <Text style={styles.bookId}><Text style={{color: isDark ? appColors.white : appColors.darkText,}}>{t('newDeveloper.BookingId')}:</Text> #{t(item.readableId)}</Text>
               </View>
             )}
-            <Text
-              style={[
-                styles.textStyle,
-                textStyle,
-                { color: isDark ? appColors.white : appColors.darkText },
-              ]}>
-              {t(item.subCategoryName)}
-            </Text>
             {item.totalBookingAmount!==0 ? (
               <View style={[styles.row, { alignItems: 'flex-end' }]}>
                 <Text style={[styles.price, priceStyle]}>
-                  {currSymbol}
+                <Text style={{color: isDark ? appColors.white : appColors.darkText,}}>{t('newDeveloper.Amount')}:</Text> {currSymbol}
                   <Text>{(item.totalBookingAmount)}</Text>
                 </Text>
               </View>
@@ -67,7 +56,7 @@ export function ServiceItems({
         </View>
       </View>
       <View style={[styles.container, { backgroundColor: backgroundColor }]}>
-        <Text style={styles.status}>{bookingStatusText}</Text>
+        <Text style={styles.status}>{capitalizeFirstLetter(bookingStatusText)}</Text>
       </View>
     </View>
   );

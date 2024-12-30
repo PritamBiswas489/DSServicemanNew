@@ -7,10 +7,16 @@ import { RootState, AppDispatch } from '@src/store';
 import { BookingInterface } from '@src/interfaces/servicemen/home.data.interface';
 import { convertToTitleCase, datetimeArr, getMediaUrl } from '@src/config/utility';
 import { windowHeight } from '@src/theme/appConstant';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'src/navigation/types';
+import { useNavigation } from '@react-navigation/native';
+
+type routeProps = NativeStackNavigationProp<RootStackParamList>;
 
 const BookingItem: React.FC<{ item: BookingInterface, isDark: boolean }> = ({ item, isDark }) => {
+  const {navigate} = useNavigation<routeProps>();
   const date_array = datetimeArr(item.created_at)
-  return <TouchableOpacity onPress={()=>Alert.alert(String(item.id))}><View style={[styles.bookingItem, { backgroundColor: isDark ? appColors.darkTheme : appColors.boxBg }]}>
+  return <TouchableOpacity onPress={()=>navigate('CompletedBooking',{id:item.id})}><View style={[styles.bookingItem, { backgroundColor: isDark ? appColors.darkTheme : appColors.boxBg }]}>
     {item?.detail?.[0]?.service?.thumbnail && <Image source={{ uri: `${getMediaUrl()}/service/${item?.detail?.[0]?.service?.thumbnail}` }} style={styles.image} />}
     <View style={styles.details}>
       <Text style={[styles.bookingText, { color: isDark ? appColors.white : appColors.darkText, }]}>Booking# {item.readable_id}</Text>
@@ -24,7 +30,7 @@ const BookingItem: React.FC<{ item: BookingInterface, isDark: boolean }> = ({ it
 // Recent booking activities
 const RecentBookingActivities: React.FC = () => {
   const { isDark, isDeliveryManLogin, t, loggedInUserType } = useValues();
-  const renderItem: ListRenderItem<BookingInterface> = ({ item }) => <BookingItem item={item} isDark={isDark} />;
+  const renderItem: ListRenderItem<BookingInterface> = ({ item }) => <BookingItem key={item.id} item={item} isDark={isDark} />;
   const { RecentBookings } = useSelector((state: RootState) => state.serviceManHomeData)
   return (
     <View style={[styles.container, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white , marginBottom:windowHeight(5)}]}>

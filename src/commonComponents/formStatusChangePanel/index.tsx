@@ -24,6 +24,10 @@ import Toast from 'react-native-toast-message';
 import { bookingDetailsAction } from '@src/store/redux/booking-details-redux';
 import { searchStatusArray } from '@src/config/utility';
 import { sendOtpNotification } from '@src/services/booking.service';
+import { completedListingActions } from '@src/store/redux/completed-listing-redux';
+import { acceptedListingActions } from '@src/store/redux/accepted.listing-redux';
+import { canceledListingActions } from '@src/store/redux/canceled-listing-redux';
+import { ongoingListingActions } from '@src/store/redux/ongoing-listing-redux';
 
 
 type routeProps = NativeStackNavigationProp<RootStackParamList>;
@@ -42,6 +46,7 @@ export function FormStatusChangePanel({ bookingId, setStatusModal }: { bookingId
   const { navigate } = useNavigation<routeProps>();
   const { isDark, t } = useValues();
   const { data: BookingDetailsState, updateData: needExistingUpdateData } = useSelector((state: RootState) => state['bookingDetails'])
+  const [showCancelOption,setShowCancelOption] = useState(false)
 
   const profileDt = useSelector((state: RootState) => state['serviceProviderAccountData'])
 
@@ -49,6 +54,15 @@ export function FormStatusChangePanel({ bookingId, setStatusModal }: { bookingId
     const checkExisting = BookingDetailsState.find(elementDet => elementDet.id === bookingId);
     setDetailsBookingDetails(checkExisting?.details)
   }, [bookingId])
+
+
+  useEffect(()=>{
+    if(detailBookingDetails?.id && detailBookingDetails?.provider_serviceman_can_cancel_booking === 1){
+      setShowCancelOption(true)
+    }
+  },[detailBookingDetails])
+
+
 
   const [bookingStatus, setBookingStatus] = useState<string>('')
   const [showServiceProofUploadOptions, setServiceProofUploadOption] = useState(false)
@@ -65,7 +79,7 @@ export function FormStatusChangePanel({ bookingId, setStatusModal }: { bookingId
 
   useEffect(() => {
     if (detailBookingDetails?.id) {
-      setBookingStatus(detailBookingDetails?.booking_status)
+      setBookingStatus('ongoing')
     }
   }, [detailBookingDetails])
 
@@ -137,10 +151,10 @@ export function FormStatusChangePanel({ bookingId, setStatusModal }: { bookingId
             });
             setProcessingSpinner(false)
             dispatch(bookingDetailsAction.setData({ field: 'updateData', data: true }))
-            const currentStatusArrayPending = statusArray.filter(element => element.value === 'pending')
-            const currentStatusArrayAccepted = statusArray.filter(element => element.value === 'accepted')
-            dispatch(currentStatusArrayPending[0].actions.resetState()) //refresh pending 
-            dispatch(currentStatusArrayAccepted[0].actions.resetState()) //refresh accpted
+            dispatch(completedListingActions.resetState()) //refresh pending 
+            dispatch(acceptedListingActions.resetState()) //refresh accpted
+            dispatch(canceledListingActions.resetState())
+            dispatch(ongoingListingActions.resetState())
             setStatusModal(false)
     } else {
             Toast.show({
@@ -189,6 +203,7 @@ export function FormStatusChangePanel({ bookingId, setStatusModal }: { bookingId
           <InputView
             bookingStatus={bookingStatus}
             setBookingStatus={setBookingStatus}
+            showCancelOption={showCancelOption}
           />
           {
             bookingStatus === 'completed' &&

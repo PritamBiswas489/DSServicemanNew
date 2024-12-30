@@ -1,6 +1,6 @@
  
 import React from "react";
-import { getBookingDetails, getBookings } from "./booking.service";
+import {  getBookings, getServicemanBookingDetails } from "./booking.service";
 import { RootState, AppDispatch } from '@src/store';
 import { BookingListingInterface } from "@src/interfaces/bookingListingInterface";
 import { homeDataActions } from "@src/store/redux/home-data-redux";
@@ -22,12 +22,13 @@ interface Response {
         config: any;
         request?: any;
 }
-
+//load booking details
 export const loadBookingDetails = async (bookingId:string) =>{
-    const response: Response = await getBookingDetails(bookingId);
-     
-    if (response.data.content?.id) {
-       const bookingDetail = response.data.content
+    const response: Response = await getServicemanBookingDetails(bookingId);
+//      console.log(JSON.stringify(response.data))
+    
+    if (response.data.content?.booking?.id) {
+       const bookingDetail = response.data.content?.booking
             const servicesList:BookingServiceListInterface[] = bookingDetail.detail.map((serviceDetail:any)=>{
                     return {
                             serviceId:serviceDetail.service_id,
@@ -115,7 +116,9 @@ export const loadBookingDetails = async (bookingId:string) =>{
                     customerInfo,
                     providerInfo,
                     serviceMeninfo,
-                    statusHistories
+                    statusHistories,
+                    provider_serviceman_can_cancel_booking:response.data.content?.provider_serviceman_can_cancel_booking,
+                    provider_serviceman_can_edit_booking:response.data.content?.provider_serviceman_can_edit_booking,
              }
             //  console.log("================= formatted ======================")
             //  console.log(formattedData)

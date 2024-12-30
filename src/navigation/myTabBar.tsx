@@ -28,17 +28,7 @@ export const MyTabBar: React.FC<MyTabBarProps> = ({
               activeOpacity={0.9}
               onPress={() => onPress(key)}
               style={tabStyle.cartView}>
-              {key === 2 ? (
-                <LinearGradient
-                  colors={[appColors.gradientBtn, appColors.primary]}
-                  style={tabStyle.circleContainer}
-                  start={{x: 1, y: 0.2}}
-                  end={{x: 1, y: 1}}>
-                  <View>
-                    <Plus height={'25'} width={'25'} />
-                  </View>
-                </LinearGradient>
-              ) : selected == key ? (
+              { selected == key ? (
                 item.activeIcon
               ) : (
                 item.tabBarIcon
@@ -51,7 +41,7 @@ export const MyTabBar: React.FC<MyTabBarProps> = ({
                       selected == key ? appColors.primary : appColors.lightText,
                   },
                 ]}>
-                {key === 2 ? null : t(item.name)}
+                {t(item.name)}
               </Text>
             </TouchableOpacity>
           );

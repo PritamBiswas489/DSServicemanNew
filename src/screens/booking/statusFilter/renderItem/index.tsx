@@ -11,8 +11,7 @@ export default function RenderItem({
   setCategory,
   item,
   index,
-  flatListRef,
-  countobj
+  flatListRef
 }: itemType) {
   const { isDark, t } = useValues();
 
@@ -50,10 +49,6 @@ export default function RenderItem({
         ]}>
         {t(item.label)}
       </Text>
-      
-      <View style={styles.countContainer}>
-        <Text style={styles.countText}>{formatNumberProcessing(countobj[item.value as keyof CountObjInterface])}</Text>
-      </View>
     </TouchableOpacity>
   );
 }

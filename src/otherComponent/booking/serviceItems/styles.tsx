@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   containerStyle: {
-    right: windowWidth(2),
+   marginLeft:windowWidth(5)
   },
   serviceImage: {
     height: windowHeight(7),
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     fontSize: fontSizes.FONT4,
   },
   price: {
-    fontSize: fontSizes.FONT5,
+    fontSize: fontSizes.FONT4,
     color: appColors.primary,
     fontFamily: appFonts.NunitoBold,
     marginTop: windowWidth(1),

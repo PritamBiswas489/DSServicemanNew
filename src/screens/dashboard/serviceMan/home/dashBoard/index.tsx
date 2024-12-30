@@ -77,8 +77,9 @@ export function ServiceMenDashBoard() {
         },
       ]}>
       {dashBoardData.map((item, index) => (
-        <>
+        <TouchableOpacity key={`dashboardpanel-${index}`}>
           <View
+          
             style={[
               styles.iconContainer,
               {
@@ -117,7 +118,7 @@ export function ServiceMenDashBoard() {
               />
             )}
           </View>
-        </>
+        </TouchableOpacity>
       ))}
       
     </View>
@@ -130,7 +131,7 @@ export function ServiceMenDashBoard() {
       },
     ]}>
     {dashBoardData2.map((item, index) => (
-      <>
+     <TouchableOpacity key={`dashboardpanelsecond-${index}`}>
         <View
           style={[
             styles.iconContainer,
@@ -168,7 +169,7 @@ export function ServiceMenDashBoard() {
             />
           )}
         </View>
-      </>
+      </TouchableOpacity>
     ))}
     
   </View>

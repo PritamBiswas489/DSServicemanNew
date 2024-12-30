@@ -84,5 +84,7 @@ export interface BookingDetailsInterface {
     providerInfo: BookingServiceProviderInterface;
     serviceMeninfo:BookingServiceServicemenInterface;
     statusHistories:BookingServiceStatusHistories[];
-    evidence_photos:string[]
+    evidence_photos:string[],
+    provider_serviceman_can_cancel_booking:number,
+    provider_serviceman_can_edit_booking:number,
 }

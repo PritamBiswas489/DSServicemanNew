@@ -6,7 +6,7 @@ import appFonts from '@theme/appFonts';
 export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: windowHeight(3),
-    marginTop: windowHeight(3),
+    marginTop: windowHeight(1),
     borderColor: appColors.border,
     borderTopWidth: 1,
     borderBottomWidth: 1,
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     color: appColors.lightText,
     fontFamily: appFonts.NunitoRegular,
     fontSize: windowWidth(3.6),
-    width:windowWidth(28)
+    // width:windowWidth(28)
   },
   totalService: {
     color: appColors.primary,
@@ -48,6 +48,6 @@ export const styles = StyleSheet.create({
     marginRight: windowHeight(3),
   },
   vertical: {
-    marginTop: windowHeight(9),
+    marginTop: windowHeight(8),
   },
 });

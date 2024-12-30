@@ -1485,11 +1485,15 @@
            "EditProfile":"Edit Profile",
            "BookingStatistics":"Booking statistics",
            "TotalAssignedBooking":"Total Assigned Booking",
-           "OngoingBooking":"Ongoing Booking",
+           "OngoingBooking":"Total Ongoing Booking",
            "TotalCompletedBooking":"Total Completed Booking",
            "TotalCancelledBooking":"Total Canceled Booking",
            "Booking":"Booking",
-           "RecentBookingActivities":"Recent Booking Activities"
+           "RecentBookingActivities":"Recent Booking Activities",
+           "History":"History",
+           "bookingList":"Booking list",
+           "bookingHistory":"Booking History",
+           "ChangeStatus":"Change Status"
 
             
           

@@ -106,13 +106,7 @@ export default function InputView(
   const { t } = useValues();
   return (
     <View style={{ flex: 1 }}>
-      <DropdownWithIcon
-        label="newDeveloper.changestatus"
-        data={statusList}
-        onSelect={handleBookingStatus}
-        error={''}
-        selectedValue={{ label:capitalizeFirstLetter(bookingStatus), value: bookingStatus }}
-      />
+      
       <TouchableOpacity onPress={() => { setDatePicker(true) }}>
         <TextInputComponent
           placeholder={t('newDeveloper.changescheduledate')}
@@ -124,15 +118,7 @@ export default function InputView(
         />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => { setServiceMenModal(true) }}>
-        <TextInputComponent
-          placeholder={t('newDeveloper.addServiceMen')}
-          value={serviceMan?.serviceManid &&`${t('newDeveloper.ServiceMan')}:   ${serviceMan.serviceManName}`}
-          editable={false}
-          onChangeText={value => {
-          }}
-        />
-      </TouchableOpacity>
+     
       
       {showDatePicker && <DateTimeSelector
              setDatePicker={setDatePicker}

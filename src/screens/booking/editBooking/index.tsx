@@ -81,14 +81,7 @@ export function EditBooking({ route }: any) {
       const formData = new FormData()
       formData.append('booking_id', detailBookingDetails?.id)
       formData.append('payment_status', paymentStatus ? 1 : 0)
-      if (serviceMan?.serviceManid) {
-        formData.append('serviceman_id', serviceMan.serviceManid)
-      }
       formData.append('service_schedule', scheduleDate)
-      formData.append('zone_id', profileDt?.zone_id)
-      formData.append('booking_status', bookingStatus)
-
-      // console.log(serviceCartItems)
 
       //========== service info =========================//
       const serviceInfo: { service_id: string, variant_key: string, quantity: number }[] = serviceCartItems.map((cartItem: BookingServiceListInterface, cartindex: number) => {
@@ -116,7 +109,6 @@ export function EditBooking({ route }: any) {
           const currentStatusArray2 = statusArray.filter(element => element.value === detailBookingDetails.booking_status)
           console.log(currentStatusArray2)
           dispatch(currentStatusArray2[0].actions.resetState())
-
         }
         navigate('CompletedBooking', { id: detailBookingDetails?.id })
       } else {

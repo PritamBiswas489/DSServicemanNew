@@ -141,7 +141,7 @@ export default function MyStack() {
               component={AuthNavigation}
             />
 
-            <RootStack.Screen name="Booking" component={Booking} />
+             
 
             <RootStack.Screen name="EditBooking" component={EditBooking} />
             <RootStack.Screen name="BottomTab" component={BottomTab} />

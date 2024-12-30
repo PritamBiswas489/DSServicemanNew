@@ -32,7 +32,8 @@ import { searchStatusArray } from '@src/config/utility';
 type routeProps = NativeStackNavigationProp<RootStackParamList>;
 
 
-export function Booking() {
+export function Booking({type}:{type:string}) {
+   
   const dispatch = useDispatch()
   const [cancelBookingModal, setCancelBookingModal] = useState(false);
   const [acceptBookingModal, setAcceptBookingModal] = useState(false);
@@ -76,12 +77,7 @@ export function Booking() {
     <View style={[styles.container,{backgroundColor:isDark ? appColors.darkCardBg : appColors.white  }]}>
       <Header
         showBackArrow={false}
-        title={'booking.booking'}
-        // trailIcon={
-        //   <BookingFilterIcon
-        //     color={isDark ? appColors.white : appColors.darkText}
-        //   />
-        // }
+        title={type === 'BOOKING' ? 'newDeveloper.bookingList' : 'newDeveloper.bookingHistory'}
         trailIcon1={
           <Icon name='refresh' size={26} color={isDark ? appColors.white : appColors.darkText} />
         }
@@ -90,14 +86,13 @@ export function Booking() {
         content={''}
       />
       <View style={[styles.fixedFilter,{backgroundColor:isDark ? appColors.darkCardBg : appColors.white  }]}>
-        <StatusFilter />
+        <StatusFilter bookingListType={type} />
       </View>
       <ScrollView
       refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           GlobalStyle.contentContainerStyle,
-
         ]}
         style={[
           GlobalStyle.mainView,

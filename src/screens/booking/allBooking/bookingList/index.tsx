@@ -12,7 +12,7 @@ import {DashLine} from '@commonComponents/dashLIne';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
 import { bookingSearchFieldActions } from '@src/store/redux/booking-search-field';
-import { getBookings } from '@src/services/booking.service';
+import {  getServicemanBookings } from '@src/services/booking.service';
 import { searchStatusArray } from '@src/config/utility';
 import { SearchBookingInterface } from '@src/interfaces/searchBookingInterface';
 import SkeletonLoader from '@src/commonComponents/SkeletonLoader'; 
@@ -30,6 +30,7 @@ import NoDataFound from '@src/commonComponents/noDataFound';
 import { windowHeight } from '@theme/appConstant';
 import GradientBtn from '@commonComponents/gradientBtn';
 import { noValue, wifi, notification } from '@utils/images';
+import HomeNoFataFound from '@src/commonComponents/homeNoDataFound';
 
 type routeProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -56,11 +57,7 @@ export default function BookingList({
   const [subCategoriesId, setSubCategoriesId] = useState<string[]>([]);
   const [clickLoadMore, setClickLoadMore] = useState(false)
 
-  // const {
-  //   data: mySubscriptionData,
-  //   needRefresh: needRefreshMySubscriptionData,
-  // } = useSelector((state: RootState) => state['mysubscriptionsData']);
-
+ 
   const {
     selectedStatus: selectedBookingStatus,
     refreshData:refreshDataRedux
@@ -85,49 +82,9 @@ export default function BookingList({
   // handle get bookings ??????
   const handleGetBookings = async () => {
      
-       // console.log({limitData,offsetData,selectedBookingStatus})
-        const currentYear = new Date().getFullYear();
-        const toDate = `${currentYear}-12-31`
-        const fromDate = `${currentYear -4}-01-01`
+        const response: Response = await getServicemanBookings(limitData,offsetData,selectedBookingStatus);
+        const bookingData = response?.data?.content?.data;
 
-        const formData = new FormData();
-        formData.append('limit', limitData);
-        formData.append('offset', offsetData);
-        formData.append('booking_status', selectedBookingStatus);
-        // formData.append('from_date', fromDate);
-        // formData.append('to_date', toDate);
-
-        // if(selectedBookingStatus === 'pending'){
-        //   if(categoriesId){
-        //     formData.append('category_ids[]', categoriesId);
-        //   }
-        //   if(subCategoriesId){
-        //     formData.append('sub_category_ids[]', subCategoriesId);
-        //   }
-        // }
-
-         
-        
-        const response: Response = await getBookings(formData);
-        const bookingData = response?.data?.content?.bookings?.data;
-        // console.log(JSON.stringify(bookingData,null,2))
-        if(firstTimeLoading){
-          const acceptedCount = response?.data?.content?.bookings_count?.accepted
-          const canceledCount = response?.data?.content?.bookings_count?.canceled
-          const completedCount = response?.data?.content?.bookings_count?.completed
-          const ongoingCount = response?.data?.content?.bookings_count?.ongoing
-          const pendingCount = response?.data?.content?.bookings_count?.pending
-          const allCount = acceptedCount + canceledCount + completedCount
-          + ongoingCount + pendingCount
-          
-          dispatch(bookingSearchFieldActions.setData({field:'accepted',data:acceptedCount}))
-          dispatch(bookingSearchFieldActions.setData({field:'canceled',data:canceledCount}))
-          dispatch(bookingSearchFieldActions.setData({field:'completed',data:completedCount}))
-          dispatch(bookingSearchFieldActions.setData({field:'ongoing',data:ongoingCount}))
-          dispatch(bookingSearchFieldActions.setData({field:'pending',data:pendingCount}))
-          dispatch(bookingSearchFieldActions.setData({field:'all',data:allCount})) 
-        }
-        //console.log(response?.data?.content?.bookings_count)
         if(bookingData.length > 0){
               const formattedData:BookingListingInterface[] = bookingData.map((bkData:any,bkIndex:number)=>{
               return {
@@ -159,7 +116,7 @@ export default function BookingList({
         }
         dispatch(currentStatusArray[0].actions.setData({
           field: 'isNoMoreData',
-          data: !response?.data?.content?.bookings?.next_page_url
+          data: !response?.data?.content?.next_page_url
         }));
         setClickLoadMore(false);
         dispatch(currentStatusArray[0].actions.setData({
@@ -169,20 +126,9 @@ export default function BookingList({
         dispatch(bookingSearchFieldActions.setData({field:'refreshData',data:false}))
   };
 
-  // useEffect(() => {
-  //   if (mySubscriptionData.length > 0) {
-  //     const categories = mySubscriptionData.map((item) => item.categoryId);
-  //     const subcategories = mySubscriptionData.map(
-  //       (item) => item.subCategoryId
-  //     );
-  //     setCategoriesId(categories);
-  //     setSubCategoriesId(subcategories);
-  //   }
-  // }, [mySubscriptionData]);
-
+   
   useEffect(()=>{
     if(refreshDataRedux){
-       
       dispatch(currentStatusArray[0].actions.resetState())
     }
   },[refreshDataRedux])
@@ -210,7 +156,7 @@ export default function BookingList({
 
   const icon = showMoreServiceMans ? <UpArrow /> : <MoreArrow />;
 
-  const {isDark} = useValues();
+  const {isDark, t} = useValues();
 
   const toggleShowMoreServiceMans = () => {
     setShowMoreServiceMans(!showMoreServiceMans);
@@ -224,27 +170,13 @@ export default function BookingList({
     <View style={[styles.container, containerStyle]}>
       {firstTimeLoading && <SkeletonLoader />}
 
-      {!firstTimeLoading && searchData.length === 0 && <NoDataFound
-        headerTitle="newDeveloper.noBookingFound"
-        image={noValue}
-        showheader={true}
-        infoImage={undefined}
-        title="newDeveloper.noBookingFound"
-        content="newDeveloper.noBookingFoundContent"
-        gradiantBtn={
-          <GradientBtn
-            additionalStyle={{ bottom: windowHeight(2) }}
-            label={'common.refresh'}
-            onPress={refreshData}
-          />
-        }
-      />}
+      {!firstTimeLoading && searchData.length === 0 && <HomeNoFataFound message={t('newDeveloper.Nodatafound')} />}
       
       {!firstTimeLoading && searchData.length > 0 &&
       <FlatList
         onEndReached={handleScrollProcessing}
         data={searchData}
-         
+        keyExtractor={(item)=>`booking-${item.id}`}
         renderItem={({item}) => (
           <View>
             <TouchableOpacity
@@ -291,45 +223,10 @@ export default function BookingList({
                 )}
                  <View style={styles.innerContainer}>
                  <CustomerItems item={item} />
-                   {item.hasServiceMen && <>
-                        <DashLine />
-                        <ServiceManItems   item={item}
-                         
-                        />
-                      </>}
-                      
-                     
                 </View>
-               {/* {item.isAssigned === true && (
-                  <NoteContainer
-                    setAcceptBookingModal={setAcceptBookingModal}
-                    setCancelBookingModal={setCancelBookingModal}
-                    isAssigned={item.isAssigned}
-                  />
-                )}
-                {item.isAssigned === false && (
-                  <NoteContainer isAssigned={item.isAssigned} />
-                )} */}
+              
               </View>
             </TouchableOpacity>
-            {/* {item.serviceMans && item.serviceMans.length > 1 && (
-              <View style={styles.center}>
-                <TouchableOpacity
-                  onPress={toggleShowMoreServiceMans}
-                  activeOpacity={0.9}
-                  style={[
-                    styles.iconView,
-                    {
-                      backgroundColor: isDark
-                        ? appColors.darkTheme
-                        : appColors.white,
-                      borderWidth: isDark ? 0.4 : 1,
-                    },
-                  ]}>
-                  {icon}
-                </TouchableOpacity>
-              </View>
-            )} */}
           </View>
         )}
         ItemSeparatorComponent={() => <View style={styles.separator}></View>}

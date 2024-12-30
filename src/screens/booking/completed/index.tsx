@@ -17,7 +17,7 @@ import { bookingDetailsAction } from "@src/store/redux/booking-details-redux";
 import SkeletonLoader from '@src/commonComponents/SkeletonLoader';
 import NoDataFound from '@src/commonComponents/noDataFound';
 import GradientBtn from '@commonComponents/gradientBtn';
-import { noValue } from '@utils/images';
+import { blog, noValue } from '@utils/images';
 import { windowHeight } from '@theme/appConstant';
 import CommonModal from '@commonComponents/commonModal';
 import ModalComponent from '@commonComponents/modal';
@@ -55,7 +55,7 @@ export function CompletedBooking({ route }: any) {
   const [processingSpinner, setProcessingSpinner] = useState(false)
   const extraCharges = [{ name: 'Ac repair', amount: '20', noService: 3 }];
   const { navigate } = useNavigation<routeProps>();
-  const { isDark } = useValues();
+  const { isDark, t } = useValues();
   const statusArray = searchStatusArray()
 
   const details = route?.params?.serviceProofData?.details;
@@ -400,20 +400,19 @@ export function CompletedBooking({ route }: any) {
       {!skeletonLoaderProcess && detailBookingDetails?.id && (detailBookingDetails?.booking_status === 'ongoing' || detailBookingDetails?.booking_status === 'accepted') &&
         <>
           <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: windowHeight(2) }}>
-            <Pressable onPress={() => {
+            {detailBookingDetails?.provider_serviceman_can_edit_booking === 1 ? <>
+              <Pressable onPress={() => {
               navigate('EditBooking', { id: detailBookingDetails?.id })
             }}>
-              <Icon name="pencil-outline" size={30} color={isDark ? appColors.white : appColors.black} />
+               <Icon name="pencil-outline" size={30} color={isDark ? appColors.white : appColors.black} />
+               </Pressable>
+               <Pressable onPress={() => { setStatusModal(true) }}>
+               <Icon  name="sync-outline" size={30} color={isDark ? appColors.white : appColors.black} /> 
             </Pressable>
-            <Pressable onPress={() => { setDatePicker(true) }}>
-              <Icon name="calendar-outline" size={30} color={isDark ? appColors.white : appColors.black} />
-            </Pressable>
-            <Pressable onPress={() => { setStatusModal(true) }}>
-              <Icon name="sync-outline" size={30} color={isDark ? appColors.white : appColors.black} />
-            </Pressable>
-            <Pressable onPress={() => { setServiceMenModal(true) }}>
-              <Icon name="person-outline" size={30} color={isDark ? appColors.white : appColors.black} />
-            </Pressable>
+            </>:  <Pressable onPress={() => { setStatusModal(true) }}>
+              
+              <Text style={{color:appColors.primary, fontWeight:'bold',fontSize:20}}>{t('newDeveloper.ChangeStatus')} <Icon  name="sync-outline" size={18} color={appColors.primary} /></Text>
+            </Pressable>}
           </View>
         </>
 

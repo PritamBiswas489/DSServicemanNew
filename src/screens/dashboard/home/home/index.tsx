@@ -243,11 +243,11 @@ export function Home() {
         />
         {/* <TouchableOpacity onPress={()=>onDisplayNotification('testing title','testing body')}><Text>Click test notification</Text></TouchableOpacity> */}
          
-
+        {/* servicemen dashboard task statistics */}
         <ServiceMenDashBoard />
-        
+        {/* statistics graph */}
         <StaticsDetail />
-
+        {/* Recent booking activites */}
         <RecentBookingActivities/>
 
          

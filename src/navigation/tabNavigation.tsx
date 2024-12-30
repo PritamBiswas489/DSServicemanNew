@@ -24,6 +24,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
 import { serviceManHomeDataActions } from '@src/store/redux/serviceman/service-man-home-data.redux';
+import { bookingSearchFieldActions } from '@src/store/redux/booking-search-field';
 
 const Tab = createBottomTabNavigator();
 
@@ -43,11 +44,10 @@ export function BottomTab() {
       activeIcon: <ActiveBooking />,
       tabBarIcon: <BookingIcon />,
     },
-    {name: '', activeIcon: <Plus />, tabBarIcon: <Plus />},
     {
-      name: 'newDeveloper.ServiceList',
-      activeIcon: <Services />,
-      tabBarIcon: <Services />,
+      name: 'newDeveloper.History',
+      activeIcon: <ActiveBooking />,
+      tabBarIcon: <BookingIcon />,
     },
     {
       name: 'newDeveloper.moreMenuText',
@@ -57,19 +57,19 @@ export function BottomTab() {
   ];
 
   const onPress = (key: number) => {
-    if(selected === 0 ){
-          dispatch(serviceManHomeDataActions.setData({field:'refreshHomeData',data:true}))
+    if(key === 0 ){
+     
+          dispatch(serviceManHomeDataActions.setData({field:'refreshHomeData',data:true})) //refresh home data
       }
-    if (key != 2) {
-      setSelected(key);
-    }
-    if(key === 2) {
-      setProcessingLoader(true)
-      setModalVisible(!modalVisible);
-      setTimeout(() => {
-        setProcessingLoader(false)
-      }, 300); // 2-second delay to simulate loading
-    } 
+      if(key === 1 ){
+        
+           dispatch(bookingSearchFieldActions.setData({field:'selectedStatus',data:'accepted'})) //selected status
+      }
+      if(key === 2 ){
+        
+           dispatch(bookingSearchFieldActions.setData({field:'selectedStatus',data:'all'})) //all status
+      }
+      setSelected(key); 
   };
 
   return (
@@ -78,9 +78,9 @@ export function BottomTab() {
         {selected == 0 ? (
           <Home />
         ) : selected == 1 ? (
-          <Booking />
-        ) : selected == 3 ? (
-          <ServiceList />
+          <Booking type="BOOKING" />
+        ) : selected == 2 ? (
+          <Booking type="HISTORY" />
         ) : (
           <MoreMenus />
         )}

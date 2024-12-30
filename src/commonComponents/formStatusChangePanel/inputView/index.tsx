@@ -32,18 +32,23 @@ export default function InputView(
   {
     bookingStatus,
     setBookingStatus,
+    showCancelOption
   }: {
     bookingStatus: string,
     setBookingStatus: (value: string) => void,
+    showCancelOption:boolean
   } 
   ) {
   
-  const statusArr = searchStatusArray()
+  let statusArr = searchStatusArray()
+  const rejectedStatus = ['accepted', 'pending','all']
+  if(!showCancelOption){
+    rejectedStatus.push('canceled')
+  }
+  statusArr = statusArr.filter(status => !rejectedStatus.includes(status.value)); //accepted pending all
+  //status list
   const statusList: DropdownItem[] = statusArr.map((statusdet: any, statusindex: number) => {
-    if (statusdet.value !== 'pending' && statusdet.value !== bookingStatus  && statusdet.value !== 'all') {
        return { label: capitalizeFirstLetter(statusdet.label), value: statusdet.value };
-    }
-    return undefined;
   })
     .filter((item): item is DropdownItem => item !== undefined);
 

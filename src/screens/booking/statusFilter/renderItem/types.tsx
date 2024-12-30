@@ -6,12 +6,4 @@ export type itemType = {
   item: {value:string,label:string};
   index: number;
   flatListRef: any;
-  countobj:{
-    accepted:number,
-    canceled:number,
-    completed:number,
-    ongoing:number,
-    pending:number,
-    all:number
-  }
 };

@@ -56,7 +56,7 @@ export default function StaticsDetail() {
               //@ts-ignore
               const match = response?.data?.content?.[0]?.booking_stats.find(entry => String(entry.month) === String(monthEntryNumber));
               if (match) {
-                console.log(match)
+                // console.log(match)
                 return {
                   ...monthEntry,
                   amount: match?.total || 0

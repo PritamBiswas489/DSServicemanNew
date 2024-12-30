@@ -1,4 +1,4 @@
-import { View, FlatList } from 'react-native';
+import { View, FlatList, Alert } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { styles } from './styles';
 import RenderItem from './renderItem';
@@ -18,7 +18,8 @@ interface Response {
   request?: any;
 }
 
-export default function StatusFilter({ }) {
+export default function StatusFilter({ bookingListType } : {bookingListType:string}) {
+   
   const flatListRef = useRef<FlatList>(null);
   const dispatch = useDispatch()
   const { t, isDark } = useValues()
@@ -34,15 +35,16 @@ export default function StatusFilter({ }) {
   } = useSelector(
     (state: RootState) => state['bookingSearchField']
   );
-  const statusList = searchStatusArray()
-  // const currentStatusArray = statusList.filter(element=>element.value === selectedBookingStatus)
+  let statusList = searchStatusArray()
+  if(bookingListType === 'BOOKING'){
+    statusList = statusList.filter(status => ['accepted', 'ongoing'].includes(status.value));
+  }else{
+    statusList = statusList.filter(status => ['all','completed','canceled'].includes(status.value));
+  }
   const setSubCategory = (value:string) =>{
       dispatch(bookingSearchFieldActions.setData({field:'selectedStatus',data:value}))
-     // dispatch(currentStatusArray[0].actions.resetState())
+     dispatch(bookingSearchFieldActions.setData({field:'refreshData',data:true}))
   }
-   
-  const countobj:CountObjInterface = {accepted,canceled,completed,ongoing,pending,all}
-
    
   return (
     <View>
@@ -53,7 +55,7 @@ export default function StatusFilter({ }) {
           {backgroundColor:isDark ? appColors.darkCardBg : appColors.white  }
         ]}
         data={statusList}
-        keyExtractor={item=>item.readableId}
+        keyExtractor={item=>item.value}
         renderItem={({ index, item }) => {
           return (
             <RenderItem
@@ -61,7 +63,6 @@ export default function StatusFilter({ }) {
               setCategory={setSubCategory}
               item={item}
               index={index}
-              countobj={countobj}
               flatListRef={flatListRef}
             />
           );
