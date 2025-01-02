@@ -78,8 +78,8 @@ export function Description({
         },
         ]}>
         <Text style={{ color: isDark ? appColors.white : appColors.darkText, fontWeight: 'bold', marginBottom: 10 }}>{t('booking.proof')}</Text>
-        {item.evidence_photos.map((evphoto) => {
-          return (<TouchableOpacity onPress={() => {
+        {item.evidence_photos.map((evphoto,index) => {
+          return (<TouchableOpacity key={`evphoto${index}`} onPress={() => {
             if(evphoto){
               setmodalImage(`${getMediaUrl()}/booking/evidence/${evphoto}`)
               setImageProofModal(true)

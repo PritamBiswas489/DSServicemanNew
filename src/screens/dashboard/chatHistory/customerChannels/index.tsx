@@ -41,12 +41,12 @@ export function CustomerChannels({handleScrollCustomerProcessing}:{
         keyExtractor={item=>item.id}
         renderItem={({ item }) => {
          
-          const getChannelUserNotMe = item?.channel_users.find(ele=>ele.user.user_type!=='provider-admin')
+          const getChannelUserNotMe = item?.channel_users.find(ele=>ele.user.user_type!=='provider-serviceman')
           let profileImage = ''
           if (getChannelUserNotMe?.user?.profile_image && getChannelUserNotMe?.user?.profile_image!=='default.png') {
              profileImage = `${getMediaUrl()}/user/profile_image/${getChannelUserNotMe?.user?.profile_image}`
           }
-          const getChannelUserMe = item?.channel_users.find(ele=>ele.user.user_type==='provider-admin')
+          const getChannelUserMe = item?.channel_users.find(ele=>ele.user.user_type==='provider-serviceman')
           
           let bgColor =  isDark ? appColors.darkCard : appColors.boxBg
           let colortext = isDark ? appColors.white : appColors.darkText

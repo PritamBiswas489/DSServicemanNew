@@ -11,7 +11,7 @@ interface Response {
 //get notitfications list
 export const getNotifications = async (queryParam:string): Promise<Response> => {
     try {
-		const response = await api.get(`/provider/notifications${queryParam}`);
+		const response = await api.get(`/serviceman/push-notifications${queryParam}`);
 		return response;
 	} catch (error:any) {
         console.log(error)

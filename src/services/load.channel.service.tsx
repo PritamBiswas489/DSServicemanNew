@@ -56,6 +56,8 @@ export  const loadServiceManChannels = async(
     adminChannelFirsttimeload:boolean,
     dispatch:AppDispatch)=>{
         const response:Response = await getServicemanChannels(limit,offset);
+        console.log("========== Hello ===============")
+        console.log(JSON.stringify(response?.data))
         if(response?.data?.response_code === 'default_200'){
             if(adminChannelFirsttimeload){
                 dispatch(adminChannelActions.setData({field:'channel',data:response?.data?.content?.adminChannel}))

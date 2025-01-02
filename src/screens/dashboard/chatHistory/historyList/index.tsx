@@ -93,7 +93,7 @@ export function HistoryList() {
   //onload process here
   useEffect(() => {
     if (adminChanelData?.id) {
-      const getChannelUserNotMe = adminChanelData?.channel_users.find(ele => ele.user.user_type !== 'provider-admin')
+      const getChannelUserNotMe = adminChanelData?.channel_users.find(ele => ele.user.user_type !== 'provider-serviceman')
       let profileImage = ''
       if (getChannelUserNotMe?.user?.profile_image) {
         profileImage = `${getMediaUrl()}/user/profile_image/${getChannelUserNotMe?.user?.profile_image}`
@@ -178,7 +178,7 @@ export function HistoryList() {
           style={[styles.tabButton, { borderBottomColor: isDark ? appColors.white : appColors.darkText, }, activeTab === 'Tab2' && styles.activeTabButton]}
           onPress={() => setActiveTab('Tab2')}
         >
-          <Text style={[styles.tabText, , { color: isDark ? appColors.white : appColors.darkText, }, activeTab === 'Tab2' && styles.activeTabText]}>{t('newDeveloper.Servicemen')}</Text>
+          <Text style={[styles.tabText, , { color: isDark ? appColors.white : appColors.darkText, }, activeTab === 'Tab2' && styles.activeTabText]}>{t('newDeveloper.Provider')}</Text>
         </TouchableOpacity>
       </View>
       }

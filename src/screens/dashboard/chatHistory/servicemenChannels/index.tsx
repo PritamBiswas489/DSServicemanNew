@@ -42,12 +42,13 @@ export function ServiceMenChannels({handleScrollServiceMenProcessing}:{
         data={serviceMenChannels}
         keyExtractor={item=>item.id}
         renderItem={({ item }) => {
-          const getChannelUserNotMe = item?.channel_users.find(ele=>ele.user.user_type!=='provider-admin')
+          const getChannelUserNotMe = item?.channel_users.find(ele=>ele.user.user_type!=='provider-serviceman')
+          
           let profileImage = ''
-          if (getChannelUserNotMe?.user?.profile_image && getChannelUserNotMe?.user?.profile_image!=='default.png') {
-             profileImage = `${getMediaUrl()}/serviceman/profile/${getChannelUserNotMe?.user?.profile_image}`
+          if (getChannelUserNotMe?.user?.provider?.logo && getChannelUserNotMe?.user?.provider?.logo!=='default.png') {
+             profileImage = `${getMediaUrl()}/provider/logo/${getChannelUserNotMe?.user?.provider?.logo}`
           }
-          const getChannelUserMe = item?.channel_users.find(ele=>ele.user.user_type==='provider-admin')
+          const getChannelUserMe = item?.channel_users.find(ele=>ele.user.user_type==='provider-serviceman')
           
           let bgColor =  isDark ? appColors.darkCard : appColors.boxBg
           let colortext = isDark ? appColors.white : appColors.darkText
@@ -59,7 +60,7 @@ export function ServiceMenChannels({handleScrollServiceMenProcessing}:{
             activeOpacity={0.9}
             onPress={() => gotToChatScreen(
               item?.id,
-              getChannelUserNotMe?.user?.first_name+' '+(getChannelUserNotMe?.user?.last_name || '')
+              getChannelUserNotMe?.user?.provider?.company_name ||  ''
             
             )}
             style={[
@@ -74,7 +75,7 @@ export function ServiceMenChannels({handleScrollServiceMenProcessing}:{
                     styles.person,
                     { color: colortext },
                   ]}>
-                  {limitWords(getChannelUserNotMe?.user?.first_name+' '+(getChannelUserNotMe?.user?.last_name || ''),2)} 
+                  {limitWords(getChannelUserNotMe?.user?.provider?.company_name,2)} 
                 </Text>
                {item?.last_sent_message && <Text style={styles.msg}>{item?.last_sent_message}</Text>} 
               {item.last_sent_attachment_type && <Text style={styles.msg}><Attachment/>{t('newDeveloper.attachment')}</Text> }

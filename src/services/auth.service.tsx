@@ -8,6 +8,16 @@ interface Response {
 	config: any;
 	request?: any;
   }
+
+export const getAuthTokenCheck =   async (): Promise<Response> => {
+	try {
+		const response = await api.get('/auth/verify-token');
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+	
+}
 export const getAuthUserService =  async (): Promise<Response> => {
 	try {
 		const response = await api.get('/serviceman/info');

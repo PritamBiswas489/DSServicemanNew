@@ -1493,7 +1493,9 @@
            "History":"History",
            "bookingList":"Booking list",
            "bookingHistory":"Booking History",
-           "ChangeStatus":"Change Status"
+           "ChangeStatus":"Change Status",
+           "noNotificationFound":"No notifications found",
+           
 
             
           

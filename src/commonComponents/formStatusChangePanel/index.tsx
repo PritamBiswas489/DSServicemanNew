@@ -18,7 +18,7 @@ import ServiceProofImageOptions from '@src/otherComponent/ServiceProofImageOptio
 import CommonModal from '../commonModal';
 import UploadCompletedImage from './uploadCompletedImage';
 import CompleteServiceOtpPanel from '@src/otherComponent/completeServiceOtpPanel';
-import { updateBookingStatus } from '@src/services/booking.service';
+import { updateBookingStatus, updatePaymentStatus } from '@src/services/booking.service';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Toast from 'react-native-toast-message';
 import { bookingDetailsAction } from '@src/store/redux/booking-details-redux';
@@ -156,6 +156,11 @@ export function FormStatusChangePanel({ bookingId, setStatusModal }: { bookingId
             dispatch(canceledListingActions.resetState())
             dispatch(ongoingListingActions.resetState())
             setStatusModal(false)
+            if(bookingStatus === 'completed'){ //booking status complete
+                const formDataPaymentStatus = new FormData()
+                formDataPaymentStatus.append('payment_status','paid')
+                updatePaymentStatus(bookingId, formDataPaymentStatus)
+            }
     } else {
             Toast.show({
               type: 'error',

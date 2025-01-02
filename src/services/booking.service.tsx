@@ -37,6 +37,17 @@ export const updateBookingStatus = async (bookingId:string,data:FormData):Promis
 	}
 }
 
+export const updatePaymentStatus = async (bookingId:string,data:FormData):Promise<Response>=>{
+    data.append('_method','PUT')
+    try {
+		const response = await api.post(`/serviceman/booking/payment-status-update/${bookingId}`,data);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+
+}
+
 export const sendOtpNotification = async (bookingId:string): Promise<Response> => {
      
     try {

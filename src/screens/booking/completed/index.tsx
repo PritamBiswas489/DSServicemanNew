@@ -390,13 +390,13 @@ export function CompletedBooking({ route }: any) {
           />
         </>
       }
-      {!skeletonLoaderProcess && detailBookingDetails?.id && detailBookingDetails?.booking_status === 'completed' &&
+      {/* {!skeletonLoaderProcess && detailBookingDetails?.id && detailBookingDetails?.booking_status === 'completed' &&
         <GradientBtn
           additionalStyle={{ bottom: windowHeight(2) }}
           label={'newDeveloper.downloadInvoice'}
           onPress={() => { Alert.alert('Download Invoice') }}
         />
-      }
+      } */}
       {!skeletonLoaderProcess && detailBookingDetails?.id && (detailBookingDetails?.booking_status === 'ongoing' || detailBookingDetails?.booking_status === 'accepted') &&
         <>
           <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: windowHeight(2) }}>

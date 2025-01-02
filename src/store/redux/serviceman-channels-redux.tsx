@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ServiceManChannelInterface } from "@src/interfaces/serviceManChannelsInterface";
+import { ProviderChannelsInterface } from "@src/interfaces/providerChannelsInterface";
 
 interface serviceManChannelStateInterface{
-    channels:ServiceManChannelInterface[];
+    channels:ProviderChannelsInterface[];
     isFirstTimeLoading: boolean;
     limit:number;
     offset:number;

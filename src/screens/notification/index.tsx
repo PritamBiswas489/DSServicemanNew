@@ -99,11 +99,11 @@ export function Notification() {
         <View style={styles.marginTop}></View>
 
         {!isFirstTimeLoading && NotificationsList.length === 0 && <NoDataFound
-        headerTitle="newDeveloper.noServiceMenFound"
+        headerTitle="newDeveloper.noNotificationFound"
         image={noValue}
         infoImage={undefined}
-        title="newDeveloper.noServiceMenFound"
-        content="newDeveloper.noServiceFoundContent"
+        title="newDeveloper.noNotificationFound"
+        content="newDeveloper.noNotificationFound"
         gradiantBtn={
           <GradientBtn
             additionalStyle={{ bottom: windowHeight(2) }}

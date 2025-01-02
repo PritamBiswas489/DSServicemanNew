@@ -84,7 +84,7 @@ export default function RenderItem({ item }: {
     <>
 
       {item.messages.map((messgeData: ChatMessageInterface, messageIndex: number) => {
-        const isSender = messgeData.user.user_type === 'provider-admin'
+        const isSender = messgeData.user.user_type === 'provider-serviceman'
         let profileImage = ''
         if (messgeData?.user?.profile_image && messgeData?.user?.profile_image !== 'default.png' && messgeData.user.user_type === 'customer') {
           profileImage = `${getMediaUrl()}/user/profile_image/${messgeData?.user?.profile_image}`
