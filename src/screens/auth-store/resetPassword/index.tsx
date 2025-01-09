@@ -90,7 +90,7 @@ const ResetPassword = () => {
       setProcessingSpinner(true)
       
       const formData = new FormData()
-      formData.append('email', forgetPasswordEmail)
+      formData.append('phone', `+${forgetPasswordPhoneDialCode}${forgerPasswordPhone}`)
       formData.append('reset_token', enteredOtp)
       formData.append('password', form.password)
       formData.append('confirm_password', form.confirmPassword)
@@ -114,7 +114,7 @@ const ResetPassword = () => {
             text2: response?.data?.message,
         });
         dispatch(forgetPasswordAction.resetState())
-        navigate('Login');
+        navigate('Login',{deliveryMenLogin:true});
      }else{
       setProcessingSpinner(false)
           Toast.show({

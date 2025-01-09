@@ -1,4 +1,4 @@
-import { Alert, RefreshControl, ScrollView, View, StyleSheet } from 'react-native';
+import { Alert, RefreshControl, ScrollView, View, StyleSheet, Linking } from 'react-native';
  
 import React, { useState, useEffect, useReducer } from 'react';
 import { GlobalStyle } from '@style/styles';
@@ -23,9 +23,13 @@ import { updateStoreStatusProcess } from '@src/services/store/profile.service';
 import { getCurrentOrders } from '@src/services/store/order.service';
 import { CurrentOrderInterface } from '@src/interfaces/store/currentOrder.interface';
 import { saveVendorFcmTokenProcess } from '@src/services/store/profile.service';
-import messaging from '@react-native-firebase/messaging';
 import { storeHomeOrderActions } from '@src/store/redux/store/store-home-order';
-import notifee, { AndroidImportance } from '@notifee/react-native';
+import { clearValue, getValue } from '@src/utils/localstorage';
+import { PermissionsAndroid, Platform } from 'react-native';
+import { request, PERMISSIONS, check, RESULTS } from 'react-native-permissions';
+import NonCancelableAlert from '@src/commonComponents/nonCancelableAlert';
+import { NativeModules } from 'react-native';
+
 
 
 interface Response {
@@ -119,6 +123,7 @@ export default function StoreHome() {
 
   const [tabOrders, setTabOrders] = useState<CurrentOrderInterface[]>([])
   const [filterCampaign,setFilterCampaign] =  useState(false);
+  const [cancelableAlert,showNonCancelableAlert] =  useState(false);
   
 
   //profile reset 
@@ -170,27 +175,25 @@ export default function StoreHome() {
       dispatch(storeHomeOrderActions.setData({field:'refreshOrders','data':false}))
     }
   }, [refreshOrders])
+  //check save fcm token
+  const checkSaveFcmToken = async () =>{
+     const fcmTokenStorage = await getValue('fcmTokenStorage')
+     if(fcmTokenStorage){
+          const formData = new FormData()
+          formData.append('fcm_token',fcmTokenStorage)
+          const response:Response =  await saveVendorFcmTokenProcess(formData)
+          console.log(response?.data)
+          clearValue('fcmTokenStorage')
 
-  async function onDisplayNotification(title:string,body:string) {
-    //==== Create a channel =====//
-    await notifee.createChannel({
-      id: 'default_channel_id',
-      name: 'Default Channel',
-      sound: 'notification_sound', // Use the same name as the MP3 file without extension
-      importance: AndroidImportance.HIGH,
-    });
-  
-    //========= Display a notification ============//
-    await notifee.displayNotification({
-      title: title,
-      body: body,
-      android: {
-        channelId: 'default_channel_id',
-        smallIcon: 'ic_launcher', // optional, defaults to your app icon
-      },
-    });
+     }
+
   }
+  //Update user fcm token 
+  useEffect(()=>{
+      checkSaveFcmToken()
+  },[])
 
+  
 
   useEffect(() => {
     setStatusMenuList([
@@ -243,87 +246,52 @@ export default function StoreHome() {
   const navigateToOrderDetailsPage = (OrderId: number) => {
     navigation.navigate('StoreOrderDetails', { OrderId: String(OrderId) });
   }
- //============================== Save user token ==================================//
-  //Request user permission
-  async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
-  //Save fcm token data
-  const saveFcmTokenData = async (fcmToken:string) =>{
-       const formData = new FormData()
-       formData.append('fcm_token',fcmToken)
-       const response:Response =  await saveVendorFcmTokenProcess(formData)
-       console.log("================ FCM Token update =======================")
-       console.log(response?.data)
-  }
 
-  const getFCMToken = async () => {
+   
+
+  const requestLocationPermission = async () => {
+    
     try {
-      const fcmToken = await messaging().getToken();
-      if (fcmToken) {
-        saveFcmTokenData(fcmToken)
+      if (Platform.OS === 'android') {
+        
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+  
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          const backgroundGranted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION
+          );
+          if (backgroundGranted !== PermissionsAndroid.RESULTS.GRANTED) {
+            showNonCancelableAlert(true);
+          }
+        } else {
+          showNonCancelableAlert(true);
+        }
       } else {
-        console.log('Failed to get FCM token');
+        const result = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
+        if (result === RESULTS.GRANTED) {
+          showNonCancelableAlert(true);
+        } else {
+          showNonCancelableAlert(true);
+        }
       }
-    } catch (error) {
-      console.error('Error getting FCM token:', error);
+    } catch (err) {
+      console.warn(err);
+      showNonCancelableAlert(true);
     }
   };
 
-  useEffect(() => {
-    requestUserPermission();
-    getFCMToken();
-
-    const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-      onDisplayNotification(remoteMessage.notification?.title || '',remoteMessage.notification?.body || '')
-            Alert.alert(remoteMessage.notification?.title || t('newDeveloper.NewNotification'), remoteMessage.notification?.body,
-              [
-                {
-                  text: "Cancel",
-                  onPress: () => console.log("Cancel Pressed"),
-                  style: "cancel",     
-                },
-                { 
-                  text: "OK", 
-                  onPress: () => {}
-                }
-              ]
-            );
-    });
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log('Notification caused app to open from background state:', remoteMessage.notification);
-    });
+  useEffect(()=>{
      
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          console.log('Notification caused app to open from quit state:', remoteMessage.notification);
-        }
-      });
-    const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(token => {
-      saveFcmTokenData(token)
-    });
-
-    return () => {
-      unsubscribeOnMessage();
-      unsubscribeOnTokenRefresh();
-    };
-  }, []);
-
-  //============================== End save user token ==================================// 
+    requestLocationPermission()
+  },[])
+  
 
   return (
     <>
       <View style={[styles.container, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
-        <Header showBackArrow={false} title={'newDeveloper.DorkarMallSeller'} />
+        <Header showBackArrow={false} title={'newDeveloper.DorkarDeliveryBoy'} />
         <ScrollView
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           showsVerticalScrollIndicator={false}
@@ -338,10 +306,10 @@ export default function StoreHome() {
             },
           ]}
         >
-          <View><StoreStatus updateStoreStatus={updateStoreStatus} /></View>
+          {/* <View><StoreStatus updateStoreStatus={updateStoreStatus} /></View>
           <View><OrderStatusList statusMenuList={statusMenuList} setTabStatus={setTabStatus} /></View>
           <View style={{marginTop:15}}><CampaignFilter filterCampaign={filterCampaign} setFilterCampaign={setFilterCampaign} /></View>
-          <View><OrderList tabOrders={tabOrders} navigateToOrderDetailsPage={navigateToOrderDetailsPage} /></View>
+          <View><OrderList tabOrders={tabOrders} navigateToOrderDetailsPage={navigateToOrderDetailsPage} /></View> */}
           <Spinner
             visible={processingLoader}
             textContent={'Processing.....'}
@@ -352,7 +320,7 @@ export default function StoreHome() {
       </View>
 
 
-
+    {cancelableAlert && <NonCancelableAlert requestLocationPermission={requestLocationPermission} message={t('newDeveloper.MapLocationError')}/>} 
     </>
   );
 }

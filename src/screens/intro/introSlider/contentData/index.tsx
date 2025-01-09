@@ -25,7 +25,6 @@ export default function ContentData({
         label1="newDeveloper.servicemanlogin"
         
         onButtonClick={() => {
-          Alert.alert('Will start durng deliveryman app')
           navigate('Login',{deliveryMenLogin:true});
         }}
         label="newDeveloper.deliveryManLogin"

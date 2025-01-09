@@ -10,7 +10,7 @@ interface Response {
   }
 export const getAuthUserService =  async (): Promise<Response> => {
 	try {
-		const response = await api.get('/vendor/profile');
+		const response = await api.get('/delivery-man/profile');
 		return response;
 	} catch (error:any) {
 		return error.response;
@@ -19,7 +19,7 @@ export const getAuthUserService =  async (): Promise<Response> => {
 
 export const deleteProviderOwnAccount = async(): Promise<Response> => {
 	try {
-		const response = await api.delete('/vendor/remove-account');
+		const response = await api.delete('/delivery-man/remove-account');
 		return response;
 	} catch (error:any) {
 		return error.response;

@@ -7724,6 +7724,11 @@ react-native-paper@^5.12.3:
     color "^3.1.2"
     use-latest-callback "^0.1.5"
 
+react-native-permissions@^5.2.2:
+  version "5.2.2"
+  resolved "https://registry.npmjs.org/react-native-permissions/-/react-native-permissions-5.2.2.tgz"
+  integrity sha512-Mae5VKT8bjliksONZ+jMYTPf90wxuhn1H1FiH/kRfw0Y5tW5WIV1P8t/KiEHKZRvimnrInimuCr+EpRzK0IPWQ==
+
 react-native-picker-select@^9.1.3:
   version "9.1.3"
   resolved "https://registry.npmjs.org/react-native-picker-select/-/react-native-picker-select-9.1.3.tgz"
@@ -7872,7 +7877,7 @@ react-native-wheel-pick@^1.2.2:
   dependencies:
     moment "^2.19.1"
 
-react-native-windows@*, react-native-windows@>=0.62:
+react-native-windows@*, react-native-windows@>=0.62, react-native-windows@>=0.70.0:
   version "0.76.3"
   resolved "https://registry.npmjs.org/react-native-windows/-/react-native-windows-0.76.3.tgz"
   integrity sha512-IE0t22dWZVKna9LIT9Rkujn0Xtnhok8nmte1kX5wZYhuHL0gtd3XQiNngVTI8oGOaxbb2v3j8tl5ZBYF/gfP0A==
@@ -7924,7 +7929,7 @@ react-native-windows@*, react-native-windows@>=0.62:
     ws "^6.2.3"
     yargs "^17.6.2"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@^0.76.0, "react-native@>= 0.30.0", "react-native@>= 0.59", "react-native@>= 0.62", "react-native@>= 0.64.3", react-native@>=0.29, react-native@>=0.40.0, react-native@>=0.42.0, react-native@>=0.47, react-native@>=0.50.1, react-native@>=0.57, react-native@>=0.59, react-native@>=0.60.0, react-native@>=0.65.0, react-native@>=0.66.0, "react-native@>=0.8.0 || 0.8.0-rc || 0.8.0-rc.2 || 0.9.0-rc || 0.10.1", react-native@0.74.2:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", react-native@^0.76.0, "react-native@>= 0.30.0", "react-native@>= 0.59", "react-native@>= 0.62", "react-native@>= 0.64.3", react-native@>=0.29, react-native@>=0.40.0, react-native@>=0.42.0, react-native@>=0.47, react-native@>=0.50.1, react-native@>=0.57, react-native@>=0.59, react-native@>=0.60.0, react-native@>=0.65.0, react-native@>=0.66.0, react-native@>=0.70.0, "react-native@>=0.8.0 || 0.8.0-rc || 0.8.0-rc.2 || 0.9.0-rc || 0.10.1", react-native@0.74.2:
   version "0.74.2"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.74.2.tgz"
   integrity sha512-EBMBjPPL4/GjHMP4NqsZabT3gI5WU9cSmduABGAGrd8uIcmTZ5F2Ng9k6gFmRm7n8e8CULxDNu98ZpQfBjl7Bw==
@@ -8002,7 +8007,7 @@ react-test-renderer@18.2.0:
     react-shallow-renderer "^16.15.0"
     scheduler "^0.23.0"
 
-react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", "react@^17 || ^18", react@^18.0, react@^18.2.0, "react@>= 15.2.1", "react@>= 16.8.0", "react@>= 17.0.1", react@>=0.14.8, react@>=16, react@>=16.3.0, react@>=16.8, react@>=16.8.0, react@>=17.0.0, react@18.2.0:
+react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", "react@^17 || ^18", react@^18.0, react@^18.2.0, "react@>= 15.2.1", "react@>= 16.8.0", "react@>= 17.0.1", react@>=0.14.8, react@>=16, react@>=16.3.0, react@>=16.8, react@>=16.8.0, react@>=17.0.0, react@>=18.1.0, react@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==

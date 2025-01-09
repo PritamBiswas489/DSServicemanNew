@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">DS Captain</string>
+    <string name="app_name">DS Serviceman</string>
+    <string name="location_permission_description">We need location access to track your location in the background for deliveries.</string>
 </resources>

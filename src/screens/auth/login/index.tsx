@@ -92,7 +92,7 @@ const Login = ({ route }: any) => {
     if (isDeliveryManLogin) {
       // setForm({ ...form, ['phone']: 'fashion1@gmail.com', ['password']: '@Dorkar1234' });
     //  setForm({ ...form, ['phone']: 'foodstore1@gmail.com', ['password']: '@Dorkar1234' });
-     setForm({ ...form, ['phone']: 'arup1012@gmail.com', ['password']: '@Kolkata1234' });
+     setForm({ ...form, ['phone']: '8111111111', ['password']: '@Dboy1234' });
     //  setForm({ ...form, ['phone']: 'Munmun2020@gmail.com', ['password']: '@Kolkata1234' });
       // setForm({ ...form, ['phone']: 'medicine1@gmail.com', ['password']: '@Dorkar1234' });
     } else {
@@ -127,65 +127,63 @@ const Login = ({ route }: any) => {
       isDeliveryManLogin ? handleDeliveryManLoginHandle() : handleServiceManLoginHandle()
     }
   };
+  //handle deliveryman login
   const handleDeliveryManLoginHandle = async () => {
     // setIsLoading(true)
-    // const data: {
-    //   phone: string,
-    //   password: string,
-    //   vendor_type: string
-    // } = {
-    //   phone: form.phone,
-    //   password: form.password,
-    //   vendor_type: 'owner'
-    // };
-
+    const data: { phone: string, password: string } = {
+      phone: `+${loginPhoneDialCode}${form.phone}`,
+      password: form.password,
+    };
     
-    //     const response: LoginResponse = await storeLoginService(data);
-    //     if (response?.data?.errors) {
-    //         Toast.show({
-    //           type: 'error',
-    //           text1: 'ERROR',
-    //           text2: response?.data?.errors[0]?.message,
-    //         });
-    //         setIsLoading(false)
-    //     } else if (response?.data?.token) {
-    //           await setAuthTokens(response?.data?.token, null);
-    //           const responseuser = await storeAuthService()
-    //           if(
-    //             responseuser?.data?.errors && 
-    //             responseuser?.data?.errors[0]?.code === 'auth-001'){
-    //               navigation.replace('AuthNavigation');
-    //               return
-    //           }
-    //           if (responseuser?.data?.id) {
-    //                   Toast.show({
-    //                     type: 'success',
-    //                     text1: 'SUCCESS',
-    //                     text2: t('newDeveloper.successfullyLoggedIn'),
-    //                   });
-    //                   dispatch(storeProfileDataActions.setData(responseuser?.data))
-    //                   setIsLoading(false)
-    //                   setValue('loggedInUserType', 'Seller')
-    //                   setLoggedInUserType('Seller')
-    //                   navigation.reset({
-    //                     index: 0,
-    //                     routes: [{ name: 'BottomTabSeller' }],
-    //                   });
-    //           } else {
-    //                 Toast.show({
-    //                   type: 'error',
-    //                   text1: 'ERROR',
-    //                   text2: t('newDeveloper.errorLoggedIn'),
-    //                 });
-    //           }
-    //     } else {
-    //       Toast.show({
-    //         type: 'error',
-    //         text1: 'ERROR',
-    //         text2: t('newDeveloper.errorLoggedIn'),
-    //       });
-    //       setIsLoading(false)
-    //     }
+        const response: LoginResponse = await storeLoginService(data);
+         
+        if (response?.data?.errors) {
+            Toast.show({
+              type: 'error',
+              text1: 'ERROR',
+              text2: response?.data?.errors[0]?.message,
+            });
+            setIsLoading(false)
+        } else if (response?.data?.token) {
+          
+              await setAuthTokens(response?.data?.token, null);
+              const responseuser = await storeAuthService()
+
+              if(
+                responseuser?.data?.errors && 
+                responseuser?.data?.errors[0]?.code === 'auth-001'){
+                  navigation.replace('AuthNavigation');
+                  return
+              }
+              if (responseuser?.data?.id) {
+                      Toast.show({
+                        type: 'success',
+                        text1: 'SUCCESS',
+                        text2: t('newDeveloper.successfullyLoggedIn'),
+                      });
+                      dispatch(storeProfileDataActions.setData(responseuser?.data))
+                      setIsLoading(false)
+                      setValue('loggedInUserType', 'Seller')
+                      setLoggedInUserType('Seller')
+                      navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'BottomTabSeller' }],
+                      });
+              } else {
+                    Toast.show({
+                      type: 'error',
+                      text1: 'ERROR',
+                      text2: t('newDeveloper.errorLoggedIn'),
+                    });
+              }
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'ERROR',
+            text2: t('newDeveloper.errorLoggedIn'),
+          });
+          setIsLoading(false)
+        }
 
        
       

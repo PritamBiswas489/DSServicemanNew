@@ -15,18 +15,19 @@ import SkeletonLoader from '@src/commonComponents/SkeletonLoader';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
 import HomeNoFataFound from '@src/commonComponents/homeNoDataFound';
-import messaging from '@react-native-firebase/messaging';
+ 
 import { Platform } from 'react-native';
 import { saveFcmTokenProcess } from '@src/services/profile.service';
 import { getAuthUserService } from '@src/services/auth.service';
 import { Text } from 'react-native';
-import notifee, { AndroidImportance } from '@notifee/react-native';
+ 
 import { serviceManAccountDataActions } from '@src/store/redux/serviceman/service-man-account-data.redux';
 import RecentBookingActivities from './homeBookingList';
 import { homeTopCardData, homeBookingStat, homeRecentBookings,  } from '@src/services/home.service';
 import { serviceManHomeDataActions } from '@src/store/redux/serviceman/service-man-home-data.redux';
 import { getPagesContent } from '@src/services/settings.service';
 import { contentPagesActions } from '@src/store/redux/content-pages-redux';
+import { clearValue, getValue } from '@src/utils/localstorage';
 
 
 type navigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -103,99 +104,25 @@ export function Home() {
   },[contentFetched])
 
   
-  //on display notification
-  async function onDisplayNotification(title:string,body:string) {
-    //==== Create a channel =====//
-    await notifee.createChannel({
-      id: 'default_channel_id',
-      name: 'Default Channel',
-      sound: 'notification_sound', // Use the same name as the MP3 file without extension
-      importance: AndroidImportance.HIGH,
-    });
-  
-    //========= Display a notification ============//
-    await notifee.displayNotification({
-      title: title,
-      body: body,
-      android: {
-        channelId: 'default_channel_id',
-        smallIcon: 'ic_launcher', // optional, defaults to your app icon
-      },
-    });
-  }
-  
-  async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
+  const checkSaveFcmToken = async () =>{
+    const fcmTokenStorage = await getValue('fcmTokenStorage')
+    if(fcmTokenStorage){
+         const formData = new FormData()
+         formData.append('fcm_token',fcmTokenStorage)
+         const response:Response =  await saveFcmTokenProcess(formData)
+         console.log(response?.data)
+         clearValue('fcmTokenStorage')
     }
-  }
+
+ }
+
+
+
+   useEffect(()=>{
+        checkSaveFcmToken()
+    },[])
  
-  //==== Save fcm token ======//
-  const saveFcmTokenData = async (fcmToken:string) =>{
-     console.log({fcmToken})
-     const formData = new FormData()
-     formData.append('fcm_token',fcmToken)
-     saveFcmTokenProcess(formData)
-  }
-
-  const getFCMToken = async () => {
-    try {
-      const fcmToken = await messaging().getToken();
-      if (fcmToken) {
-        saveFcmTokenData(fcmToken)
-      } else {
-        console.log('Failed to get FCM token');
-      }
-    } catch (error) {
-      console.error('Error getting FCM token:', error);
-    }
-  };
-  useEffect(() => {
-    requestUserPermission();
-    getFCMToken();
-
-    const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-     
-      onDisplayNotification(remoteMessage.notification?.title || '',remoteMessage.notification?.body || '')
-      Alert.alert(remoteMessage.notification?.title || t('newDeveloper.NewNotification'), remoteMessage.notification?.body,
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",     
-          },
-          { 
-            text: "OK", 
-            onPress: () => navigate('Notification') 
-          }
-        ]
-      );
-    });
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log('Notification caused app to open from background state:', remoteMessage.notification);
-    });
-     
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          console.log('Notification caused app to open from quit state:', remoteMessage.notification);
-        }
-      });
-    const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(token => {
-      saveFcmTokenData(token)
-    });
-
-    return () => {
-      unsubscribeOnMessage();
-      unsubscribeOnTokenRefresh();
-    };
-  }, []);
+  
 
   // load home page date
   const loadDashboardHomeData = async ()=>{

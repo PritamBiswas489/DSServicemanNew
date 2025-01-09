@@ -32,7 +32,7 @@ interface Response {
 }
 
 const ForgotPasswordStore = () => {
-   
+  
   const dispatch = useDispatch()
   const { navigate } = useNavigation<forgotPswProps>();
   const [errors, setErrors] = useState({ phoneNo: '' });
@@ -41,7 +41,7 @@ const ForgotPasswordStore = () => {
   const [selectOptionModal, setOptionModal] = useState<boolean>(false);
   const [processingSpinner,setprocessingSpinner] = useState<boolean>(false);
 
-    const forget_password_verification_method:string = 'email'
+    const forget_password_verification_method:string = 'phone'
    
   //  const forget_password_verification_method:string = 'phone' 
  
@@ -77,7 +77,7 @@ const ForgotPasswordStore = () => {
   }, [forget_password_verification_method])
 
   useEffect(()=>{
-    setEmailAddress('fashion1@gmail.com')
+    setPhoneNumber('8111111111')
   },[])
 
   //get otp function
@@ -110,11 +110,13 @@ const ForgotPasswordStore = () => {
     if(error === false){
       setprocessingSpinner(true)
       //send otp to the user phone or email address
-       
-      const formData:{email:string} = {
-        email:forgetPasswordEmail
+      const formData:{phone:string} = {
+        phone:`+${forgetPasswordPhoneDialCode}${forgerPasswordPhone}`
       }
+       
       const response:Response = await getForgetpasswordOtp(formData)
+      console.log("=== forget password response ====")
+      console.log(response?.data)
        
       if(response?.data?.errors){
           Toast.show({
@@ -200,15 +202,10 @@ const ForgotPasswordStore = () => {
 
             }
 
-
-
             <View style={styles.blankView}></View>
             <GradientBtn
-              accountText="introSlider.anAccount"
-              authText="introSlider.signUp"
               label="auth.sendOtp"
               onPress={onOtpClick}
-              gotoScreen={() => setOptionModal(true)}
             />
           </View>
         }

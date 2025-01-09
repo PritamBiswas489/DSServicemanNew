@@ -29,20 +29,24 @@ api.interceptors.request.use(async (config) => {
 			'Content-Type': 'multipart/form-data',
 			'Authorization': 'Bearer ' + accessToken,
             'X-localization': languageCode || 'en',  
-            'vendorType':'owner'
+            
 		};
 	}else{
 		config.headers = {
             ...config.headers,
 			'Authorization': 'Bearer ' + accessToken,
             'X-localization': languageCode || 'en',
-            'vendorType':'owner' 
+            
 		};
 	}
-    console.log(config.headers)
+
+    const separator = config.url.includes('?') ? '&' : '?';
+    config.url = `${config.url}${separator}token=${accessToken}`;
+
 	const fullRequestUrl = `${config.baseURL}${config.url}`;
 	console.log('Request URL:', fullRequestUrl);
 	
+    
 	return config;
 });
 

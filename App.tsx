@@ -3,7 +3,14 @@ import Navigation from './src/navigation';
 import {ThemeContextType} from './src/utils/types';
 import {useTranslation} from 'react-i18next';
 
-import {ScrollView, TouchableOpacity, View,Text} from 'react-native';
+import {ScrollView, TouchableOpacity, View,Text, Alert, PermissionsAndroid} from 'react-native';
+import { checkLoggedInUserType } from '@src/utils/functions';
+import { saveVendorFcmTokenProcess } from '@src/services/store/profile.service';
+import messaging from '@react-native-firebase/messaging';
+import notifee, { AndroidImportance } from '@notifee/react-native';
+import { setValue, clearValue } from '@src/utils/localstorage';
+import { saveFcmTokenProcess } from '@src/services/profile.service';
+import Geolocation from 'react-native-geolocation-service';
 
 const initialContextVal = {
   currSymbol: '$',
@@ -22,7 +29,14 @@ const initialContextVal = {
   setLoggedInUserType:()=>{}, 
   t: '',
 };
-
+interface Response {
+  data: any;
+  status: number;
+  statusText: string;
+  headers: any;
+  config: any;
+  request?: any;
+}
 export const ThemeContext = createContext<ThemeContextType>(initialContextVal);
 
 const App: React.FC = () => {
@@ -53,6 +67,156 @@ const App: React.FC = () => {
     setLoggedInUserType
   };
 
+  async function onDisplayNotification(title:string,body:string) {
+    //==== Create a channel =====//
+    await notifee.createChannel({
+      id: 'default_channel_id',
+      name: 'Default Channel',
+      sound: 'notification_sound', // Use the same name as the MP3 file without extension
+      importance: AndroidImportance.HIGH,
+    });
+  
+    //========= Display a notification ============//
+    await notifee.displayNotification({
+      title: title,
+      body: body,
+      android: {
+        channelId: 'default_channel_id',
+        smallIcon: 'ic_launcher', // optional, defaults to your app icon
+      },
+    });
+  }
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+   //save fcm token
+   const saveFcmTokenData = async (fcmToken:string) =>{
+        console.log(fcmToken);
+        const getLoggedInUserType = await checkLoggedInUserType()
+        if(getLoggedInUserType === 'Seller'){
+          const formData = new FormData()
+          formData.append('fcm_token',fcmToken)
+          const response:Response =  await saveVendorFcmTokenProcess(formData)
+          console.log(response?.data)
+          clearValue('fcmTokenStorage')
+
+        }else if(getLoggedInUserType === 'Provider'){
+          const formData = new FormData()
+          formData.append('fcm_token',fcmToken)
+          const response:Response =  await saveFcmTokenProcess(formData)
+          console.log(response?.data)
+          clearValue('fcmTokenStorage')
+
+        }else{
+          setValue('fcmTokenStorage',fcmToken)
+        }
+    }
+    const getFCMToken = async () => {
+      try {
+        const fcmToken = await messaging().getToken();
+        if (fcmToken) {
+          saveFcmTokenData(fcmToken)
+        } else {
+          console.log('Failed to get FCM token');
+        }
+      } catch (error) {
+        console.error('Error getting FCM token:', error);
+      }
+    };
+
+    useEffect(() => {
+      requestUserPermission();
+      getFCMToken();
+  
+      const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+        onDisplayNotification(remoteMessage.notification?.title || '',remoteMessage.notification?.body || '')
+              Alert.alert(remoteMessage.notification?.title || t('newDeveloper.NewNotification'), remoteMessage.notification?.body,
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",     
+                  },
+                  { 
+                    text: "OK", 
+                    onPress: () => {}
+                  }
+                ]
+              );
+      });
+      messaging().onNotificationOpenedApp(remoteMessage => {
+        console.log('Notification caused app to open from background state:', remoteMessage.notification);
+      });
+       
+      messaging()
+        .getInitialNotification()
+        .then(remoteMessage => {
+          if (remoteMessage) {
+            console.log('Notification caused app to open from quit state:', remoteMessage.notification);
+          }
+        });
+      const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(token => {
+        saveFcmTokenData(token)
+      });
+  
+      return () => {
+        unsubscribeOnMessage();
+        unsubscribeOnTokenRefresh();
+      };
+    }, []);
+
+    const startLocationTracking = () => {
+      Geolocation.watchPosition(
+        (position) => {
+          console.log('Location:', position);
+          // Send position to your server
+        },
+        (error) => {
+          console.warn(error);
+        },
+        {
+          enableHighAccuracy: true,
+          distanceFilter: 10,
+          interval: 5000, // Update every 5 seconds
+          fastestInterval: 2000,
+          useSignificantChanges: false,
+        }
+      );
+    }; 
+
+
+    const checkingSeller = async ()=>{
+      const checkUserType = await checkLoggedInUserType()
+      if(checkUserType === 'Seller'){
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        const tt = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+        );
+         
+        const backgroundGranted = await PermissionsAndroid.check(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION
+                  );
+                  console.log({granted})
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          // startLocationTracking()
+         }
+      }
+    }
+    useEffect(()=>{
+      checkingSeller()
+
+    },[])
+ 
   return (
     <ThemeContext.Provider value={contextValue}>
       <Navigation />

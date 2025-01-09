@@ -30,7 +30,7 @@ interface Response {
 
 const VerifyOtp=()=> {
  
-  const inputCount = 4;
+  const inputCount = 6;
   const dispatch = useDispatch()
   const {navigate} = useNavigation<otpProps>(); 
   const {isDark,t} = useValues();
@@ -39,6 +39,10 @@ const VerifyOtp=()=> {
 
   const {
     email: forgetPasswordEmail,
+    phoneCountryCode: forgetPasswordPhoneCountryCode,
+    phoneDialCode: forgetPasswordPhoneDialCode,
+    phone: forgerPasswordPhone,
+    identity_type: forgetPasswordIdentityType,
   } = useSelector((state: RootState) => state['forgetPassword'])
   
 
@@ -51,7 +55,7 @@ const VerifyOtp=()=> {
 
   const onOtpClick = async () => {
     setprocessingSpinner(true)
-    if(enteredOtp.length  < 4){
+    if(enteredOtp.length  < 6){
       Toast.show({
         type: 'error',
         text1: 'error',
@@ -62,7 +66,7 @@ const VerifyOtp=()=> {
     
     const response:Response = await verifyToken(
       {
-        email:forgetPasswordEmail,
+        phone:`+${forgetPasswordPhoneDialCode}${forgerPasswordPhone}`,
         reset_token:enteredOtp
       })
 

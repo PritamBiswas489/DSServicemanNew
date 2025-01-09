@@ -28,6 +28,7 @@ import { storeHomeOrderActions } from '@src/store/redux/store/store-home-order';
 import { serviceManAccountDataActions } from '@src/store/redux/serviceman/service-man-account-data.redux';
 import { serviceManConfigAppActions } from '@src/store/redux/serviceman/service-man-config-redux';
 import { serviceManHomeDataActions } from '@src/store/redux/serviceman/service-man-home-data.redux';
+ 
 
 type navigation = NativeStackNavigationProp<RootStackParamList>;
 const SplashScreen = () => {
@@ -244,7 +245,7 @@ const SplashScreen = () => {
   };
   
   //check vendor
-  const checkVendor = async ()=>{
+  const checkDeliveryBoy = async ()=>{
     setCheckingLoader(true)
     const responseStoreConfig = await getStoreSettings()
     if(responseStoreConfig?.data?.business_name){
@@ -255,6 +256,7 @@ const SplashScreen = () => {
        return
     }
     const responseuser = await storeAuthService()
+    //Redirect
     if (responseuser?.data?.id) {
         dispatch(storeProfileDataActions.setData(responseuser?.data))
         dispatch(storeHomeOrderActions.setData({field:'refreshOrders','data':true}))
@@ -334,7 +336,7 @@ const SplashScreen = () => {
                  assignDefaultHomeStatisticsData()
                  checkuser()
             }else if(getUserType === 'Seller'){
-                  // checkVendor()
+                  checkDeliveryBoy()
             }else{
                 replace('IntroSlider');
             }

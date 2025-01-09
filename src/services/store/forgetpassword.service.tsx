@@ -10,18 +10,18 @@ interface Response {
     request?: any;
 }
 
-export const getForgetpasswordOtp = async (formData: {email:string}): Promise<Response> => {
+export const getForgetpasswordOtp = async (formData: {phone:string}): Promise<Response> => {
     try {
-        const response = await api.post(`/auth/vendor/forgot-password`,formData);
+        const response = await api.post(`/auth/delivery-man/forgot-password`,formData);
         return response;
     } catch (error: any) {
         return error.response;
     }
 }
 
-export const verifyToken = async (formData: {email:string,reset_token:string}): Promise<Response> => {
+export const verifyToken = async (formData: {phone:string,reset_token:string}): Promise<Response> => {
     try {
-        const response = await api.post(`/auth/vendor/verify-token`,formData);
+        const response = await api.post(`/auth/delivery-man/verify-token`,formData);
         return response;
     } catch (error: any) {
         return error.response;
@@ -46,7 +46,7 @@ export const resetPassword = async(formData:{identity:string,identity_type:strin
 export const resetPasswordNew = async(formData:FormData): Promise<Response> => {
 	 
     try {
-		const response = await API_PROCESS.post(`/auth/vendor/reset-password`,formData);
+		const response = await API_PROCESS.post(`/auth/delivery-man/reset-password`,formData);
 		return response;
 	} catch (error:any) {
 		return error.response;

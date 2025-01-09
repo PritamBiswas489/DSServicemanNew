@@ -1,7 +1,7 @@
 import api from "@src/config/frontApi.config.store";
 
 interface LoginData {
-  email: string;
+  phone: string;
   password: string;
 }
 
@@ -16,7 +16,7 @@ interface Response {
 
 export const loginService = async (data: LoginData): Promise<Response> => {
   try {
-    const response = await api.post<Response>('/auth/vendor/login', data);
+    const response = await api.post<Response>('/auth/delivery-man/login', data);
     return response;
   } catch (error: any) {
     return error.response;

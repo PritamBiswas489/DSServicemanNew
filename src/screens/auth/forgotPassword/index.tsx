@@ -32,6 +32,7 @@ interface Response {
 }
 
 const ForgotPassword = () => {
+ 
   const dispatch = useDispatch()
   const { navigate } = useNavigation<forgotPswProps>();
   const [errors, setErrors] = useState({ phoneNo: '' });

@@ -1495,7 +1495,8 @@
            "bookingHistory":"Booking History",
            "ChangeStatus":"Change Status",
            "noNotificationFound":"No notifications found",
-           
+           "DorkarDeliveryBoy":"Deliveryman",
+           "MapLocationError":"This app collects location data to enable location fetching at the time of your online status, even when the app is closed or not in use"
 
             
           
