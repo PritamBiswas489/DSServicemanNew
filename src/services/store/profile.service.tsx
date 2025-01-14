@@ -11,7 +11,7 @@ interface Response {
 
 export const updateProfileData = async (data:FormData): Promise<Response> => {
     try {
-		const response = await api.post('/vendor/update-profile',data);
+		const response = await api.post('/delivery-man/update-profile',data);
 		return response;
 	} catch (error:any) {
 		return error.response;
@@ -52,16 +52,30 @@ export const saveVendorFcmTokenProcess = async (formData:FormData):Promise<Respo
 		return error.response;
 	}
 }
+
+export const recordLocationData  = async (formData:FormData):Promise<Response> => { 
+	try {
+		const response = await api.post(`/delivery-man/record-location-data`,formData);
+		console.log(response?.data)
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+
+
+}
+
+//list-record-location-data
+
+export const listRecordLocationData = async ():Promise<Response> => { 
+	try {
+		const response = await api.get(`/delivery-man/list-record-location-data`);
+		console.log(response?.data)
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
  
 
-//save fcm token process
-// export const saveFcmTokenProcess = async (formData:FormData):Promise<Response> => { 
-// 	formData.append('_method','PUT')
-// 	try {
-// 		const response = await api.post(`/provider/update/fcm-token`,formData);
-// 		console.log(response?.data)
-// 		return response;
-// 	} catch (error:any) {
-// 		return error.response;
-// 	}
-// }
+ 

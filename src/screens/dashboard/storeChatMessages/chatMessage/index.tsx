@@ -42,6 +42,7 @@ interface MessageDataInterFace {
 export default function ChatView(
   {
       vendorid,
+      delivery_man_id,
       otherUserId,
       receiverScreenName,
       messageData,
@@ -52,6 +53,7 @@ export default function ChatView(
 }:
   {
     vendorid:number,
+    delivery_man_id:string | number | null,
     otherUserId:number,
     receiverScreenName:string,
     messageData:MessageDataInterFace[],
@@ -94,6 +96,11 @@ export default function ChatView(
         setNewMessage('')
         setSelectedImageUri(null)
    }
+
+  //  useEffect(()=>{
+  //    console.log(JSON.stringify(messageData))
+  //    console.log({delivery_man_id})
+  //  },[messageData])
  
 
   return (  
@@ -108,7 +115,7 @@ export default function ChatView(
             keyExtractor={(item)=>item.date}
             renderItem={({ item }) => (
               <>
-                <RenderItem  vendorid={vendorid} otherUserId={otherUserId} receiverProfileImage={receiverProfileImage} receiverScreenName={receiverScreenName} item={item} />
+                <RenderItem delivery_man_id={delivery_man_id}  vendorid={vendorid} otherUserId={otherUserId} receiverProfileImage={receiverProfileImage} receiverScreenName={receiverScreenName} item={item} />
               </>
             )}
             onEndReachedThreshold={0.1} // Trigger when 10% away from the end

@@ -102,8 +102,8 @@ export function StoreChatMessages({ route }: any) {
     if(params?.conversation_id){ //conversation id
       setConversationId(params?.conversation_id)
     }
-    if(params?.delivery_man_id){ //delivery man id
-      setDeliveryManId(params?.delivery_man_id)
+    if(params?.vendor_id){ //delivery man id
+      setVendorid(params?.vendor_id)
     }
     if(params?.user_id){ //user id 
       setUserId(params?.user_id)
@@ -118,8 +118,8 @@ export function StoreChatMessages({ route }: any) {
             if(conversation_id){
               query  = `conversation_id=${conversation_id}` //conversation id
             }
-            if(delivery_man_id){
-              query  = `delivery_man_id=${delivery_man_id}` //delivery man id
+            if(vendorid){
+              query  = `vendor_id=${vendorid}` //delivery man id
             }
             if(user_id){
               query  = `user_id=${user_id}` //user id
@@ -173,11 +173,11 @@ export function StoreChatMessages({ route }: any) {
 useEffect(()=>{
     if(CONVERSATION_STATE?.conversation && CONVERSATION_STATE?.conversation?.id){
           let fullName:string | null = ''
-          if(!CONVERSATION_STATE?.conversation?.sender?.vendor_id){
+          if(!CONVERSATION_STATE?.conversation?.sender?.deliveryman_id){
             fullName = CONVERSATION_STATE?.conversation?.sender?.f_name + ' '+CONVERSATION_STATE?.conversation.sender?.l_name
             setReceiverProfileImage( CONVERSATION_STATE?.conversation?.sender?.image_full_url)
            
-          }else if(!CONVERSATION_STATE?.conversation?.receiver?.vendor_id){
+          }else if(!CONVERSATION_STATE?.conversation?.receiver?.deliveryman_id){
             fullName = CONVERSATION_STATE?.conversation?.receiver?.f_name + ' '+CONVERSATION_STATE?.conversation?.receiver?.l_name
             setReceiverProfileImage( CONVERSATION_STATE?.conversation?.receiver?.image_full_url)
           }
@@ -188,16 +188,16 @@ useEffect(()=>{
           setReciverType(CONVERSATION_STATE?.conversation?.receiver_type)
           //set vendor and other user id
           if(CONVERSATION_STATE?.conversation?.sender){
-            if(CONVERSATION_STATE?.conversation?.sender?.vendor_id){
-              setVendorid(CONVERSATION_STATE?.conversation?.sender?.id)
+            if(CONVERSATION_STATE?.conversation?.sender?.deliveryman_id){
+              setDeliveryManId(CONVERSATION_STATE?.conversation?.sender?.id)
             }else{
               setOtherUserId(CONVERSATION_STATE?.conversation?.sender?.id)
             }
           }
 
           if(CONVERSATION_STATE?.conversation?.receiver){
-            if(CONVERSATION_STATE?.conversation?.receiver?.vendor_id){
-              setVendorid(CONVERSATION_STATE?.conversation?.receiver?.id)
+            if(CONVERSATION_STATE?.conversation?.receiver?.deliveryman_id){
+              setDeliveryManId(CONVERSATION_STATE?.conversation?.receiver?.id)
             }else{
               setOtherUserId(CONVERSATION_STATE?.conversation?.receiver?.id)
             }
@@ -212,11 +212,11 @@ useEffect(()=>{
        loadChatMessages(CONVERSATION_STATE.limit,CONVERSATION_STATE.offset)
   }else{
     const intervalId = setInterval(() => {
-      loadChatMessages(10,1)
+      // loadChatMessages(10,1)
     }, 3000);
     return () => clearInterval(intervalId);
   }
-},[isFirstTimeLoading,clickLoadMore,conversation_id,delivery_man_id,user_id])
+},[isFirstTimeLoading,clickLoadMore,conversation_id,delivery_man_id,user_id, vendorid])
 
 
 
@@ -235,9 +235,9 @@ const handleSendMessage = async (message:string,imageFile:string | null) => {
      formData.append('conversation_id',conversation_id)
   }else{
     
-    if(delivery_man_id){
-      formData.append('receiver_type','delivery_man')
-      formData.append('receiver_id',delivery_man_id)
+    if(vendorid){
+      formData.append('receiver_type','vendor')
+      formData.append('receiver_id',vendorid)
     }else if(user_id){
       formData.append('receiver_type','customer')
       formData.append('receiver_id',user_id)
@@ -251,6 +251,9 @@ const handleSendMessage = async (message:string,imageFile:string | null) => {
         type: 'image/jpeg',
       });
   }
+
+  // console.log(formData)
+  // return 
    
   const response:Response = await sendConversationMessage(formData)
  
@@ -284,6 +287,7 @@ const handleSendMessage = async (message:string,imageFile:string | null) => {
           <View style={styles.mainView}>
             <ChatMessage  
                     vendorid={vendorid} 
+                    delivery_man_id={delivery_man_id}
                     otherUserId={otherUserid} 
                     receiverScreenName={receiverScreenName} 
                     messageData={CONVERSATION_STATE.messageData} 

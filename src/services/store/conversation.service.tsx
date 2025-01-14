@@ -10,7 +10,7 @@ interface Response {
 //get conversations
 export const getConverstions = async(limit:number,offset:number): Promise<Response> => {
     try {
-		const response = await api.get(`/vendor/message/list?limit=${limit}&offset=${offset}`);
+		const response = await api.get(`/delivery-man/message/list?limit=${limit}&offset=${offset}`);
 		return response;
 	} catch (error:any) {
 		return error.response;
@@ -20,7 +20,7 @@ export const getConverstions = async(limit:number,offset:number): Promise<Respon
 //get conversation messages
 export const getConversationMessages    = async(query:string): Promise<Response> => {
 	try {
-		const response = await api.get(`/vendor/message/details?${query}`);
+		const response = await api.get(`/delivery-man/message/details?${query}`);
 		return response;
 	} catch (error:any) {
 		return error.response;
@@ -29,7 +29,7 @@ export const getConversationMessages    = async(query:string): Promise<Response>
 
 export const sendConversationMessage = async(formData:FormData): Promise<Response> => {
 	try {
-		const response = await api.post(`/vendor/message/send`,formData);
+		const response = await api.post(`/delivery-man/message/send`,formData);
 		return response;
 	} catch (error:any) {
 		return error.response;

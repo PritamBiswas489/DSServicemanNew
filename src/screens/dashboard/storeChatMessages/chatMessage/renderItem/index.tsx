@@ -27,8 +27,9 @@ interface MessageDataInterFace {
   messages:ConversationsMessageInterface[]
 }
 
-export default function RenderItem({ vendorid, otherUserId, receiverScreenName, receiverProfileImage, item }: {
+export default function RenderItem({ vendorid, delivery_man_id, otherUserId, receiverScreenName, receiverProfileImage, item }: {
   vendorid:number,
+  delivery_man_id:string | number | null,
   otherUserId:number,
   receiverScreenName:string,
   receiverProfileImage:string  | null |undefined,
@@ -90,7 +91,7 @@ export default function RenderItem({ vendorid, otherUserId, receiverScreenName, 
   return (
     <>
       {item.messages.map((messgeData: ConversationsMessageInterface, messageIndex: number) => {
-        const isSender = messgeData.sender_id === vendorid
+        const isSender = messgeData.sender_id === delivery_man_id
         let profileImage = receiverProfileImage
         const { hours,
           minutes,

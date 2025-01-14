@@ -13,13 +13,11 @@ import { timeAgo } from '@src/config/utility';
 //available balance function 
 export function AvailableBalance() {
   const { isDeliveryManLogin, t } = useValues();
-  const { stores } = useSelector((state: RootState) => state['storeProfileData'])
-
-  let totalOrder:number = 0, totalDaysJoined:string | null = ''
-  if(stores?.[0]){
-    totalOrder = stores[0].total_order
-    totalDaysJoined = timeAgo(stores[0].created_at)
-  }
+  const deliveryManProfileData = useSelector((state: RootState) => state['storeProfileData'])
+  let totalOrder:number = 0, totalDaysJoined:string | null = '' 
+  totalOrder = deliveryManProfileData.order_count
+  totalDaysJoined = timeAgo(deliveryManProfileData.created_at)
+   
 
   return (
     <View style={styles.containerStyle}>

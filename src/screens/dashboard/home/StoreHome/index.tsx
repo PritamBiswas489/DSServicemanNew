@@ -171,8 +171,8 @@ export default function StoreHome() {
   //**** load home data current order ******//
   useEffect(() => {
     if(refreshOrders){
-      loadHomeDataCurrentOrder()
-      dispatch(storeHomeOrderActions.setData({field:'refreshOrders','data':false}))
+      // loadHomeDataCurrentOrder()
+      // dispatch(storeHomeOrderActions.setData({field:'refreshOrders','data':false}))
     }
   }, [refreshOrders])
   //check save fcm token

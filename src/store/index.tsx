@@ -81,6 +81,8 @@ import serviceManConfigAppSlice from "./redux/serviceman/service-man-config-redu
 import forgetPasswordSlice from "./redux/forgetpassword-redux";
 import serviceManHomeDataSlice from "./redux/serviceman/service-man-home-data.redux";
 
+import currentLocationSlice from "./redux/store/current-location-redux";
+
 //configure store
 const store = configureStore({
     reducer: { 
@@ -162,7 +164,10 @@ const store = configureStore({
        //==================== SERVICEMAN STORE ===================================================//
        serviceManAccountData:serviceManAccountDataSlice.reducer,
        serviceManConfigApp:serviceManConfigAppSlice.reducer,
-       serviceManHomeData:serviceManHomeDataSlice.reducer
+       serviceManHomeData:serviceManHomeDataSlice.reducer,
+
+       //================ CURRENT LOCATION ==================================//
+       currentLocation:currentLocationSlice.reducer
 
         //DONOT FORGET CLEAR REDUX STATE AFTER LOGOUT DEVELOPER
     },

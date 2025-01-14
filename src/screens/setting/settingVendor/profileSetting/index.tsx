@@ -106,15 +106,15 @@ export function VendorProfileEdit() {
          resetError()
 
          if(updatedProfileData.firstName.trim() === ''){
-              set_error_first_name(t('newDeveloper.errorCompanyName'))
+              set_error_first_name(t('newDeveloper.addServiceMenFirstNameError'))
               errorExist =  true
          }
          if(updatedProfileData.lastName.trim() === ''){
-               set_error_last_name(t('newDeveloper.errorCompanyName'))
+               set_error_last_name(t('newDeveloper.addServiceMenLastNameError'))
                errorExist =  true
          }
-         if (updatedProfileData.phoneNumber.trim()==='') {
-                set_error_phone_number(t('newDeveloper.errorCompanyPhone'))
+         if (updatedProfileData.email.trim()==='') {
+                set_error_phone_number(t('newDeveloper.addServiceMenEmailError'))
                 errorExist =  true
          }
          if(updatedProfileData.password.length > 0){
@@ -140,7 +140,7 @@ export function VendorProfileEdit() {
         formData.append('_method', 'PUT'); 
         formData.append('f_name',updatedProfileData.firstName)
         formData.append('l_name',updatedProfileData.lastName)
-        formData.append('phone',updatedProfileData.phoneNumber)
+        formData.append('email',updatedProfileData.email)
         
         if(updatedProfileData.password.length > 0){
            formData.append('password',updatedProfileData.password)

@@ -30,7 +30,9 @@ export function CustomerChannels({handleScrollCustomerProcessing}:{
     channels: customerChannels,
   } = useSelector((state: RootState) => state['conversationChannel'])
 
-   
+  //  useEffect(()=>{
+  //    console.log(JSON.stringify(customerChannels))
+  //  },[customerChannels])
 
   const gotToChatScreen = (conversation_id: number | string,) => {
     navigation.navigate('StoreChatMessages',{conversation_id})
@@ -49,11 +51,11 @@ export function CustomerChannels({handleScrollCustomerProcessing}:{
           const conversation_id = item.id
 
            
-          if(!item?.sender?.vendor_id){
+          if(!item?.sender?.deliveryman_id){
             profileimage = item?.sender?.image_full_url
             fullName = item.sender?.f_name + ' '+item.sender?.l_name
            
-          }else if(!item.receiver?.vendor_id){
+          }else if(!item.receiver?.deliveryman_id){
             profileimage = item?.receiver?.image_full_url
             fullName = item.receiver?.f_name + ' '+item?.receiver?.l_name
           }

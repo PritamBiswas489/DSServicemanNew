@@ -10,7 +10,7 @@ interface Response {
 //get notitfications list
 export const getNotifications = async (): Promise<Response> => {
     try {
-			const response = await api.get(`/vendor/notifications`);
+			const response = await api.get(`/delivery-man/notifications`);
 			return response;
 	} catch (error:any) {
 			console.log(error)

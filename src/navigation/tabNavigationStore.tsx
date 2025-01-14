@@ -29,7 +29,6 @@ import StoreOrders from '@src/screens/dashboard/home/StoreOrders';
 import { storeHomeOrderActions } from '@src/store/redux/store/store-home-order';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
- 
 
 const Tab = createBottomTabNavigator();
 
@@ -40,25 +39,24 @@ export function BottomTabSeller() {
   const dispatch = useDispatch()
   const tabData = [
     {
-      name: 'bottomTab.home',
-      activeIcon: <ActiveHomeIcon />,
-      tabBarIcon: <HomeIcon color={appColors.lightText} />,
+        name: 'bottomTab.home',
+        activeIcon: <ActiveHomeIcon />,
+        tabBarIcon: <HomeIcon color={appColors.lightText} />,
     },
     {
-      name: 'newDeveloper.orders',
-      activeIcon: <ActiveBooking />,
-      tabBarIcon: <BookingIcon />,
-    },
-    { name: '', activeIcon: <Plus />, tabBarIcon: <Plus /> },
-    {
-      name: 'newDeveloper.wallet',
-      activeIcon: <ActiveWallet />,
-      tabBarIcon: <WalletIcon />,
+        name: 'newDeveloper.orders',
+        activeIcon: <ActiveBooking />,
+        tabBarIcon: <BookingIcon />,
     },
     {
-      name: 'newDeveloper.moreMenuText',
-      activeIcon: <ActiveMenuIcon />,
-      tabBarIcon: <MenuIcon />,
+        name: 'newDeveloper.wallet',
+        activeIcon: <ActiveWallet />,
+        tabBarIcon: <WalletIcon />,
+    },
+    {
+        name: 'newDeveloper.moreMenuText',
+        activeIcon: <ActiveMenuIcon />,
+        tabBarIcon: <MenuIcon />,
     },
   ];
 
@@ -85,7 +83,7 @@ export function BottomTabSeller() {
           <StoreHome />
         ) : selected == 1 ? (
           <StoreOrders />
-        ) : selected == 3 ? (
+        ) : selected == 2 ? (
           <StoreWallet />
         ) : (
           <MoreMenusVendor />

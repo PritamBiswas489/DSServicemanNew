@@ -4,7 +4,7 @@ import { DropdownItem } from "@src/commonComponents/dropdownWithIcon/types";
 interface FieldState {
       firstName:string;
       lastName:string;
-      phoneNumber:string;
+      email:string;
       logo:string;
       password:string;
       confirm_password:string;
@@ -18,7 +18,7 @@ interface SetDataPayload {
 const initialState: FieldState = {
   firstName:'',
   lastName:'',
-  phoneNumber:'',
+  email:'',
   logo:'',
   password:'',
   confirm_password:''

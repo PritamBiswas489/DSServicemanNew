@@ -73,11 +73,11 @@ export default function InputField() {
     ))
   }
   //phone number
-  const dispatchPhoneNumber = () => {
+  const dispatchEmail = () => {
     dispatch(vendorProfileUpdateFieldActions.setData(
       {
-        field: 'phoneNumber',
-        data: phoneNumber
+        field: 'email',
+        data: email
       }
     ))
   }
@@ -93,8 +93,8 @@ export default function InputField() {
   }, [lastName])
 
   useEffect(() => {
-    dispatchPhoneNumber()
-  }, [phoneNumber])
+    dispatchEmail()
+  }, [email])
 
 
 
@@ -134,6 +134,7 @@ export default function InputField() {
         keyboardType="number-pad"
         value={phoneNumber}
         Icon={<Call />}
+        editable={false}
         error={errorPhoneNumber}
         onChangeText={value => { setPhoneNumber(value) }}
 
@@ -144,7 +145,7 @@ export default function InputField() {
         error={''}
         Icon={<Email />}
         value={email}
-        editable={false}
+        
         onChangeText={value => { setEmail(value) }}
         containerStyle={{
           marginBottom: windowWidth(1),
