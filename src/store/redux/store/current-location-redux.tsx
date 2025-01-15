@@ -3,13 +3,15 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface currentlocationInterface {
     latitude : any | null,
     longitude : any | null,
-    location: string
+    location: string,
+    canStartTracking:boolean
 }
 
 const initialState: currentlocationInterface = {
     latitude: null,
     longitude :  null,
-    location: ''
+    location: '',
+    canStartTracking:false
  };
 
  interface SetDataPayload {

@@ -8,7 +8,7 @@ import { checkLoggedInUserType, getDistanceFromLatLonInKm } from '@src/utils/fun
 import { recordLocationData, saveVendorFcmTokenProcess, listRecordLocationData } from '@src/services/store/profile.service';
 import messaging from '@react-native-firebase/messaging';
 import notifee, { AndroidImportance } from '@notifee/react-native';
-import { setValue, clearValue } from '@src/utils/localstorage';
+import { setValue, clearValue, getValue } from '@src/utils/localstorage';
 import { saveFcmTokenProcess } from '@src/services/profile.service';
 import Geolocation, { GeolocationResponse, GeolocationError } from '@react-native-community/geolocation';
 import Geocoder from 'react-native-geocoding';
@@ -54,7 +54,7 @@ const App: React.FC = () => {
   const [isDeliveryManLogin, setIsDeliveryManLogin] = useState(initialContextVal.isDeliveryManLogin);
   const [isFreelancerLogin, setIsFreeLancerLogin] = useState(initialContextVal.isFreelancerLogin);
   const [loggedInUserType, setLoggedInUserType] = useState(initialContextVal.loggedInUserType);
-  const [canStartTracking,setCanStartTracking] = useState(false)
+   
   const [loaderRecordCurrentLocation, setLoaderRecordCurrentLocation]  = useState(false)
 
   const dispatch = useDispatch()
@@ -65,6 +65,12 @@ const App: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   const reduxValueCurrentLocation = useSelector((state: RootState)=>state.currentLocation)
+
+  const {canStartTracking} = useSelector((state: RootState)=>state.currentLocation)
+
+  const setCanStartTracking = (value:boolean) =>{
+    dispatch(currentLocationActions.setData({'field':'canStartTracking','data':value}))
+  }
 
   const {t} = useTranslation();
   const contextValue = {
@@ -269,9 +275,27 @@ const App: React.FC = () => {
     };
 
     useEffect(()=>{
+      const c = async()=>{
+        const g = await getValue('deliveryCurrentLocation')
+        if(g){ 
+          const s = JSON.parse(g)
+          if(s?.latitude && s?.longitude){
+            dispatch(currentLocationActions.setData({'field':'latitude','data':s?.latitude}))
+            dispatch(currentLocationActions.setData({'field':'longitude','data':s?.longitude}))
+          }
+        }
+
+        const ga = await getValue('deliveryCurrentLocationAddr')
+        if(ga){ 
+          dispatch(currentLocationActions.setData({'field':'location','data':ga}))
+        }
+     }
+     c()
       console.log(`=============== ${JSON.stringify({location})} ===========================`)
      const f = async ()=>{
         if(location?.coords?.latitude && location?.coords?.longitude){
+          // set location lat lang in local storage
+          setValue('deliveryCurrentLocation',JSON.stringify({latitude:location?.coords?.latitude,longitude:location?.coords?.longitude}))
           setLoaderRecordCurrentLocation(true)
           let currentlocation:string = 'Not found'
           let needUpdatedLocation = true
@@ -313,6 +337,7 @@ const App: React.FC = () => {
           dispatch(currentLocationActions.setData({'field':'latitude','data':location?.coords?.latitude}))
           dispatch(currentLocationActions.setData({'field':'longitude','data':location?.coords?.longitude}))
           if(currentlocation!=='Not found'){
+            setValue('deliveryCurrentLocationAddr',currentlocation)
             dispatch(currentLocationActions.setData({'field':'location','data':currentlocation}))
           }
 
@@ -338,6 +363,8 @@ const App: React.FC = () => {
     //   g()
     // },[])
 
+    
+
 
 
 
@@ -354,8 +381,9 @@ const App: React.FC = () => {
         const backgroundGranted = await PermissionsAndroid.check(
                     PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION
                   );
-                  
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          
+              
+        if (granted === PermissionsAndroid.RESULTS.GRANTED && backgroundGranted) {
           setCanStartTracking(true)
          }
       }

@@ -1497,7 +1497,19 @@
            "noNotificationFound":"No notifications found",
            "DorkarDeliveryBoy":"Deliveryman",
            "MapLocationError":"This app collects location data to enable location fetching at the time of your online status, even when the app is closed or not in use",
-           "RecordLocation":"Saving current location....."
+           "RecordLocation":"Saving current location.....",
+           "ImportantMessage":"Important Message",
+           "Openpermission":"Open permission in app settings",
+           "Checkpermissionagain":"Check permission again",
+           "LocationPermissionError":"Location Permission Error",
+           "StoreOrderRequest":"Order Request",
+           "Viewonmap":"View on map",
+           "awayfromyou":"away from you",
+           "Deliverto":"Deliver to",
+           "Payment":"Payment",
+           "Ignore":"Ignore",
+           "Accept":"Accept",
+           "ago":"ago"
 
             
           

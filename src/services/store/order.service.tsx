@@ -7,6 +7,17 @@ interface Response {
 	config: any;
 	request?: any;
 }
+
+export const getServiceManLatestOrders = async()=>{
+	try {
+		const response = await api.get(`/delivery-man/latest-orders`);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
+
+//===================================================//
 //get All Orders
 export const getCompleteOrders = async(limit:number,offset:number,status:string): Promise<Response> => { //all,refunded,delivered
 	try {

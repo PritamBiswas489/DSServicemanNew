@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
- 
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
+import { useValues } from '../../../App';
+import appColors from '@src/theme/appColors';
 
-const NonCancelableAlert = ({message, requestLocationPermission}:{message:string, requestLocationPermission:()=>void}) => {
+const NonCancelableAlert = ({message,  checkLocationPermission}:{message:string, checkLocationPermission:()=>void}) => {
   const [visible, setVisible] = useState(true); // Control modal visibility
- 
+  const {t,isDark} = useValues()
   
   return (
     <Modal
@@ -14,9 +15,10 @@ const NonCancelableAlert = ({message, requestLocationPermission}:{message:string
     >
       <View style={styles.overlay}>
         <View style={styles.alertBox}>
-          <Text style={styles.title}>Important Message</Text>
+          <Text style={styles.title}>{t('newDeveloper.LocationPermissionError')}</Text>
           <Text style={styles.message}>{message}</Text>
-          <TouchableOpacity onPress={()=> {  Linking.openSettings(); }}><Text style={{color:'red'}}>Open permission</Text></TouchableOpacity>
+          <TouchableOpacity style={{marginTop:20}} onPress={()=> {  Linking.openSettings(); }}><Text style={{color:'red'}}>{t('newDeveloper.Openpermission')}</Text></TouchableOpacity>
+          <TouchableOpacity style={{marginTop:20}}  onPress={checkLocationPermission}><Text style={{color:appColors.primary}}>{t('newDeveloper.Checkpermissionagain')}</Text></TouchableOpacity>
         </View>
       </View>
     </Modal>

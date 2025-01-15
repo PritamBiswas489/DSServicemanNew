@@ -29,6 +29,7 @@ import { PermissionsAndroid, Platform } from 'react-native';
 import { request, PERMISSIONS, check, RESULTS } from 'react-native-permissions';
 import NonCancelableAlert from '@src/commonComponents/nonCancelableAlert';
 import { NativeModules } from 'react-native';
+import { currentLocationActions } from '@src/store/redux/store/current-location-redux';
 
 
 
@@ -247,6 +248,20 @@ export default function StoreHome() {
     navigation.navigate('StoreOrderDetails', { OrderId: String(OrderId) });
   }
 
+
+  const checkLocationPermission = async ()=>{
+        const granted = await PermissionsAndroid.check(
+                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        const backgroundGranted = await PermissionsAndroid.check(
+                            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION
+        );
+         
+        if(granted && backgroundGranted){
+          showNonCancelableAlert(false)
+          dispatch(currentLocationActions.setData({'field':'canStartTracking','data':true}))
+        }
+  }
    
 
   const requestLocationPermission = async () => {
@@ -320,7 +335,7 @@ export default function StoreHome() {
       </View>
 
 
-    {cancelableAlert && <NonCancelableAlert requestLocationPermission={requestLocationPermission} message={t('newDeveloper.MapLocationError')}/>} 
+    {cancelableAlert && <NonCancelableAlert checkLocationPermission={checkLocationPermission}   message={t('newDeveloper.MapLocationError')}/>} 
     </>
   );
 }

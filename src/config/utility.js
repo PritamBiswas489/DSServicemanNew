@@ -609,3 +609,20 @@ export function getFileNameFromUrl(url) {
 
   return matches ? matches[0] : null;
 }
+
+
+export function getTimeDifference(targetDate) {
+  const currentDate = new Date();
+  const otherDate = new Date(targetDate);
+
+  const diffInMs = Math.abs(currentDate - otherDate); // Difference in milliseconds
+
+  const minutes = Math.floor(diffInMs / 60000);       // Convert to minutes
+  const seconds = Math.floor((diffInMs % 60000) / 1000); // Remaining seconds
+  if(minutes === 0){
+    return ` ${seconds} sec`;
+  } else {
+    return `${minutes} mins`;
+  }
+  
+}

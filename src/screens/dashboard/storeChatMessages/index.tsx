@@ -212,7 +212,7 @@ useEffect(()=>{
        loadChatMessages(CONVERSATION_STATE.limit,CONVERSATION_STATE.offset)
   }else{
     const intervalId = setInterval(() => {
-      // loadChatMessages(10,1)
+      loadChatMessages(10,1)
     }, 3000);
     return () => clearInterval(intervalId);
   }

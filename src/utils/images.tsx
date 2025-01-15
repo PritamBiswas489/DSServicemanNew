@@ -132,5 +132,12 @@ export const votingCard = require('../assets/images/setting/votingCard.png');
 export const packageServiceBg = require('../assets/images/setting/packageServiceBg.png');
 export const packageService = require('../assets/images/setting/service.png');
 export const packageService1 = require('../assets/images/setting/service1.png');
-export const femaleDefault = require('../assets/images/default/male.png');
-export const maleDefault = require('../assets/images/default/female.png');
+export const femaleDefault = require('../assets/images/default/female.png');
+export const maleDefault = require('../assets/images/default/male.png');
+export const shopDefault = require('../assets/images/default/shop.png');
+
+export const customer_marker = require('../assets/images/markers/customer_marker.png');
+export const delivery_man_marker = require('../assets/images/markers/delivery_man_marker.png');
+export const location_marker = require('../assets/images/markers/location_marker.png');
+export const marker_store = require('../assets/images/markers/marker_store.png');
+export const restaurant_marker = require('../assets/images/markers/restaurant_marker.png');
