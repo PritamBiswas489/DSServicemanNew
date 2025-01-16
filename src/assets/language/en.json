@@ -1509,7 +1509,22 @@
            "Payment":"Payment",
            "Ignore":"Ignore",
            "Accept":"Accept",
-           "ago":"ago"
+           "ago":"ago",
+           "CustomerLocation":"Customer Location",
+           "StoreLocation":"Store Location",
+           "OrderLocation":"Order Location",
+           "distanceTextOne":"Your Distance from Restaurant",
+           "distanceTextTwo":"From Customer to Restaurant Distance",
+           "acceptOrderConfirmation":"Are you sure! you want to accept this order?",
+           "ConfirmAction":"Confirm Action",
+           "ignoreOrderConfirmation":"Are you sure?",
+           "RunningOrders":"Running Orders",
+           "direction":"Direction",
+           "StoreDetails":"Store details",
+           "Orderwaitingforprocess":"Order waiting for process",
+           "swipeToPickup":"Swipe to pickup"
+
+
 
             
           

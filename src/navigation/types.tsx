@@ -84,6 +84,7 @@ export type StoreChatMessagesProps = {
   conversation_id?: string | number;
   delivery_man_id?: string | number;
   user_id?: string | number;
+  vendor_id?: string | number;
   name?:string | null
 };
 export type RootStackParamList = {
@@ -215,6 +216,7 @@ export type RootStackParamList = {
   ListItem:undefined;
   VendorLogout:undefined;
   StoreOrders:undefined;
+  StoreRunningOrders:undefined;
   StoreExpenseReports:undefined;
   StoreWallet:undefined;
   StoreHome:undefined;

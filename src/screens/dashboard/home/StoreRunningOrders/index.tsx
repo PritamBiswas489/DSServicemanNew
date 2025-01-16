@@ -12,11 +12,9 @@ import { useValues } from '../../../../../App';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import OrderCard from '@src/screens/dashboard/home/StoreOrders/orderCard';
-import OrderFilterCard from '@src/screens/dashboard/home/StoreOrders/orderFilterCard';
-import StatusCard from '@src/screens/dashboard/home/StoreOrders/statusCard';
+import OrderCard from './orderCard';
 import GradientBtn from '@src/commonComponents/gradientBtn';
-import {  getServiceManLatestOrders, serviceManAcceptOrder } from '@src/services/store/order.service';
+import {  getServiceManLatestOrders, serviceManAcceptOrder, getServiceManCurrentOrders } from '@src/services/store/order.service';
 import HomeNoFataFound from '@src/commonComponents/homeNoDataFound';
 import SkeletonLoader from '@src/commonComponents/SkeletonLoader';
 import ViewMapModal from './viewMap';
@@ -62,7 +60,7 @@ type routeProps = NativeStackNavigationProp<RootStackParamList>;
 
 
 //Store Order Listing view
-export default function StoreOrders() {
+export default function StoreRunningOrders() {
     const { isDark, t } = useValues();
     const dispatch = useDispatch()
     const [refreshing, setRefreshing] = React.useState(false);
@@ -88,8 +86,8 @@ export default function StoreOrders() {
 
     //navigate order details page
     const navigateToOrderDetailsPage = (OrderId: number) => {
-        return
-        // navigate('StoreOrderDetails',{OrderId:String(OrderId)});
+        
+        navigate('StoreOrderDetails',{OrderId:String(OrderId)});
     }
     //load view map page 
     const navigateToViewMapPage = (item:any)=>{
@@ -158,8 +156,8 @@ export default function StoreOrders() {
 
     //load order onload process
     const loadOrderOnload = async () => {
-        const [latestOrders] = await Promise.all([getServiceManLatestOrders()])
-        ORDER_DISPATCH({ type: 'SET_ORDERS', payload: latestOrders?.data })
+        const [currentOrders] = await Promise.all([getServiceManCurrentOrders()])
+        ORDER_DISPATCH({ type: 'SET_ORDERS', payload: currentOrders?.data })
         setIsFirstTimeLoading(false)
     }
 
@@ -191,8 +189,8 @@ export default function StoreOrders() {
     return (
         <View style={[styles.container, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
             <Header
-                showBackArrow={false}
-                title={'newDeveloper.StoreOrderRequest'}
+                showBackArrow={true}
+                title={'newDeveloper.RunningOrders'}
                 content={''}
             />
              
@@ -214,7 +212,7 @@ export default function StoreOrders() {
                 <FlatList
                     data={ORDER_STATE.orders}
                     renderItem={({ item }) => {
-                        return  <OrderCard acceptOrder={acceptOrder} ignoreOrder={ignoreOrder} navigateToViewMapPage={navigateToViewMapPage} item={item} /> 
+                        return <TouchableOpacity onPress={()=>{navigateToOrderDetailsPage(item.id)}}><OrderCard item={item} /></TouchableOpacity>
                     }}
                     keyExtractor={(item:any) => String(item?.id)}
                 />

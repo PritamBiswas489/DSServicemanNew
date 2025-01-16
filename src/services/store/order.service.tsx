@@ -17,6 +17,94 @@ export const getServiceManLatestOrders = async()=>{
 	}
 }
 
+export const getServiceManCurrentOrders = async()=>{
+	try {
+		const response = await api.get(`delivery-man/current-orders`);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+
+}
+
+
+
+
+export const serviceManAcceptOrder = async (orderid:any): Promise<Response> =>{
+     
+    const formData = new FormData()
+	formData.append('_method','PUT')
+	formData.append('order_id',orderid)
+	 
+	try {
+		const response = await api.post(`/delivery-man/accept-order`,formData);
+		console.log(response?.data)
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
+
+//get order details
+export const getOrderProductList = async(orderId:string | number): Promise<Response> =>{
+	try {
+		const response = await api.get(`/delivery-man/order-details?order_id=${orderId}`);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
+//get current order details
+export const getCurrentOrderDetails = async(orderId:string | number): Promise<Response> =>{
+	try {
+		const response = await api.get(`/delivery-man/order?order_id=${orderId}`);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+
+}
+
+export const changeStatusToPickupProcessing = async (orderid:string | number): Promise<Response> =>{
+	const formData = new FormData()
+	formData.append('_method','PUT')
+	formData.append('order_id',orderid)
+	formData.append('status','picked_up')
+
+	try {
+		const response = await api.post(`/delivery-man/update-order-status`,formData);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+
+}
+
+export const changeStatusToDeliveredProcessing = async (formData:FormData): Promise<Response> =>{
+	formData.append('_method','PUT')
+
+	try {
+		const response = await api.post(`/delivery-man/update-order-status`,formData);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
+
+
+export const serviceMenSendCustomerOtp = async (orderid:string | number): Promise<Response> =>{
+	const formData = new FormData()
+	formData.append('_method','PUT')
+	formData.append('order_id',orderid)
+    
+	try {
+		const response = await api.post(`/delivery-man/send-order-otp`,formData);
+		console.log(response?.data)
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
 //===================================================//
 //get All Orders
 export const getCompleteOrders = async(limit:number,offset:number,status:string): Promise<Response> => { //all,refunded,delivered
@@ -46,25 +134,8 @@ export const getCurrentOrders = async(): Promise<Response> =>{
 	}
 }
 
-//get current order details
-export const getCurrentOrderDetails = async(orderId:string | number): Promise<Response> =>{
-	try {
-		const response = await api.get(`/vendor/order?order_id=${orderId}`);
-		return response;
-	} catch (error:any) {
-		return error.response;
-	}
 
-}
-//get order details
-export const getOrderProductList = async(orderId:string | number): Promise<Response> =>{
-	try {
-		const response = await api.get(`/vendor/order-details?order_id=${orderId}`);
-		return response;
-	} catch (error:any) {
-		return error.response;
-	}
-}
+
 //cancel order process
 export const cancelOrderProcess= async (orderid:string | number,reason:string): Promise<Response> =>{
      

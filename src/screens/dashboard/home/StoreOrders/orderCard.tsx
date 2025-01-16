@@ -19,7 +19,7 @@ function isValidOrderStatus(status: string): status is keyof typeof statusColor 
 }
 
 //order card 
-const OrderCard = ({ item, navigateToViewMapPage }: { item: any, navigateToViewMapPage:(item:any)=>void }) => {
+const OrderCard = ({ item, navigateToViewMapPage, acceptOrder, ignoreOrder }: { item: any, navigateToViewMapPage:(item:any)=>void,acceptOrder:(value:any)=>void,ignoreOrder:(value:any)=>void }) => {
     const {latitude,longitude} = useSelector((state: RootState)=>state.currentLocation)
 
     const { isDark, t, currSymbol } = useValues();
@@ -28,6 +28,7 @@ const OrderCard = ({ item, navigateToViewMapPage }: { item: any, navigateToViewM
         <View style={styles.header}>
           {item?.store_logo_full_url ? <Image source={{uri:item?.store_logo_full_url}} style={styles.icon} /> : <Image source={shopDefault} style={styles.icon} />}   
             <View style={styles.headerText}>
+               <Text style={[styles.restaurantName,{color: appColors.primary}]}>#{item?.id}</Text>
                 <Text style={[styles.restaurantName,{color: isDark ? appColors.white : appColors.darkText}]}>{item?.store_name}</Text>
                 <Text style={styles.itemText}>{item?.details_count} {t('newDeveloper.item')}</Text>
                 <Text style={[styles.locationText,{color: isDark ? appColors.darkSubText : appColors.darkText}]}>{item?.store_address}</Text>
@@ -52,10 +53,10 @@ const OrderCard = ({ item, navigateToViewMapPage }: { item: any, navigateToViewM
             <Text style={styles.priceText}>{currSymbol} {item?.delivery_charge}</Text>
             <Text style={styles.paymentText}>{convertToTitleCase(item?.payment_method.replaceAll('_',' ')) }</Text>
             <View style={styles.actionButtons}>
-                <TouchableOpacity onPress={()=>Alert.alert('Ignore order')} style={styles.ignoreButton}>
+                {/* <TouchableOpacity onPress={()=>ignoreOrder(item?.id)} style={styles.ignoreButton}>
                     <Text style={styles.ignoreText}>{t('newDeveloper.Ignore')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>Alert.alert('Accept order')}  style={styles.acceptButton}>
+                </TouchableOpacity> */}
+                <TouchableOpacity onPress={()=>acceptOrder(item?.id)}  style={styles.acceptButton}>
                     <Text style={styles.acceptText}>{t('newDeveloper.Accept')}</Text>
                 </TouchableOpacity>
             </View>
@@ -168,12 +169,12 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     acceptButton: {
-        backgroundColor: appColors.accepted,
+        backgroundColor: appColors.lightGreen,
         padding: 10,
         borderRadius: 5,
     },
     acceptText: {
-        color: '#fff',
+        color: '#000',
     },
 });
 export default OrderCard;

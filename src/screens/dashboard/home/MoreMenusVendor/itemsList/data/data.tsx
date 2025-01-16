@@ -35,6 +35,13 @@ export const categoriesData: Array<HomeCategoryType> = [
     title: 'newDeveloper.moreMenuProfile', 
     goToScreen:'VendorProfileSettings'
   },
+
+  {
+    icon: <ProfileIcon height={'36'} width={'36'} />,
+    title: 'Running orders', 
+    goToScreen:'StoreRunningOrders'
+  },
+  
   { 
     icon: <ChatIcon height={'36'} width={'36'} />,
     title: 'newDeveloper.Conversation',

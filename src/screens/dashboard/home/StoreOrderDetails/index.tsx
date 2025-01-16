@@ -5,7 +5,7 @@ import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ScrollView,
 import { useValues } from '../../../../../App';
 import Header from '@commonComponents/header';
 import SwipeButton from './SwipeButton';
-import { cancelOrderProcess, changeStatusToHandover, confirmOrderProcess, getCurrentOrderDetails, getOrderProductList, processingOrderProcess } from '@src/services/store/order.service';
+import { cancelOrderProcess, changeStatusToDeliveredProcessing, changeStatusToHandover, changeStatusToPickupProcessing, confirmOrderProcess, getCurrentOrderDetails, getOrderProductList, processingOrderProcess, serviceMenSendCustomerOtp } from '@src/services/store/order.service';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '@src/navigation/types';
 import Toast from 'react-native-toast-message';
@@ -21,7 +21,12 @@ import { Alert } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CancellationModal from '@src/commonComponents/cancellationModal';
 import ProcessingModal from '@src/commonComponents/processingModal';
- 
+import ServiceProofImageOptions from '@src/otherComponent/ServiceProofImageOptions';
+import CommonModal from '@src/commonComponents/commonModal';
+import UploadCompletedImage from '@src/commonComponents/formStatusChangePanel/uploadCompletedImage';
+import CompleteServiceOtpPanel from '@src/otherComponent/completeServiceOtpPanel';
+import CompleteOrderOtpPanel from '@src/otherComponent/completeOrderOtpPanel';
+
 
 interface Response {
     data: any;
@@ -47,16 +52,23 @@ const StoreOrderDetails = () => {
     const [totalItemPrice, setTotalItemPrice] = useState<number | string>(0) //total item price
     const [processingLoader, setProcessingLoader] = useState(false)
 
-    const [modalVisible,setModalVisible] =  useState<boolean>(false)
-    const [reason,setReason]  = useState<string>('')
+    const [modalVisible, setModalVisible] = useState<boolean>(false)
+    const [reason, setReason] = useState<string>('')
 
 
-    const [processingModalVisible,setProcessingModalVisible] =  useState<boolean>(false)
-    const [processingTime,setProcessingTime]  = useState<string>('')
-    
+    const [processingModalVisible, setProcessingModalVisible] = useState<boolean>(false)
+    const [processingTime, setProcessingTime] = useState<string>('')
+
+
+
+    const [selectedCompletedImages, setSeletedCompletedImages] = useState<string[]>([])
+    const [showServiceProofUploadOptions, setServiceProofUploadOption] = useState(false)
+    const [showServiceProofOtp, setServiceProofOtp] = useState(false)
+    const [booking_otp, setBookingOtp] = useState<string>('')
+
     //load current order details and item list
     const loadCurrentOrderDetails = async () => {
-        
+
         const [orderDetails, orderProductList] = await Promise.all([
             getCurrentOrderDetails(OrderId), getOrderProductList(OrderId),
         ])
@@ -70,6 +82,12 @@ const StoreOrderDetails = () => {
             navigation.goBack()
             return
         }
+
+
+        // console.log("===========================================================")
+        // console.log(JSON.stringify(orderMainDetails))
+
+
         setOrderMainDetails(orderDetails?.data) //order main details
         if (orderDetails?.data?.created_at) {
             setOrdertime(datetimeArr(orderDetails?.data?.created_at))
@@ -79,7 +97,7 @@ const StoreOrderDetails = () => {
             setTotalItemPrice(totalItem)
         }
         setOrderProductItemList(orderProductList?.data) //order product list
-         
+
     }
     useEffect(() => {
         loadCurrentOrderDetails()
@@ -130,8 +148,7 @@ const StoreOrderDetails = () => {
     </div>
 
      
-    ${
-        orderProductItemList.length > 0 && orderProductItemList.map((item: any, index: number) => {
+    ${orderProductItemList.length > 0 && orderProductItemList.map((item: any, index: number) => {
             return `<div style="margin-top: 10px; border-top: 1px solid #ddd; padding-top: 10px;">
       <strong>${t('newDeveloper.Item')}:</strong> ${index + 1}<br>
       <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -144,7 +161,7 @@ const StoreOrderDetails = () => {
     </div>`
 
         })
-    }
+            }
     
 
     
@@ -170,10 +187,10 @@ const StoreOrderDetails = () => {
           </tr>`: ''}
 
         
-          ${orderMainDetails?.ref_bonus_amount > 0 ?  `<tr>
+          ${orderMainDetails?.ref_bonus_amount > 0 ? `<tr>
           <td style="padding: 5px; text-align: left;">${t('newDeveloper.Referraldiscount')}</td>
           <td style="padding: 5px; text-align: right;">(-) ${currSymbol}${orderMainDetails?.ref_bonus_amount}</td>
-        </tr>` :''}
+        </tr>` : ''}
         <tr>
           <td style="padding: 5px; text-align: left;">${t('newDeveloper.VatTax')}</td>
           <td style="padding: 5px; text-align: right;">(+) ${currSymbol}${orderMainDetails?.total_tax_amount}</td>
@@ -213,117 +230,117 @@ const StoreOrderDetails = () => {
             console.error('Error generating or printing PDF:', error);
         }
     };
-    const refreshHomeOrders = ()=>{
-         dispatch(storeHomeOrderActions.setData({field:'refreshOrders','data':true}))
+    const refreshHomeOrders = () => {
+        dispatch(storeHomeOrderActions.setData({ field: 'refreshOrders', 'data': true }))
     }
     //confirm order processing 
-    const confirmOrderProcessing = async () =>{
-        const response:Response = await confirmOrderProcess(orderMainDetails.id)
-        if(response?.data?.errors){
-                    Toast.show({
-                        type: 'error',
-                        text1: 'ERROR',
-                        text2: response?.data?.errors[0]?.message,
-                    });
-        }else{
-                if(response?.data?.message){
-                        Toast.show({
-                                    type: 'success',
-                                    text1: 'ERROR',
-                                    text2: response?.data?.message,
-                    });
-                }else{
-                    Toast.show({
-                        type: 'success',
-                        text1: 'ERROR',
-                        text2: 'Process successfully done',
-                    });
-                }
-        }
-        refreshHomeOrders()
-        loadCurrentOrderDetails()
-        setReason(''); // Clear textarea
-        setProcessingLoader(false) 
-    }
-    const confirmOrder = () =>{
-        Alert.alert(
-            'Confirmation', // Title of the alert
-             t('newDeveloper.ConfirmOrderAlertMessage'), // Message
-            [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel', // iOS styling for "cancel"
-              },
-              {
-                text: 'Confirm',
-                onPress: () => confirmOrderProcessing(),
-              },
-            ],
-            { cancelable: false } // Disallows dismissal by tapping outside
-          );
-    } 
-    const cancelOrder = ()=>{
-        setModalVisible(true)
-        // loadCurrentOrderDetails();
-    }
-    //Cancel Order Process
-    const CancelOrderProcess = async ()=>{
-        if(reason.trim() === ''){ return }
-        setProcessingLoader(true) 
-        const response:Response = await cancelOrderProcess(orderMainDetails.id,reason)
-        if(response?.data?.errors){
+    const confirmOrderProcessing = async () => {
+        const response: Response = await confirmOrderProcess(orderMainDetails.id)
+        if (response?.data?.errors) {
+            Toast.show({
+                type: 'error',
+                text1: 'ERROR',
+                text2: response?.data?.errors[0]?.message,
+            });
+        } else {
+            if (response?.data?.message) {
                 Toast.show({
-                    type: 'error',
+                    type: 'success',
                     text1: 'ERROR',
-                    text2: response?.data?.errors[0]?.message,
+                    text2: response?.data?.message,
                 });
-        }else{
-            if(response?.data?.message){
-                    Toast.show({
-                                type: 'success',
-                                text1: 'ERROR',
-                                text2: response?.data?.message,
-                   });
-            }else{
+            } else {
                 Toast.show({
                     type: 'success',
                     text1: 'ERROR',
                     text2: 'Process successfully done',
-                 });
+                });
+            }
+        }
+        refreshHomeOrders()
+        loadCurrentOrderDetails()
+        setReason(''); // Clear textarea
+        setProcessingLoader(false)
+    }
+    const confirmOrder = () => {
+        Alert.alert(
+            'Confirmation', // Title of the alert
+            t('newDeveloper.ConfirmOrderAlertMessage'), // Message
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel', // iOS styling for "cancel"
+                },
+                {
+                    text: 'Confirm',
+                    onPress: () => confirmOrderProcessing(),
+                },
+            ],
+            { cancelable: false } // Disallows dismissal by tapping outside
+        );
+    }
+    const cancelOrder = () => {
+        setModalVisible(true)
+        // loadCurrentOrderDetails();
+    }
+    //Cancel Order Process
+    const CancelOrderProcess = async () => {
+        if (reason.trim() === '') { return }
+        setProcessingLoader(true)
+        const response: Response = await cancelOrderProcess(orderMainDetails.id, reason)
+        if (response?.data?.errors) {
+            Toast.show({
+                type: 'error',
+                text1: 'ERROR',
+                text2: response?.data?.errors[0]?.message,
+            });
+        } else {
+            if (response?.data?.message) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'ERROR',
+                    text2: response?.data?.message,
+                });
+            } else {
+                Toast.show({
+                    type: 'success',
+                    text1: 'ERROR',
+                    text2: 'Process successfully done',
+                });
             }
         }
         refreshHomeOrders()
         loadCurrentOrderDetails()
         setModalVisible(false); // Close modal after submission
         setReason(''); // Clear textarea
-        setProcessingLoader(false) 
+        setProcessingLoader(false)
     }
 
-    const changeStatusToModalOpen = ()=>{
+    const changeStatusToModalOpen = () => {
         setProcessingModalVisible(true)
     }
 
     //change status to processing time
-    const processingStatusChange = async () =>{
-         
-        if(processingTime.trim() === '') {  return; }
-        setProcessingLoader(true) 
-        const response:Response = await processingOrderProcess(orderMainDetails.id,processingTime)
-        if(response?.data?.errors){
+    const processingStatusChange = async () => {
+
+        if (processingTime.trim() === '') { return; }
+        setProcessingLoader(true)
+        const response: Response = await processingOrderProcess(orderMainDetails.id, processingTime)
+        if (response?.data?.errors) {
             Toast.show({
                 type: 'error',
                 text1: 'ERROR',
                 text2: response?.data?.errors[0]?.message,
             });
-        }else{
-            if(response?.data?.message){
-                    Toast.show({
-                                type: 'success',
-                                text1: 'SUCCESS',
-                                text2: response?.data?.message,
+        } else {
+            if (response?.data?.message) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'SUCCESS',
+                    text2: response?.data?.message,
                 });
-            }else{
+            } else {
                 Toast.show({
                     type: 'success',
                     text1: 'SUCCESS',
@@ -335,27 +352,27 @@ const StoreOrderDetails = () => {
         loadCurrentOrderDetails()
         setProcessingModalVisible(false); // Close modal after submission
         setProcessingTime(''); // Clear textarea
-        setProcessingLoader(false) 
+        setProcessingLoader(false)
 
     }
-    const handOverProcessing = async ()=>{
+    const handOverProcessing = async () => {
         setProcessingLoader(true)
-       
-        const response:Response = await changeStatusToHandover(orderMainDetails.id)
-        if(response?.data?.errors){
+
+        const response: Response = await changeStatusToHandover(orderMainDetails.id)
+        if (response?.data?.errors) {
             Toast.show({
                 type: 'error',
                 text1: 'ERROR',
                 text2: response?.data?.errors[0]?.message,
             });
-        }else{
-            if(response?.data?.message){
-                    Toast.show({
-                                type: 'success',
-                                text1: 'SUCCESS',
-                                text2: response?.data?.message,
+        } else {
+            if (response?.data?.message) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'SUCCESS',
+                    text2: response?.data?.message,
                 });
-            }else{
+            } else {
                 Toast.show({
                     type: 'success',
                     text1: 'SUCCESS',
@@ -367,38 +384,107 @@ const StoreOrderDetails = () => {
         loadCurrentOrderDetails()
         setProcessingModalVisible(false); // Close modal after submission
         setProcessingTime(''); // Clear textarea
-        setProcessingLoader(false) 
+        setProcessingLoader(false)
     }
     //Handover processing
-    const handoverProcessing =   () =>{
+    const handoverProcessing = () => {
         Alert.alert(
             'Confirmation', // Title of the alert
-             t('newDeveloper.HandOverOrderAlertMessage'), // Message
+            t('newDeveloper.HandOverOrderAlertMessage'), // Message
             [
-              {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel', // iOS styling for "cancel"
-              },
-              {
-                text: 'Confirm',
-                onPress: () => handOverProcessing(),
-              },
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel', // iOS styling for "cancel"
+                },
+                {
+                    text: 'Confirm',
+                    onPress: () => handOverProcessing(),
+                },
             ],
             { cancelable: false } // Disallows dismissal by tapping outside
-          );
+        );
     }
 
-    const redirectToDeliverManChat = (id:number|string | null,name:string | null)=>{
-        if(id){
-            navigation.navigate('StoreChatMessages',{delivery_man_id:id,name})
+    const redirectToDeliverManChat = (id: number | string | null, name: string | null) => {
+        if (id) {
+            navigation.navigate('StoreChatMessages', { delivery_man_id: id, name })
         }
     }
-    const redirectToCustomerChatPanel = (id:number|string | null,name:string | null)=>{
-        if(id){
-            navigation.navigate('StoreChatMessages',{user_id:id,name})
+    const redirectToCustomerChatPanel = (id: number | string | null, name: string | null) => {
+        if (id) {
+
+            navigation.navigate('StoreChatMessages', { user_id: id, name })
         }
     }
+
+    const redirectToVendorChatPanel = (id: number | string | null, name: string | null) => {
+
+        if (id) {
+            navigation.navigate('StoreChatMessages', { vendor_id: id, name })
+        }
+    }
+
+    //change status to pickup
+    const changeStatusToPickup = async () => {
+        setProcessingLoader(true)
+        await changeStatusToPickupProcessing(orderMainDetails?.id)
+        loadCurrentOrderDetails()
+        setProcessingLoader(false)
+    }
+
+    const deleteUploadServiceProofImage = (selectedindex: number) => {
+        const updatedImage = selectedCompletedImages.filter((ele, eleIndex) => selectedindex !== eleIndex)
+        setSeletedCompletedImages([...updatedImage])
+    }
+
+    const handleModalServiceProofOtpModal = () => {
+        setServiceProofOtp(!showServiceProofOtp)
+    }
+
+
+
+
+    const checkBookingOtp = async (value: string) => {
+        setProcessingLoader(true)
+        const formData = new FormData()
+        formData.append('order_id', orderMainDetails?.id)
+        formData.append('otp', value)
+        formData.append('status', 'delivered')
+        if (selectedCompletedImages) {
+            selectedCompletedImages.forEach((imageFile) => {
+                formData.append('order_proof[]', {
+                    uri: imageFile,
+                    name: 'order_proof.jpg',
+                    type: 'image/jpeg',
+                });
+            })
+        }
+
+        const response: Response = await changeStatusToDeliveredProcessing(formData)
+        if (response?.data?.errors) {
+            Toast.show({
+                type: 'error',
+                text1: 'ERROR',
+                text2: response?.data?.errors[0]?.message,
+            });
+            setProcessingLoader(false)
+        } else {
+            Toast.show({
+                type: 'success',
+                text1: 'SUCCESS',
+                text2: response?.data?.message,
+            });
+            loadCurrentOrderDetails()
+            setProcessingLoader(false)
+        }
+
+    }
+
+
+
+
+
 
     return (
         <View style={[styles.container, { backgroundColor: isDark ? appColors.darkTheme : appColors.white, }]}>
@@ -453,6 +539,45 @@ const StoreOrderDetails = () => {
 
                 })}
 
+                {/* Store details */}
+
+                <View style={[styles.customerContainer, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
+                    <Text style={[styles.customerLabel, { color: appColors.primary }]}>{t('newDeveloper.StoreDetails')}</Text>
+
+                    <View style={[styles.customerDetails]}>
+
+                        <View>
+                            <Text style={[styles.customerName, { color: isDark ? appColors.white : appColors.darkText, }]}>{orderMainDetails?.store_name}</Text>
+                            <Text style={[styles.customerAddress, { color: isDark ? appColors.white : appColors.darkText, }]}>{orderMainDetails?.store_address}</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => redirectToVendorChatPanel(orderMainDetails?.store_id, `${orderMainDetails?.store_name}`)} style={[styles.chatButton]}>
+                            <Text style={[styles.chatText]}>{t('newDeveloper.Chat')}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => {
+
+                            const phoneNumber = `tel:${orderMainDetails?.store_phone}`; // Replace with the phone number you want to call
+                            Linking.canOpenURL(phoneNumber)
+                                .then((supported) => {
+                                    if (!supported) {
+                                        Alert.alert("Error", "Phone calls are not supported on this device");
+                                    } else {
+                                        return Linking.openURL(phoneNumber);
+                                    }
+                                })
+                                .catch((err) => console.error("An error occurred", err));
+
+                        }} style={[styles.callButton]}>
+                            <Text style={[styles.chatText]}>{t('newDeveloper.Call')}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => {
+                            const url = `https://www.google.com/maps/dir/?api=1&destination=${orderMainDetails?.store_lat},${orderMainDetails?.store_lng}&travelmode=driving`;
+                            Linking.openURL(url).catch(err => console.error('An error occurred', err));
+                        }} style={[styles.directionButton]}>
+                            <Text style={[styles.chatText]}>{t('newDeveloper.direction')}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
 
                 {/* Customer Details */}
                 {orderMainDetails?.delivery_address?.contact_person_name && <View style={[styles.customerContainer, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
@@ -464,32 +589,34 @@ const StoreOrderDetails = () => {
                             <Text style={[styles.customerName, { color: isDark ? appColors.white : appColors.darkText, }]}>{orderMainDetails?.delivery_address?.contact_person_name}</Text>
                             <Text style={[styles.customerAddress, { color: isDark ? appColors.white : appColors.darkText, }]}>{orderMainDetails?.delivery_address?.address}</Text>
                         </View>
-                        <TouchableOpacity onPress={()=>redirectToCustomerChatPanel(orderMainDetails?.customer?.id,`${orderMainDetails?.customer?.f_name} ${orderMainDetails?.customer?.l_name}`)} style={[styles.chatButton]}>
+                        <TouchableOpacity onPress={() => redirectToCustomerChatPanel(orderMainDetails?.customer?.id, `${orderMainDetails?.customer?.f_name} ${orderMainDetails?.customer?.l_name}`)} style={[styles.chatButton]}>
                             <Text style={[styles.chatText]}>{t('newDeveloper.Chat')}</Text>
                         </TouchableOpacity>
-                    </View>
-                </View>}
-                {/* delivery man details */}
-                {orderMainDetails?.delivery_man?.id && <View style={[styles.customerContainer, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
-                    <Text style={[styles.customerLabel, { color: appColors.primary }]}>{t('newDeveloper.DeliveryManDetails')}</Text>
+                        <TouchableOpacity onPress={() => {
 
-                    <View style={[styles.customerDetails]}>
-                        {orderMainDetails?.delivery_man?.image_full_url && <Image
-                            source={{ uri: orderMainDetails?.delivery_man?.image_full_url }} // Replace with actual image URL
-                            style={[styles.itemImage]}
-                        />}
-                        <View>
-                            <Text style={[styles.customerName, { color: isDark ? appColors.white : appColors.darkText, }]}>{`${orderMainDetails?.delivery_man?.f_name} ${orderMainDetails?.delivery_man?.l_name}`}</Text>
-                            {orderMainDetails?.delivery_man?.email && <Text style={[styles.customerAddress, { color: isDark ? appColors.white : appColors.darkText, }]}>{orderMainDetails?.delivery_man?.email}</Text>}
-                        </View>
-                        <TouchableOpacity onPress={()=>redirectToDeliverManChat(orderMainDetails?.delivery_man?.id,`${orderMainDetails?.delivery_man?.f_name} ${orderMainDetails?.delivery_man?.l_name}`)} style={[styles.chatButton]}>
-                            <Text style={[styles.chatText]}>{t('newDeveloper.Chat')}</Text>
-                        </TouchableOpacity>
-                        {orderMainDetails?.delivery_man?.phone && <TouchableOpacity onPress={() => { makePhoneCall(orderMainDetails?.delivery_man?.phone) }} style={[styles.callButton]}>
+                            const phoneNumber = `tel:${orderMainDetails?.delivery_address?.contact_person_number}`; // Replace with the phone number you want to call
+                            Linking.canOpenURL(phoneNumber)
+                                .then((supported) => {
+                                    if (!supported) {
+                                        Alert.alert("Error", "Phone calls are not supported on this device");
+                                    } else {
+                                        return Linking.openURL(phoneNumber);
+                                    }
+                                })
+                                .catch((err) => console.error("An error occurred", err));
+
+                        }} style={[styles.callButton]}>
                             <Text style={[styles.chatText]}>{t('newDeveloper.Call')}</Text>
-                        </TouchableOpacity>}
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => {
+                            const url = `https://www.google.com/maps/dir/?api=1&destination=${orderMainDetails?.delivery_address?.latitude},${orderMainDetails?.delivery_address?.longitude}&travelmode=driving`;
+                            Linking.openURL(url).catch(err => console.error('An error occurred', err));
+                        }} style={[styles.directionButton]}>
+                            <Text style={[styles.chatText]}>{t('newDeveloper.direction')}</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>}
+
                 {/* Pricing Details */}
                 <View style={[styles.pricingContainer, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
                     <View style={[styles.priceRow]}><Text style={{ color: isDark ? appColors.white : appColors.darkText, }}>{t('newDeveloper.ItemPrice')}</Text><Text style={{ color: isDark ? appColors.white : appColors.darkText, }}>{currSymbol}{totalItemPrice}</Text></View>
@@ -504,49 +631,89 @@ const StoreOrderDetails = () => {
                     <View style={[styles.totalRow]}><Text style={{ color: appColors.primary, fontSize: 16, fontWeight: 'bold' }}>{t('newDeveloper.TotalAmount')}</Text><Text style={{ color: appColors.primary, fontSize: 16, fontWeight: 'bold' }}>{currSymbol}{orderMainDetails?.order_amount}</Text></View>
                 </View>
                 {/* Actions */}
-                 {orderMainDetails?.order_status === 'pending' && <View style={styles.btncontainer}>
-                    <TouchableOpacity style={[styles.button,styles.buttonOne, styles.buttonLeft]} onPress={() => cancelOrder()}>
-                        <Text style={styles.buttonText}>{t('newDeveloper.cancelBtn')}</Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.button,styles.buttonTwo, styles.buttonRight]} onPress={() => confirmOrder()}>
-                        <Text style={styles.buttonText}>{t('newDeveloper.confirmBtn')}</Text>
-                    </TouchableOpacity>
-              </View>} 
-                
+
 
                 <View style={[styles.actionContainer]}>
-                     {orderMainDetails?.id && orderMainDetails?.order_status === 'confirmed' && <SwipeButton btnText={t('newDeveloper.swipeToProcessing')} onSwipeComplete={changeStatusToModalOpen} /> }
-                     {orderMainDetails?.id && orderMainDetails?.order_status === 'processing' && <SwipeButton btnText={t('newDeveloper.swipeTohandover')} onSwipeComplete={handoverProcessing} /> } 
-                    <TouchableOpacity onPress={printOrderInvoice} style={[styles.printButton]}>
-                        <Text style={[styles.printText]}>{t('newDeveloper.PrintInvoice')}</Text>
-                    </TouchableOpacity>
+
+
+                    {orderMainDetails?.order_status && !['picked_up', 'delivered', 'handover', 'canceled'].includes(orderMainDetails?.order_status) && <View style={[styles.printButton]}>
+                        <Text style={[styles.printText]}>{t('newDeveloper.Orderwaitingforprocess')}</Text>
+                    </View>}
+
+                    {orderMainDetails?.order_status && orderMainDetails?.order_status === 'handover' &&
+                        <SwipeButton btnText={t('newDeveloper.swipeToPickup')} onSwipeComplete={changeStatusToPickup} />
+                    }
+
+                    {
+                        orderMainDetails?.order_status && orderMainDetails?.order_status === 'picked_up' &&
+                        <UploadCompletedImage
+                            selectedCompletedImages={selectedCompletedImages}
+                            setServiceProofUploadOption={setServiceProofUploadOption}
+                            deleteUploadServiceProofImage={deleteUploadServiceProofImage}
+                        />
+                    }
+
+
+                    {orderMainDetails?.order_status && orderMainDetails?.order_status === 'picked_up' &&
+                        <TouchableOpacity style={[styles.printButton]} onPress={handleModalServiceProofOtpModal}><Text style={[styles.printText]}>Complete Order</Text></TouchableOpacity>
+                    }
                 </View>
                 <Spinner
-            visible={processingLoader}
-            textContent={'Processing.....'}
-            textStyle={{ color: '#FFF' }}
-          />
+                    visible={processingLoader}
+                    textContent={'Processing.....'}
+                    textStyle={{ color: '#FFF' }}
+                />
 
             </ScrollView>}
 
-             <CancellationModal 
-                        modalVisible={modalVisible}
-                        setModalVisible={setModalVisible}
-                        reason={reason}
-                        setReason={setReason}
-                        CancelOrderProcess={CancelOrderProcess}
-                    />
+
+            {orderMainDetails?.order_status && orderMainDetails?.order_status === 'picked_up' && <CommonModal
+                modal={<ServiceProofImageOptions addServiceProofImages={(image: string) => {
+                    setSeletedCompletedImages(prev => [...prev, image])
+                }} setShowModal={setServiceProofUploadOption} />}
+                showModal={showServiceProofUploadOptions}
+                visibleModal={() => {
+                    setServiceProofUploadOption(!showServiceProofUploadOptions);
+                }}
+            />
+            }
 
 
-             <ProcessingModal
-             modalVisible={processingModalVisible}
-             setModalVisible={setProcessingModalVisible}
-             processingTime={processingTime}
-             setProcessingTime={setProcessingTime}
-             processingStatusChange={processingStatusChange}
-             
-             />       
+            {orderMainDetails?.order_status && orderMainDetails?.order_status === 'picked_up' && <CommonModal
+                modal={<CompleteOrderOtpPanel
+                    handleSendOtpForConfirmation={async () => {
+                        setProcessingLoader(true)
+                        const response: Response = await serviceMenSendCustomerOtp(orderMainDetails?.id)
+                        setProcessingLoader(false)
+
+                    }}
+                    setShowModal={setServiceProofOtp}
+                    setBookingOtp={(value) => { checkBookingOtp(value) }}
+                />}
+                showModal={showServiceProofOtp}
+                visibleModal={() => {
+                    setServiceProofOtp(!showServiceProofOtp)
+                }}
+            />}
+
+            <CancellationModal
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                reason={reason}
+                setReason={setReason}
+                CancelOrderProcess={CancelOrderProcess}
+            />
+
+
+            <ProcessingModal
+                modalVisible={processingModalVisible}
+                setModalVisible={setProcessingModalVisible}
+                processingTime={processingTime}
+                setProcessingTime={setProcessingTime}
+                processingStatusChange={processingStatusChange}
+
+            />
 
         </View>
     );
@@ -673,8 +840,8 @@ const styles = StyleSheet.create({
     chatButton: {
         marginLeft: 'auto',
         backgroundColor: appColors.primary,
-        paddingVertical: 6,
-        paddingHorizontal: 12,
+        paddingVertical: 3,
+        paddingHorizontal: 8,
         borderRadius: 8,
         position: 'absolute',
         right: 0,
@@ -683,12 +850,22 @@ const styles = StyleSheet.create({
     callButton: {
         marginLeft: 'auto',
         backgroundColor: appColors.success,
-        paddingVertical: 6,
-        paddingHorizontal: 12,
+        paddingVertical: 3,
+        paddingHorizontal: 8,
         borderRadius: 8,
         position: 'absolute',
         right: 60,
-        bottom: 50
+        bottom: 30
+    },
+    directionButton: {
+        marginLeft: 'auto',
+        backgroundColor: appColors.pending,
+        paddingVertical: 3,
+        paddingHorizontal: 8,
+        borderRadius: 8,
+        position: 'absolute',
+        right: 120,
+        bottom: 30
     },
     chatText: {
         color: '#fff',
@@ -740,33 +917,33 @@ const styles = StyleSheet.create({
         flexDirection: 'row', // Arrange buttons side by side
         justifyContent: 'space-between', // Add space between buttons
         padding: 10,
-      },
-      button: {
+    },
+    button: {
         flex: 1, // Each button takes equal width
-        
+
         padding: 15,
         marginHorizontal: 5, // Space between buttons
         borderRadius: 5,
         alignItems: 'center', // Center text horizontally
-      },
-      buttonOne:{
+    },
+    buttonOne: {
         backgroundColor: appColors.error,
-      },
-      buttonTwo:{
+    },
+    buttonTwo: {
         backgroundColor: appColors.success,
-      },
-      buttonLeft: {
+    },
+    buttonLeft: {
         marginRight: 5, // Optional for better spacing
-      },
-     
-      buttonRight: {
+    },
+
+    buttonRight: {
         marginLeft: 5, // Optional for better spacing
-      },
-      buttonText: {
+    },
+    buttonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
-      },
+    },
 });
 
 export default StoreOrderDetails;

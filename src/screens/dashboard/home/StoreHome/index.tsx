@@ -179,6 +179,7 @@ export default function StoreHome() {
   //check save fcm token
   const checkSaveFcmToken = async () =>{
      const fcmTokenStorage = await getValue('fcmTokenStorage')
+     console.log({fcmTokenStorage})
      if(fcmTokenStorage){
           const formData = new FormData()
           formData.append('fcm_token',fcmTokenStorage)

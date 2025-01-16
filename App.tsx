@@ -130,23 +130,24 @@ const App: React.FC = () => {
           formData.append('fcm_token',fcmToken)
           const response:Response =  await saveVendorFcmTokenProcess(formData)
           console.log(response?.data)
-          clearValue('fcmTokenStorage')
+          if(!response?.data?.errors){
+            clearValue('fcmTokenStorage')
+          }
 
         }else if(getLoggedInUserType === 'Provider'){
           const formData = new FormData()
           formData.append('fcm_token',fcmToken)
           const response:Response =  await saveFcmTokenProcess(formData)
-          console.log(response?.data)
-          clearValue('fcmTokenStorage')
-
-        }else{
-          setValue('fcmTokenStorage',fcmToken)
-        }
+          if(response?.data?.response_code && response?.data?.response_code!=='default_update_200'){
+            clearValue('fcmTokenStorage')
+          }
+        } 
     }
     const getFCMToken = async () => {
       try {
         const fcmToken = await messaging().getToken();
         if (fcmToken) {
+          setValue('fcmTokenStorage',fcmToken)
           saveFcmTokenData(fcmToken)
         } else {
           console.log('Failed to get FCM token');
@@ -396,11 +397,11 @@ const App: React.FC = () => {
   return (
     <ThemeContext.Provider value={contextValue}>
       <Navigation />
-      <Spinner
+      {/* <Spinner
           visible={loaderRecordCurrentLocation}
           textContent={t('newDeveloper.RecordLocation')}
           textStyle={{ color: '#FFF' }}
-        />
+        /> */}
     </ThemeContext.Provider>
   );
 };
