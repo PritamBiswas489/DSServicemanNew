@@ -108,6 +108,7 @@ import ListItem from '@src/screens/dashboard/storeItem/listItem';
 import VendorLogout from '@src/screens/dashboard/home/VendorLogout';
 import StoreOrders from '@src/screens/dashboard/home/StoreOrders';
 import StoreRunningOrders from '@src/screens/dashboard/home/StoreRunningOrders';
+import StoreCompletedOrders from '@src/screens/dashboard/home/StoreCompletedOrders';
 import StoreExpenseReports from '@src/screens/dashboard/home/StoreExpenseReports';
 import  StoreWallet  from '@src/screens/dashboard/home/StoreWallet';
 import StoreHome from '@src/screens/dashboard/home/StoreHome';
@@ -454,7 +455,7 @@ export default function MyStack() {
 
             <RootStack.Screen name="StoreOrders" component={StoreOrders} />
 
-            <RootStack.Screen name="StoreRunningOrders" component={StoreRunningOrders} />
+            <RootStack.Screen name="StoreRunningOrders" component={StoreCompletedOrders} />
 
             
             <RootStack.Screen name="StoreExpenseReports" component={StoreExpenseReports} />

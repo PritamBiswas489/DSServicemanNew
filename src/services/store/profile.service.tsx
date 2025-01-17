@@ -17,6 +17,19 @@ export const updateProfileData = async (data:FormData): Promise<Response> => {
 		return error.response;
 	}
 }
+
+//update store status 
+export const updateStoreStatusProcess = async (): Promise<Response> =>{
+	const formData = new FormData()
+	formData.append('updateStatus',1)
+	try {
+		const response = await api.post('/delivery-man/update-active-status',formData);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
+//===================================================================
  
 //update vendor store data
 export const updateVendorStoreData = async (data:FormData): Promise<Response> => {
@@ -28,18 +41,7 @@ export const updateVendorStoreData = async (data:FormData): Promise<Response> =>
 		return error.response;
 	}
 }
-//update store status 
-export const updateStoreStatusProcess = async (): Promise<Response> =>{
-	const formData = new FormData()
-	formData.append('updateStatus',1)
-	try {
-		const response = await api.post('/vendor/update-active-status',formData);
-		return response;
-	} catch (error:any) {
-		return error.response;
-	}
 
-}
 
 //update vendor fcm token process
 export const saveVendorFcmTokenProcess = async (formData:FormData):Promise<Response> => { 

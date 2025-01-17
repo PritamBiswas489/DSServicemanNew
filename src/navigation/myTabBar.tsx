@@ -33,7 +33,7 @@ export const MyTabBar: React.FC<MyTabBarProps> = ({
               ) : (
                 item.tabBarIcon
               )}
-              <Text
+              {item?.name && <Text
                 style={[
                   tabStyle.label,
                   {
@@ -42,7 +42,7 @@ export const MyTabBar: React.FC<MyTabBarProps> = ({
                   },
                 ]}>
                 {t(item.name)}
-              </Text>
+              </Text>}
             </TouchableOpacity>
           );
         })}

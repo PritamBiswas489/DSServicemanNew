@@ -36,11 +36,7 @@ export const categoriesData: Array<HomeCategoryType> = [
     goToScreen:'VendorProfileSettings'
   },
 
-  {
-    icon: <ProfileIcon height={'36'} width={'36'} />,
-    title: 'Running orders', 
-    goToScreen:'StoreRunningOrders'
-  },
+   
   
   { 
     icon: <ChatIcon height={'36'} width={'36'} />,

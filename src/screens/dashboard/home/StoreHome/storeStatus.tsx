@@ -8,51 +8,39 @@ import { useValues } from '../../../../../App';
 import SwitchContainer from '@src/otherComponent/switchContainer';
 
 const StoreStatus: React.FC<{updateStoreStatus:()=>void}> = ({updateStoreStatus}) => {
- 
   const { isDark, t, currSymbol } = useValues();
+  
+  const profileData = useSelector(
+      (state: RootState) => state['storeProfileData']
+    );
 
-  const { this_month_earning, this_week_earning, todays_earning, stores } = useSelector(
-    (state: RootState) => state['storeProfileData']
-  );
-  const store = stores[0]
-
-  const [isStoreClosed, setIsStoreClosed] = useState(false);
-
-  useEffect(()=>{
-    setIsStoreClosed(!store.active)
-  },[store])
+   
 
 
   //switch profile and update status
-  const toggleSwitch = () =>{
-    setIsStoreClosed(previousState => !previousState);
-    updateStoreStatus()
-  } 
+  
 
   return (
     <View style={styles.container}>
-      <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>{t('newDeveloper.StoreTemporarilyClosed')}</Text>
-         <SwitchContainer toggleDarkSwitch={toggleSwitch} switchOn={isStoreClosed} />
-      </View>
-
       <View style={styles.card}>
         <View style={styles.walletContainer}>
           <Icon name="account-balance-wallet" size={60} color="#fff" />
-          <Text style={styles.walletText}>{t('newDeveloper.Today')}</Text>
-          <Text style={styles.walletAmount}>{currSymbol} {todays_earning}</Text>
+          <Text style={styles.walletText}>{t('newDeveloper.Balance')}</Text>
+          <Text style={styles.walletAmount}>{currSymbol} {profileData?.balance}</Text>
         </View>
-
         <View style={styles.divider} />
-
         <View style={styles.balanceContainer}>
           <View style={styles.balanceColumn}>
+            <Text style={styles.balanceText}>{t('newDeveloper.Today')}</Text>
+            <Text style={styles.balanceAmount}>{currSymbol} {profileData.todays_earning}</Text>
+          </View>
+          <View style={styles.balanceColumn}>
             <Text style={styles.balanceText}>{t('newDeveloper.ThisWeek')}</Text>
-            <Text style={styles.balanceAmount}>{currSymbol} {this_week_earning}</Text>
+            <Text style={styles.balanceAmount}>{currSymbol} {profileData.this_week_earning}</Text>
           </View>
           <View style={styles.balanceColumn}>
             <Text style={styles.balanceText}>{t('newDeveloper.ThisMonth')}</Text>
-            <Text style={styles.balanceAmount}>{currSymbol} {this_month_earning}</Text>
+            <Text style={styles.balanceAmount}>{currSymbol} {profileData.this_month_earning}</Text>
           </View>
         </View>
       </View>

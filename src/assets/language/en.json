@@ -1522,8 +1522,17 @@
            "direction":"Direction",
            "StoreDetails":"Store details",
            "Orderwaitingforprocess":"Order waiting for process",
-           "swipeToPickup":"Swipe to pickup"
-
+           "swipeToPickup":"Swipe to pickup",
+           "MyOrders":"My Orders",
+           "CollectMoneyFromCustomer":"Collect money from customer",
+           "OrderAmount":"Order Amount",
+           "ok":"Ok",
+           "Online":"Online",
+           "Orders":"Orders",
+           "TodayOrder":"Today's Orders",
+           "ThisWeekOrders":"This Week Orders",
+           "TotalOrders":"Total Orders",
+           "CashInYourHand":"Cash In Your Hand"
 
 
             

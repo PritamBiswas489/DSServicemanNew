@@ -99,6 +99,28 @@ export const serviceMenSendCustomerOtp = async (orderid:string | number): Promis
     
 	try {
 		const response = await api.post(`/delivery-man/send-order-otp`,formData);
+		 
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
+export const getCompleteOrders = async(limit:number,offset:number): Promise<Response> => { //all,refunded,delivered
+	try {
+		const response = await api.get(`/delivery-man/all-orders?limit=${limit}&offset=${offset}`);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
+export const updateOrderPaymentPaid =  async (orderid:string | number): Promise<Response> =>{
+	const formData = new FormData()
+	formData.append('_method','PUT')
+	formData.append('order_id',orderid)
+	formData.append('status','paid')
+
+	try {
+		const response = await api.post(`/delivery-man/update-payment-status`,formData);
 		console.log(response?.data)
 		return response;
 	} catch (error:any) {
@@ -107,14 +129,7 @@ export const serviceMenSendCustomerOtp = async (orderid:string | number): Promis
 }
 //===================================================//
 //get All Orders
-export const getCompleteOrders = async(limit:number,offset:number,status:string): Promise<Response> => { //all,refunded,delivered
-	try {
-		const response = await api.get(`/vendor/completed-orders?limit=${limit}&offset=${offset}&status=${status}`);
-		return response;
-	} catch (error:any) {
-		return error.response;
-	}
-}
+
 //get all orders
 export const getAllOrders = async(): Promise<Response> =>{
     try {

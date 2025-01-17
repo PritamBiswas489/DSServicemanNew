@@ -13,30 +13,43 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import OrderCard from './orderCard';
+import OrderFilterCard from '@src/screens/dashboard/home/StoreOrders/orderFilterCard';
+import StatusCard from '@src/screens/dashboard/home/StoreOrders/statusCard';
 import GradientBtn from '@src/commonComponents/gradientBtn';
-import {  getServiceManLatestOrders, serviceManAcceptOrder, getServiceManCurrentOrders } from '@src/services/store/order.service';
+import { getAllOrders, getCompleteOrders } from '@src/services/store/order.service';
+import { StoreOrderInterface } from '@src/interfaces/store/order.interface';
+import { storeProfileDataActions } from '@src/store/redux/store/store-profile-redux';
+import { getAuthUserService as storeAuthService } from '@src/services/store/auth.service';
 import HomeNoFataFound from '@src/commonComponents/homeNoDataFound';
 import SkeletonLoader from '@src/commonComponents/SkeletonLoader';
-import ViewMapModal from './viewMap';
-import Spinner from 'react-native-loading-spinner-overlay';
 //ORDER STATE
 interface OrderState {
-    orders: any[];
+    limit: number;
+    offset: number;
+    orders: StoreOrderInterface[];
     
 }
 //INITIAL STATE
 const initialState: OrderState = {
+    limit: 30,
+    offset: 1,
     orders: [],
     
 }
 //ACTION
 type Action =
+    | { type: 'SET_LIMIT'; payload: typeof initialState.limit }
+    | { type: 'SET_OFFSET'; payload: typeof initialState.offset }
     | { type: 'SET_ORDERS'; payload: typeof initialState.orders }
     | { type: 'RESET_ALL' };
 ;
 //REDUCER
 const reducer = (state: OrderState, action: Action): OrderState => {
     switch (action.type) {
+        case 'SET_LIMIT':
+            return { ...state, limit: action.payload };
+        case 'SET_OFFSET':
+            return { ...state, offset: action.payload };
         case 'SET_ORDERS':
             return { ...state, orders: action.payload };
         case 'RESET_ALL':
@@ -60,18 +73,15 @@ type routeProps = NativeStackNavigationProp<RootStackParamList>;
 
 
 //Store Order Listing view
-export default function StoreRunningOrders() {
+export default function StoreCompletedOrders() {
     const { isDark, t } = useValues();
     const dispatch = useDispatch()
     const [refreshing, setRefreshing] = React.useState(false);
+    const [scrollPaging, setScrollPaging] = useState(false)
+    const [noMoreData,setNoMoreData] = useState(false)
     const [isFirstTimeLoading,setIsFirstTimeLoading] =  useState(true)
     const [ORDER_STATE, ORDER_DISPATCH] = useReducer(reducer, initialState);
    
-    const {latitude:myCurrentLat,longitude:myCurrentLng} = useSelector((state: RootState)=>state.currentLocation)
-    const [showViewOnMap,setShowViewOnMap]=  useState(false)
-    const [selectedItem,setSelectedItem] = useState(null)
-    const [loaderSpinner,setLoaderSpinner] = useState(false)
-     
     //drag screen refresh page
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -86,115 +96,53 @@ export default function StoreRunningOrders() {
 
     //navigate order details page
     const navigateToOrderDetailsPage = (OrderId: number) => {
-        
         navigate('StoreOrderDetails',{OrderId:String(OrderId)});
     }
-    //load view map page 
-    const navigateToViewMapPage = (item:any)=>{
-        setSelectedItem(item)
-        setShowViewOnMap(true)
-    }
-    //hide map
-    const hideMap = ()=>{
-        setSelectedItem(null)
-        setShowViewOnMap(false)
-    }
 
-    //accept order
-    const acceptOrder = (orderId:any)=>{
-         if(orderId){
-            Alert.alert(
-                t('newDeveloper.ConfirmAction'), // Title of the alert
-                t('newDeveloper.acceptOrderConfirmation'), // Message of the alert
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel", // Styles the button as a "Cancel" type
-                  },
-                  {
-                    text: "Confirm",
-                    onPress: async() => {
-                        setLoaderSpinner(true)
-                        await serviceManAcceptOrder(orderId)
-                        setLoaderSpinner(false)
-                        reset()
-                        hideMap()
-                    },
-                  },
-                ],
-                { cancelable: false } // Disables closing the alert by tapping outside
-              );
-               
-         }
-    }
-    //ignore order
-    const ignoreOrder = (orderId:any)=>{
-        if(orderId){
-            Alert.alert(
-                t('newDeveloper.ConfirmAction'), // Title of the alert
-                t('newDeveloper.ignoreOrderConfirmation'), // Message of the alert
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel", // Styles the button as a "Cancel" type
-                  },
-                  {
-                    text: "Confirm",
-                    onPress: () => {
-                        console.log({orderId})
-                    },
-                  },
-                ],
-                { cancelable: false } // Disables closing the alert by tapping outside
-              );
-        }
-
-    }
-
-
-    //load order onload process
+    //load order onload
     const loadOrderOnload = async () => {
-        const [currentOrders] = await Promise.all([getServiceManCurrentOrders()])
-        ORDER_DISPATCH({ type: 'SET_ORDERS', payload: currentOrders?.data })
+         
+        const [completedOrder] = await Promise.all([getCompleteOrders(ORDER_STATE.limit, ORDER_STATE.offset)])
+        if(completedOrder?.data?.orders && completedOrder?.data?.orders.length > 0){
+            const cloneOrders = [...ORDER_STATE.orders, ...completedOrder?.data?.orders];
+            ORDER_DISPATCH({ type: 'SET_ORDERS', payload: cloneOrders })
+            ORDER_DISPATCH({ type: 'SET_OFFSET', payload: ORDER_STATE.offset+1 })
+        }else{
+            setNoMoreData(true)
+        }
         setIsFirstTimeLoading(false)
+        setScrollPaging(false);
     }
 
     useEffect(() => {
-      if(isFirstTimeLoading){
+      if((isFirstTimeLoading || scrollPaging) && !noMoreData){
         loadOrderOnload()
       }  
-    },[isFirstTimeLoading])
+    },[isFirstTimeLoading,scrollPaging])
 
     const reset = ()=>{
-      setIsFirstTimeLoading(true)
+            setNoMoreData(false)
+            setIsFirstTimeLoading(true)
+            ORDER_DISPATCH({ type: 'SET_ORDERS', payload: [] });
+            ORDER_DISPATCH({ type: 'SET_OFFSET', payload: 1 });
+    }
+   
+    //handle scroll processing
+    const handleScrollProcessing = () => {
+        if (noMoreData){ return; }
+        setScrollPaging(true)
     }
 
-
-    useEffect(() => {
-        const interval = setInterval(async () => {
-            if(!isFirstTimeLoading){
-                setRefreshing(true);
-                // await loadOrderOnload()
-                setRefreshing(false);
-            }
-        }, 100000);  
-
-        return () => clearInterval(interval);
-      }, []);
-
-    
-
+     
     return (
         <View style={[styles.container, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
             <Header
                 showBackArrow={false}
-                title={'newDeveloper.RunningOrders'}
+                title={'newDeveloper.MyOrders'}
                 content={''}
             />
-             
-             
+            
+           
             <ScrollView
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 showsVerticalScrollIndicator={false}
@@ -210,21 +158,17 @@ export default function StoreRunningOrders() {
 
                 {!isFirstTimeLoading && ORDER_STATE.orders.length > 0 &&
                 <FlatList
+                    onEndReached={handleScrollProcessing}
                     data={ORDER_STATE.orders}
                     renderItem={({ item }) => {
                         return <TouchableOpacity onPress={()=>{navigateToOrderDetailsPage(item.id)}}><OrderCard item={item} /></TouchableOpacity>
                     }}
-                    keyExtractor={(item:any) => String(item?.id)}
+                    keyExtractor={(item:StoreOrderInterface) => String(item.id)}
                 />
                  }  
                 <View style={GlobalStyle.blankView} />
             </ScrollView>
-            <Spinner
-                visible={loaderSpinner}
-                textContent={'Processing.....'}
-                textStyle={{ color: '#FFF' }}
-            />
-           {showViewOnMap && selectedItem && <ViewMapModal acceptOrder={acceptOrder} ignoreOrder={ignoreOrder} dmcurloc={{lat:Number(myCurrentLat),lng:Number(myCurrentLng)}} selectedItem={selectedItem} hideMap={hideMap} />} 
+            {scrollPaging && <ActivityIndicator />}
         </View>
     );
 }

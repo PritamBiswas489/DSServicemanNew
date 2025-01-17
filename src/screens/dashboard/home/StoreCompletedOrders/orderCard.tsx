@@ -30,9 +30,9 @@ const OrderCard = ({ item }: { item: any }) => {
             <Text style={[styles.orderType, { color: appColors.primary }]}>{item?.store_name}</Text>
             <Text style={[styles.orderDate, { color: isDark ? appColors.darkSubText : appColors.darkText }]}>{tt.day} {tt.month} {tt.year} {tt.hours} {tt.minutes} {tt.ampm}</Text>
         </View>
-        <TouchableOpacity onPress={mapViewRedirect} style={[styles.statusButton, { backgroundColor: appColors.primary }]}>
-            <Text style={[styles.statusText, { color: appColors.white }]}>{t(`newDeveloper.direction`)}</Text>
-        </TouchableOpacity>
+        <View style={[styles.statusButton, { backgroundColor: appColors.primary }]}>
+            <Text style={[styles.statusText, { color: appColors.white }]}>{t(`newDeveloper.${item.order_status}`)}</Text>
+        </View>
     </View>
 };
 

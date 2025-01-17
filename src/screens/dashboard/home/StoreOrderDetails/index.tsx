@@ -5,7 +5,7 @@ import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ScrollView,
 import { useValues } from '../../../../../App';
 import Header from '@commonComponents/header';
 import SwipeButton from './SwipeButton';
-import { cancelOrderProcess, changeStatusToDeliveredProcessing, changeStatusToHandover, changeStatusToPickupProcessing, confirmOrderProcess, getCurrentOrderDetails, getOrderProductList, processingOrderProcess, serviceMenSendCustomerOtp } from '@src/services/store/order.service';
+import { cancelOrderProcess, changeStatusToDeliveredProcessing, changeStatusToHandover, changeStatusToPickupProcessing, confirmOrderProcess, getCurrentOrderDetails, getOrderProductList, processingOrderProcess, serviceMenSendCustomerOtp, updateOrderPaymentPaid } from '@src/services/store/order.service';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '@src/navigation/types';
 import Toast from 'react-native-toast-message';
@@ -26,6 +26,8 @@ import CommonModal from '@src/commonComponents/commonModal';
 import UploadCompletedImage from '@src/commonComponents/formStatusChangePanel/uploadCompletedImage';
 import CompleteServiceOtpPanel from '@src/otherComponent/completeServiceOtpPanel';
 import CompleteOrderOtpPanel from '@src/otherComponent/completeOrderOtpPanel';
+import { windowHeight, windowWidth } from '@src/theme/appConstant';
+import OrderAmountModal from '@src/commonComponents/orderAmountModal';
 
 
 interface Response {
@@ -66,12 +68,17 @@ const StoreOrderDetails = () => {
     const [showServiceProofOtp, setServiceProofOtp] = useState(false)
     const [booking_otp, setBookingOtp] = useState<string>('')
 
+    const [modalImage,setmodalImage] = useState<string>('')
+    const [showImageProofModal, setImageProofModal] = useState<boolean>(false);
+    const [showOrderAmountModal,setShowOrderAmountModal] = useState<boolean>(false);
+
     //load current order details and item list
     const loadCurrentOrderDetails = async () => {
 
         const [orderDetails, orderProductList] = await Promise.all([
             getCurrentOrderDetails(OrderId), getOrderProductList(OrderId),
         ])
+        
         setShowSkeletonloader(false)
         if (!orderDetails?.data?.id) {
             Toast.show({
@@ -82,6 +89,7 @@ const StoreOrderDetails = () => {
             navigation.goBack()
             return
         }
+        // console.log(orderDetails?.data?.order_proof_full_url)
 
 
         // console.log("===========================================================")
@@ -477,14 +485,19 @@ const StoreOrderDetails = () => {
             });
             loadCurrentOrderDetails()
             setProcessingLoader(false)
+            if(orderMainDetails?.payment_method === 'cash_on_delivery'){
+                setShowOrderAmountModal(true)
+            }
         }
 
     }
-
-
-
-
-
+    //change payment status
+    const changePaymentStatus = async ()=>{
+           setProcessingLoader(true)
+           await updateOrderPaymentPaid(orderMainDetails?.id)
+           setProcessingLoader(false)
+           setShowOrderAmountModal(false)
+    }
 
     return (
         <View style={[styles.container, { backgroundColor: isDark ? appColors.darkTheme : appColors.white, }]}>
@@ -665,6 +678,35 @@ const StoreOrderDetails = () => {
                     textStyle={{ color: '#FFF' }}
                 />
 
+
+{orderMainDetails?.order_proof_full_url && orderMainDetails.order_proof_full_url.length > 0 && <><View style={[
+        styles.icontainer,
+        {
+          backgroundColor: isDark ? appColors.darkTheme : appColors.white,
+          borderColor: isDark ? appColors.darkBorder : appColors.border,
+        },
+        ]}>
+        <Text style={{ color: isDark ? appColors.white : appColors.darkText, fontWeight: 'bold', marginBottom: 10 }}>{t('booking.proof')}</Text>
+        {orderMainDetails.order_proof_full_url.map((evphoto:string,index:number) => {
+          return (<TouchableOpacity key={`evphoto${index}`} onPress={() => {
+            if(evphoto){
+              setmodalImage(`${evphoto}`)
+              setImageProofModal(true)
+            }
+          }}><View
+            style={[
+              styles.imageContainer,
+              { borderColor: isDark ? appColors.darkBorder : appColors.border },
+            ]}>
+              <Image source={{ uri: `${evphoto}` }} style={styles.image} />
+            </View></TouchableOpacity>)
+
+        })}
+      </View>
+
+      </>
+      }
+
             </ScrollView>}
 
 
@@ -697,6 +739,19 @@ const StoreOrderDetails = () => {
                 }}
             />}
 
+             <CommonModal modal={
+                      <View style={styles.modalContainer}>
+                        <TouchableOpacity style={styles.closeButton} onPress={() => { setImageProofModal(false) }}>
+                          <Text style={styles.closeButtonText}>Close</Text>
+                        </TouchableOpacity>
+                       {modalImage && <Image source={{ uri: modalImage }} style={styles.modalImage} />} 
+                      </View>
+            
+                    }
+                      showModal={showImageProofModal}
+                      visibleModal={() => { }}
+                    />
+
             <CancellationModal
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
@@ -705,15 +760,14 @@ const StoreOrderDetails = () => {
                 CancelOrderProcess={CancelOrderProcess}
             />
 
-
             <ProcessingModal
                 modalVisible={processingModalVisible}
                 setModalVisible={setProcessingModalVisible}
                 processingTime={processingTime}
                 setProcessingTime={setProcessingTime}
                 processingStatusChange={processingStatusChange}
-
             />
+           {showOrderAmountModal && <OrderAmountModal changePaymentStatus={changePaymentStatus} orderMainDetails={orderMainDetails}/>} 
 
         </View>
     );
@@ -944,6 +998,54 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+     image: {
+        height: windowWidth(20),
+        width: windowWidth(20),
+        resizeMode: 'contain',
+        borderRadius: windowWidth(2),
+      },
+     icontainer:{
+         
+        borderWidth: 1,
+        borderRadius: windowHeight(1.8),
+        paddingHorizontal: windowWidth(2),
+        paddingVertical: windowHeight(1),
+        marginHorizontal:windowWidth(5),
+      },
+      imageContainer: {
+        height: windowWidth(17),
+        width: windowWidth(17),
+        borderColor: appColors.border,
+        // borderWidth: 1,
+        borderRadius: windowWidth(3),
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin:10
+      },
+      closeButton: {
+        position: 'absolute',
+        top: 50,
+        right: 20,
+        padding: 10,
+        backgroundColor: 'white',
+        borderRadius: 5,
+      },
+      closeButtonText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'black',
+      },
+      modalContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dim background
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      modalImage: {
+        width: '90%', // Adjust as needed
+        height: '70%', // Adjust as needed
+        borderRadius: 10,
+      },
 });
 
 export default StoreOrderDetails;

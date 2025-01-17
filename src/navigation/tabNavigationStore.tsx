@@ -29,6 +29,9 @@ import StoreOrders from '@src/screens/dashboard/home/StoreOrders';
 import { storeHomeOrderActions } from '@src/store/redux/store/store-home-order';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@src/store';
+import StoreRunningOrders from '@src/screens/dashboard/home/StoreRunningOrders';
+import StoreCompletedOrders from '@src/screens/dashboard/home/StoreCompletedOrders';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,24 +42,24 @@ export function BottomTabSeller() {
   const dispatch = useDispatch()
   const tabData = [
     {
-        name: 'bottomTab.home',
-        activeIcon: <ActiveHomeIcon />,
-        tabBarIcon: <HomeIcon color={appColors.lightText} />,
+        // name: 'bottomTab.home',
+        activeIcon: <Icon name="home" size={24} color={appColors.primary} />,
+        tabBarIcon: <Icon name="home" size={24} color="gray" />,
     },
     {
-        name: 'newDeveloper.orders',
-        activeIcon: <ActiveBooking />,
-        tabBarIcon: <BookingIcon />,
+        // name: 'newDeveloper.RunningOrders',
+        activeIcon:<Icon name="list-alt" size={24} color={appColors.primary} />,
+        tabBarIcon: <Icon name="list-alt" size={24} color="gray" />,
     },
     {
-        name: 'newDeveloper.wallet',
-        activeIcon: <ActiveWallet />,
-        tabBarIcon: <WalletIcon />,
+        // name: 'newDeveloper.MyOrders',
+        activeIcon: <Icon name="shopping-bag" size={24} color={appColors.primary} />,
+        tabBarIcon:  <Icon name="shopping-bag" size={24} color="gray" />,
     },
     {
-        name: 'newDeveloper.moreMenuText',
-        activeIcon: <ActiveMenuIcon />,
-        tabBarIcon: <MenuIcon />,
+        // name: 'newDeveloper.moreMenuText',
+        activeIcon: <Icon name="bars" size={24} color={appColors.primary} />,
+        tabBarIcon: <Icon name="bars" size={24} color="gray" />,
     },
   ];
 
@@ -64,16 +67,8 @@ export function BottomTabSeller() {
     if(selected === 0 ){
       dispatch(storeHomeOrderActions.setData({field:'refreshOrders','data':true}))
     }
-    if (key != 2) {
-      setSelected(key);
-    }
-    if(key === 2) {
-      setProcessingLoader(true)
-      setModalVisible(!modalVisible);
-      setTimeout(() => {
-        setProcessingLoader(false)
-      }, 300); // 2-second delay to simulate loading
-    } 
+    setSelected(key);
+   
   };
 
   return (
@@ -82,9 +77,9 @@ export function BottomTabSeller() {
         {selected == 0 ? (
           <StoreHome />
         ) : selected == 1 ? (
-          <StoreOrders />
+          <StoreRunningOrders />
         ) : selected == 2 ? (
-          <StoreWallet />
+          <StoreCompletedOrders />
         ) : (
           <MoreMenusVendor />
         )}
