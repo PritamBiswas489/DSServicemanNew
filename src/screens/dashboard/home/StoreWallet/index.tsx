@@ -19,7 +19,7 @@ import EarningsCard from './earningsCard';
 import TransactionHistory from './transactionHistory';
 import { getAuthUserService as storeAuthService } from '@src/services/store/auth.service';
 import { storeProfileDataActions } from '@src/store/redux/store/store-profile-redux';
-import { getWithdraws, getWalletPaymentList, deliveryBoywalletAdjustment } from '@src/services/store/transaction.service';
+import { getWithdraws, getWalletPaymentList, deliveryBoywalletAdjustment, walletProvidedEarningList } from '@src/services/store/transaction.service';
 import { WithdrawInterface } from '@src/interfaces/store/withdraw.interface';
 import { PaymentInterface } from '@src/interfaces/store/payment.interface';
 import { paymentSectionData } from '@src/config/utility';
@@ -44,10 +44,10 @@ export default function StoreWallet() {
   const dispatch = useDispatch()
   const [processingLoader, setProcessingLoader] = useState(false)
   const [refreshing, setRefreshing] = React.useState(false);
-  const [withdrawList,setWithdrawList] = useState<WithdrawInterface[]>([])
-  const [paymentList,setPaymentList] = useState<PaymentInterface[]>([])
+  const [withdrawList, setWithdrawList] = useState<any[]>([])
+  const [paymentList, setPaymentList] = useState<any[]>([])
 
-   const storeProfileData = useSelector((state: RootState) => state['storeProfileData'])
+  const storeProfileData = useSelector((state: RootState) => state['storeProfileData'])
 
   //  useEffect(()=>{
   //     console.log(JSON.stringify(storeProfileData))
@@ -60,51 +60,53 @@ export default function StoreWallet() {
     }
   }
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    profileReset()
+    await Promise.all([profileReset(), loadWithdraws(), loadTransactionPaymentList()])
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   }, []);
 
   //load withdraws list
-  const loadWithdraws = async()=>{
-    const response:Response = await getWithdraws()
-    if(response?.data && response?.data.length > 0){
-      setWithdrawList(response?.data)
+  const loadWithdraws = async () => {
+    const response: Response = await walletProvidedEarningList()
+    console.log("========== Wallet provided earning list =================")
+    console.log(response?.data)
+    if (response?.data?.transactions && response?.data?.transactions.length > 0) {
+      setWithdrawList(response?.data?.transactions)
     }
   }
   //load transaction payment list
-  const loadTransactionPaymentList = async ()=>{
-    const response:Response = await getWalletPaymentList()
-    if(response?.data?.transactions && response?.data?.transactions.length > 0){
+  const loadTransactionPaymentList = async () => {
+    const response: Response = await getWalletPaymentList()
+    if (response?.data?.transactions && response?.data?.transactions.length > 0) {
       setPaymentList(response?.data?.transactions)
     }
   }
-  const f = async()=>{
+  const f = async () => {
     setProcessingLoader(true)
-    await profileReset()
-    // await loadWithdraws()
-    // await loadTransactionPaymentList()
+    await Promise.all([profileReset(), loadWithdraws(), loadTransactionPaymentList()])
     setProcessingLoader(false)
 
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     f()
-  },[])
+  }, [])
 
-  const adjustPayments = async ()=>{
+  const adjustPayments = async () => {
     setProcessingLoader(true)
     const repsonse = await deliveryBoywalletAdjustment()
     //============= adjustment response ========================//
     console.log(repsonse?.data)
-    await profileReset()
-    // await loadWithdraws()
-    // await loadTransactionPaymentList()
+    await Promise.all([profileReset(), loadWithdraws(), loadTransactionPaymentList()])
     setProcessingLoader(false)
   }
+
+  useEffect(() => {
+    console.log({ withdrawList })
+  }, [withdrawList])
 
   return (
     <>

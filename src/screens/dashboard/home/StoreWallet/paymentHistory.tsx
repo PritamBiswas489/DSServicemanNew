@@ -10,9 +10,7 @@ const PaymentHistoryList: React.FC<{paymentList:PaymentInterface[]}> = ({payment
     const { isDark, t, currSymbol } = useValues();
     return (
         <View style={styles.container}>
-            <View style={styles.transactionContainer}>
-                <Text style={[styles.transactionTitle,{color: isDark ? appColors.white : appColors.darkText}]}>{t('newDeveloper.PaymentHistory')}</Text>
-            </View>
+            
             {paymentList.length > 0 ? paymentList.map((withdraw:PaymentInterface, withdrawIndex: number) => {
                 return <View key={`${'payment'+withdrawIndex}`} style={[styles.transactionDetails, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
                     <Text style={[styles.amount, { color: isDark ? appColors.white : appColors.darkText }]}>{currSymbol} {getIndianPriceFormat(withdraw.amount)}</Text>
@@ -71,6 +69,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
+        marginBottom:10
     },
     amount: {
         fontSize: 24,

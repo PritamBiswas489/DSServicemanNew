@@ -8,20 +8,20 @@ import { getIndianPriceFormat } from '@src/config/utility';
 import { datetimeArr } from '@src/config/utility';
 
 //Withdraw request list
-const WithdrawRequestList: React.FC<{ withdrawList: WithdrawInterface[] }> = ({ withdrawList }) => {
+const WithdrawRequestList: React.FC<{ withdrawList: any[] }> = ({ withdrawList }) => {
     const { isDark, t, currSymbol } = useValues();
     return (
         <View style={styles.container}>
-            <View style={styles.transactionContainer}>
+            {/* <View style={styles.transactionContainer}>
                 <Text style={[styles.transactionTitle, { color: isDark ? appColors.white : appColors.darkText }]}>{t('newDeveloper.TransactionHistory')}</Text>
-            </View>
-            {withdrawList.length > 0 ? withdrawList.map((withdraw:WithdrawInterface, withdrawIndex: number) => {
-                const dateObject = datetimeArr(withdraw.requested_at)
+            </View> */}
+            {withdrawList.length > 0 ? withdrawList.map((withdraw:any, withdrawIndex: number) => {
+                
                 return <View key={`${'withdraw'+withdrawIndex}`} style={[styles.transactionDetails, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
                     <Text style={[styles.amount, { color: isDark ? appColors.white : appColors.darkText }]}>{currSymbol} {getIndianPriceFormat(withdraw.amount)}</Text>
                     <View style={styles.detailContainer}>
-                        <Text style={[styles.detail, { color: isDark ? appColors.darkSubText : appColors.darkText }]}>{t('newDeveloper.Transferredto')} {withdraw.bank_name}</Text>
-                        <Text style={[styles.date, { color: isDark ? appColors.darkSubText : appColors.darkText }]}>{dateObject.day} {dateObject.month} {dateObject.year} {dateObject.hours}:{dateObject.minutes} {dateObject.ampm}</Text>
+                        <Text style={[styles.detail, { color: isDark ? appColors.darkSubText : appColors.darkText }]}>{withdraw.method}</Text>
+                        <Text style={[styles.date, { color: isDark ? appColors.darkSubText : appColors.darkText }]}>{withdraw?.payment_time}</Text>
                     </View>
                     <Text style={styles.status}>{withdraw.status}</Text>
                 </View>
@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
+        marginBottom:5
     },
     amount: {
         fontSize: 24,

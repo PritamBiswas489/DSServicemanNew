@@ -20,6 +20,26 @@ export const deliveryBoywalletAdjustment = async(): Promise<Response> => {
 	}
 }
 
+export const walletProvidedEarningList = async(): Promise<Response> => {
+	try {
+		const response = await api.get(`/delivery-man/wallet-provided-earning-list?limit=${200}`);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+
+}
+
+export const getWalletPaymentList = async(): Promise<Response> => {
+    try {
+		const response = await api.get(`/delivery-man/wallet-payment-list?limit=${100}`);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+
+}
+
 
 //=====================================================================//
 export const getWithdraws = async(): Promise<Response> => {
@@ -32,12 +52,3 @@ export const getWithdraws = async(): Promise<Response> => {
 }
  
 
-export const getWalletPaymentList = async(): Promise<Response> => {
-    try {
-		const response = await api.get(`/vendor/wallet-payment-list?limit=${100}`);
-		return response;
-	} catch (error:any) {
-		return error.response;
-	}
-
-}

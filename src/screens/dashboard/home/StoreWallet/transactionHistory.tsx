@@ -8,14 +8,14 @@ import { WithdrawInterface } from '@src/interfaces/store/withdraw.interface';
 import { PaymentInterface } from '@src/interfaces/store/payment.interface';
 
 
-const TransactionHistory: React.FC<{withdrawList:WithdrawInterface[],paymentList:PaymentInterface[]}> = ({withdrawList,paymentList}) => {
+const TransactionHistory: React.FC<{withdrawList:any[],paymentList:PaymentInterface[]}> = ({withdrawList,paymentList}) => {
     const { isDark, t } = useValues();
     const [listTabTyle,setListTabType] = useState<string>('transaction')
     return (
         <View style={styles.container}>
             <View style={styles.tabContainer}>
                 <TouchableOpacity onPress={()=>setListTabType('transaction')}>
-                    <Text style={ [listTabTyle === 'transaction' ? styles.activeTab : styles.inactiveTab,{color: isDark ? appColors.white : appColors.darkText,}]}>{t('newDeveloper.WithdrawRequest')}</Text>
+                    <Text style={ [listTabTyle === 'transaction' ? styles.activeTab : styles.inactiveTab,{color: isDark ? appColors.white : appColors.darkText,}]}>{t('newDeveloper.WalletProvidedEarning')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>setListTabType('payment')}>
                     <Text style={[listTabTyle === 'payment' ? styles.activeTab : styles.inactiveTab,{color: isDark ? appColors.white : appColors.darkText,}]}>{t('newDeveloper.PaymentHistory')}</Text>
