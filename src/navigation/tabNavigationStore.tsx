@@ -32,6 +32,7 @@ import { RootState, AppDispatch } from '@src/store';
 import StoreRunningOrders from '@src/screens/dashboard/home/StoreRunningOrders';
 import StoreCompletedOrders from '@src/screens/dashboard/home/StoreCompletedOrders';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import StoreExpenseReports from '@src/screens/dashboard/home/StoreExpenseReports';
 
 const Tab = createBottomTabNavigator();
 
@@ -57,6 +58,11 @@ export function BottomTabSeller() {
         tabBarIcon:  <Icon name="shopping-bag" size={24} color="gray" />,
     },
     {
+      // name: 'newDeveloper.MyOrders',
+      activeIcon: <Icon name="credit-card" size={24} color={appColors.primary} />,
+      tabBarIcon:  <Icon name="credit-card" size={24} color="gray" />,
+  },
+    {
         // name: 'newDeveloper.moreMenuText',
         activeIcon: <Icon name="bars" size={24} color={appColors.primary} />,
         tabBarIcon: <Icon name="bars" size={24} color="gray" />,
@@ -77,9 +83,11 @@ export function BottomTabSeller() {
         {selected == 0 ? (
           <StoreHome />
         ) : selected == 1 ? (
-          <StoreRunningOrders />
+          <StoreOrders />
         ) : selected == 2 ? (
           <StoreCompletedOrders />
+        ): selected == 3 ? (
+          <StoreWallet />
         ) : (
           <MoreMenusVendor />
         )}

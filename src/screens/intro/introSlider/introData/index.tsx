@@ -8,6 +8,7 @@ import {
   leaf,
   leaf1,
   slider,
+  deliveryman,
   vector,
   vector5,
 } from '@utils/images';
@@ -115,7 +116,7 @@ export default function IntroData() {
         </View>
         <View style={styles.position}>
           <View style={styles.imageContainer}>
-            <Image source={slider} style={styles.image} />
+            <Image source={deliveryman} style={styles.image} />
           </View>
         </View>
         <View style={styles.rowContainer}>

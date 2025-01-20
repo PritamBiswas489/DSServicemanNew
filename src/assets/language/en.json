@@ -1532,7 +1532,11 @@
            "TodayOrder":"Today's Orders",
            "ThisWeekOrders":"This Week Orders",
            "TotalOrders":"Total Orders",
-           "CashInYourHand":"Cash In Your Hand"
+           "CashInYourHand":"Cash In Your Hand",
+           "Totalwithdrawn":"Total withdrawn",
+           "Viewallrunningorders":"View all running orders",
+           "paymentErrorMessage":"Currently, there are no payment options available. Please contact admin regarding any payment process or queries.",
+           "AdjustPayments":"Adjust payments",
 
 
             

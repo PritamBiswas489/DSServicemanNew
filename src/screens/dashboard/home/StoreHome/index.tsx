@@ -203,6 +203,7 @@ export default function StoreHome() {
                 <Text style={[styles.statusText,{color: isDark ? appColors.white : appColors.darkText,}]}>{t('newDeveloper.Online')}</Text>
                  <SwitchContainer toggleDarkSwitch={toggleSwitch} switchOn={isOnline} />
         </View>
+        {runningOrder && <View style={{alignItems:'flex-end',marginHorizontal:10}}><TouchableOpacity style={{marginTop:10, padding:4,backgroundColor:appColors.primary, borderRadius:4}} onPress={()=>{ navigation.navigate('StoreRunningOrders') }}><Text style={{color:appColors.white}}>{t('newDeveloper.Viewallrunningorders')}</Text></TouchableOpacity></View>  }
         {runningOrder && <TouchableOpacity style={{marginTop:10}} onPress={()=>{navigateToOrderDetailsPage(runningOrder.id)}}><OrderCard item={runningOrder} /></TouchableOpacity>}
         <ScrollView
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}

@@ -19,9 +19,10 @@ import EarningsCard from './earningsCard';
 import TransactionHistory from './transactionHistory';
 import { getAuthUserService as storeAuthService } from '@src/services/store/auth.service';
 import { storeProfileDataActions } from '@src/store/redux/store/store-profile-redux';
-import { getWithdraws, getWalletPaymentList } from '@src/services/store/transaction.service';
+import { getWithdraws, getWalletPaymentList, deliveryBoywalletAdjustment } from '@src/services/store/transaction.service';
 import { WithdrawInterface } from '@src/interfaces/store/withdraw.interface';
 import { PaymentInterface } from '@src/interfaces/store/payment.interface';
+import { paymentSectionData } from '@src/config/utility';
 
 interface Response {
   data: any;
@@ -46,12 +47,17 @@ export default function StoreWallet() {
   const [withdrawList,setWithdrawList] = useState<WithdrawInterface[]>([])
   const [paymentList,setPaymentList] = useState<PaymentInterface[]>([])
 
+   const storeProfileData = useSelector((state: RootState) => state['storeProfileData'])
+
+  //  useEffect(()=>{
+  //     console.log(JSON.stringify(storeProfileData))
+  //  },[storeProfileData])
+
   const profileReset = async () => {
     const responseuser = await storeAuthService()
     if (responseuser?.data?.id) {
       dispatch(storeProfileDataActions.setData(responseuser?.data))
     }
-
   }
 
   const onRefresh = React.useCallback(() => {
@@ -76,13 +82,29 @@ export default function StoreWallet() {
       setPaymentList(response?.data?.transactions)
     }
   }
+  const f = async()=>{
+    setProcessingLoader(true)
+    await profileReset()
+    // await loadWithdraws()
+    // await loadTransactionPaymentList()
+    setProcessingLoader(false)
 
-  
+  }
 
   useEffect(()=>{
-     loadWithdraws()
-     loadTransactionPaymentList()
+    f()
   },[])
+
+  const adjustPayments = async ()=>{
+    setProcessingLoader(true)
+    const repsonse = await deliveryBoywalletAdjustment()
+    //============= adjustment response ========================//
+    console.log(repsonse?.data)
+    await profileReset()
+    // await loadWithdraws()
+    // await loadTransactionPaymentList()
+    setProcessingLoader(false)
+  }
 
   return (
     <>
@@ -102,9 +124,8 @@ export default function StoreWallet() {
             },
           ]}
         >
-          <View><WithdrawBalance /></View>
+          <View><WithdrawBalance adjustPayments={adjustPayments} /></View>
           <View><BalanceInfo /></View>
-          <View><EarningsCard /></View>
           <View><TransactionHistory withdrawList={withdrawList} paymentList={paymentList} /></View>
           <Spinner
             visible={processingLoader}

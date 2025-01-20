@@ -1,6 +1,6 @@
 import appColors from '@src/theme/appColors';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Ensure you have react-native-vector-icons installed
 import { useValues } from '../../../../../App';
 import { getIndianPriceFormat } from '@src/config/utility';
@@ -15,22 +15,27 @@ interface Response {
   config: any;
   request?: any;
 }
-const WithdrawBalance: React.FC = () => {
+const WithdrawBalance: React.FC<{adjustPayments:()=>void}> = ({adjustPayments}) => {
   const { isDark, t, currSymbol } = useValues();
-  const {withdraw_able_balance} = useSelector((state: RootState)=>state['storeProfileData'])
+  const {Payable_Balance,adjust_able, show_pay_now_button} = useSelector((state: RootState)=>state['storeProfileData'])
   
   return (
     <View style={styles.container}>
       <View style={styles.balanceContainer}>
         <Icon name="account-balance-wallet" size={40} color="#fff" />
         <View style={styles.textContainer}>
-          <Text style={styles.label}>{t('newDeveloper.WithdrawableBalance')}</Text>
-          <Text style={styles.amount}>{currSymbol} {getIndianPriceFormat(withdraw_able_balance)}</Text>
+          <Text style={styles.label}>{t('newDeveloper.PayableBalance')}</Text>
+          <Text style={styles.amount}>{currSymbol} {getIndianPriceFormat(Payable_Balance)}</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.withdrawButton}>
-        <Text style={styles.withdrawButtonText}>{t('newDeveloper.Withdraw')}</Text>
-      </TouchableOpacity>
+      <View style={{flexDirection:'column'}}>
+      {adjust_able &&  <TouchableOpacity onPress={adjustPayments} style={[styles.adjustnowButton]}>
+        <Text style={styles.adjustnowButtonText}>{t('newDeveloper.AdjustPayments')}</Text>
+      </TouchableOpacity>}
+      <TouchableOpacity style={styles.withdrawButton} onPress={()=>Alert.alert(t('newDeveloper.paymentErrorMessage'))}>
+        <Text style={styles.withdrawButtonText}>{t('newDeveloper.PayNow')}</Text>
+      </TouchableOpacity> 
+      </View>
     </View>
   );
 };
@@ -71,6 +76,21 @@ const styles = StyleSheet.create({
     color:appColors.primary,
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign:'center'
+  },
+
+  adjustnowButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom:5
+  },
+  adjustnowButtonText: {
+    color:appColors.primary,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign:'center'
   },
 });
 

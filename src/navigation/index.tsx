@@ -455,7 +455,7 @@ export default function MyStack() {
 
             <RootStack.Screen name="StoreOrders" component={StoreOrders} />
 
-            <RootStack.Screen name="StoreRunningOrders" component={StoreCompletedOrders} />
+            <RootStack.Screen name="StoreRunningOrders" component={StoreRunningOrders} />
 
             
             <RootStack.Screen name="StoreExpenseReports" component={StoreExpenseReports} />

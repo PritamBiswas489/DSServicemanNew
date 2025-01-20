@@ -7,7 +7,21 @@ interface Response {
 	config: any;
 	request?: any;
 }
-//get withdraw list
+//======================================================================//
+//wallet adjustment
+export const deliveryBoywalletAdjustment = async(): Promise<Response> => {
+	const formData = new FormData()
+	formData.append('adjustment',1)
+	try {
+		const response = await api.post('/delivery-man/make-wallet-adjustment',formData);
+		return response;
+	} catch (error:any) {
+		return error.response;
+	}
+}
+
+
+//=====================================================================//
 export const getWithdraws = async(): Promise<Response> => {
 	try {
 		const response = await api.get('/vendor/get-withdraw-list');

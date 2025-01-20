@@ -8,7 +8,7 @@ import { getIndianPriceFormat } from '@src/config/utility';
 
 const BalanceInfo: React.FC = () => {
   const { isDark, t, currSymbol } = useValues();
-  const { cash_in_hands, withdraw_able_balance } = useSelector((state: RootState) => state['storeProfileData'])
+  const { cash_in_hands, total_withdrawn } = useSelector((state: RootState) => state['storeProfileData'])
   return (
     <View style={styles.container}>
       <View style={[styles.card, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
@@ -16,8 +16,8 @@ const BalanceInfo: React.FC = () => {
         <Text style={[styles.label, { color: isDark ? appColors.white : appColors.darkText }]}>{t('newDeveloper.CashinHand')}</Text>
       </View>
       <View style={[styles.card, { backgroundColor: isDark ? appColors.darkCardBg : appColors.white }]}>
-        <Text style={styles.amount}>{currSymbol} {getIndianPriceFormat(withdraw_able_balance)}</Text>
-        <Text style={[styles.label, { color: isDark ? appColors.white : appColors.darkText }]}>{t('newDeveloper.WithdrawableBalance')}</Text>
+        <Text style={styles.amount}>{currSymbol} {getIndianPriceFormat(total_withdrawn)}</Text>
+        <Text style={[styles.label, { color: isDark ? appColors.white : appColors.darkText }]}>{t('newDeveloper.Totalwithdrawn')}</Text>
       </View>
     </View>
   );

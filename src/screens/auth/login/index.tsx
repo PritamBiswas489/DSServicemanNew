@@ -129,7 +129,7 @@ const Login = ({ route }: any) => {
   };
   //handle deliveryman login
   const handleDeliveryManLoginHandle = async () => {
-    // setIsLoading(true)
+    setIsLoading(true)
     const data: { phone: string, password: string } = {
       phone: `+${loginPhoneDialCode}${form.phone}`,
       password: form.password,
