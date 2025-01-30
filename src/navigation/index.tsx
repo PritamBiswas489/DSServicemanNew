@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import AuthNavigation from './authNavigation';
 import { RootStack } from './RootStackNavigator';
 import { BottomTab } from './tabNavigation';
@@ -116,7 +116,13 @@ import StoreListCampaign from '@src/screens/dashboard/home/StoreCampaign/listCam
 import { StoreChatHistory } from '@src/screens/dashboard/storeChatHistory';
 import { StoreChatMessages } from '@src/screens/dashboard/storeChatMessages';
 import AuthTokenChecker from '@src/commonComponents/AuthTokenChecker';
+import { RootStackParamList } from './types';
+export const navigationRef = React.createRef<NavigationContainerRef<RootStackParamList>>();
 
+export const navigateExtra = (name: keyof RootStackParamList, params?: object) => {
+  //@ts-ignore
+  navigationRef.current?.navigate(name, params);
+};
 
 export default function MyStack() {
   const [isConnected, setIsConnected] = useState<boolean | null>(true);
@@ -128,7 +134,7 @@ export default function MyStack() {
   }, []);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator
         screenOptions={{
           headerShown: false,
